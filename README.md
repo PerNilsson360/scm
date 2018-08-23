@@ -1,2 +1,2 @@
 # scm
-A scheme interpreter
+A scheme interpreter.
