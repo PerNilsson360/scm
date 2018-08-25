@@ -1,4 +1,4 @@
-; (load "simply-typed-lambda.scm")
+; (load "/home/per/prg/git/scm/tst/simply-typed-lambda.scm")
 (define (assert condition . args)
   (if (not condition) (error "ASSERT:" args)))
 
@@ -428,7 +428,7 @@
 (define (announce-output string) (newline) (display string))
 
 (define (user-print object)
-  (cond ((constant? object) (display-constant object))
+  (cond ((constant? object) (constant-name object))
 	((pair? object)
 	 (let ((c (car object)))
 	   (if (constant? c)

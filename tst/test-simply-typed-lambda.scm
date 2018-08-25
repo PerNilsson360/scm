@@ -1,4 +1,5 @@
 (define add2 (lambda (int) int) (lambda (n) (+ n 2)))
+(define 
 (define bad (lambda (int) int) (lambda (n) (+ n "growl")))
 (define two int 2)
 
