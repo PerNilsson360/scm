@@ -41,6 +41,7 @@ number --> num-2 | num-8 | num-10 | num-16
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 
 #include "error.h"
 #include "type.h"
