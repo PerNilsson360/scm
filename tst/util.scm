@@ -11,7 +11,7 @@
 	     l)
   (if (null? k)
       '()
-      (cons (cons (car k) (car l)) (zip (cdr k) (cdr l)))))
+      (cons (list (car k) (car l)) (zip (cdr k) (cdr l)))))
 
 ;; Algebraic data type Some/None
 
