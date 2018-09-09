@@ -20,7 +20,9 @@ test : test.c
 	$(CC) $(CFLAGS) test.c -o test -lX11
 clean :
 	rm scheme
+	rm TAGS
 	rm *.o
+	rm tst/*~
 	rm *~
 
 tags :

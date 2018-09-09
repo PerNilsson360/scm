@@ -49,8 +49,10 @@ number --> num-2 | num-8 | num-10 | num-16
 #include "char.h"
 #include "number.h"
 #include "symbol.h"
+#include "vector.h"
 #include "port.h"
 #include "str.h"
+#include "util.h"
 
 enum TOKEN_TYPE
 {
@@ -77,8 +79,44 @@ static TOKEN token;
 static TOKEN pushed_token;
 static TOKEN* pushed_token_ptr = NULL;
 
-static type* datum(FILE* file);
+static void
+print_token(TOKEN* token)
+{
+    if (token == NULL)
+    {
+	return;
+    }
+    switch (token->type)
+    {
+    case T_IDENTIFIER:
+	fprintf(stderr, "id: %s\n", token->data);
+	break;
+    case T_BOOLEAN:
+	fprintf(stderr, "bool: %s\n", token->data);
+	break;
+    case T_NUMBER:
+	fprintf(stderr, "num: %s\n", token->data);
+	break;
+    case T_CHARACTER:
+	fprintf(stderr, "char: %s\n", token->data);
+	break;
+    case T_STRING:
+	fprintf(stderr, "str: %s\n", token->data);
+	break;
+    case T_INITIAL_VECTOR:
+	fprintf(stderr, "initial vector\n");
+	break;
+    case T_UNQUOTE_SPLICING:
+	fprintf(stderr, "unquote splicing\n");
+	break;
+    };
+}
 
+void
+parse_error(const char* error)
+{
+    assert(FALSE && "Handle this in a better way");
+}
 
 void
 skip_atmospheres(FILE* file)
@@ -91,7 +129,7 @@ skip_atmospheres(FILE* file)
     {
         skip_atmospheres(file);
     } 
-    else if (c = ';')
+    else if (c == ';')
     {
         /* comment --> all subsequent characters up to a line break */
         while ((c = getc(file) != ('\n' || EOF)))
@@ -100,6 +138,8 @@ skip_atmospheres(FILE* file)
         }
         
         skip_atmospheres(file);
+    } else {
+	ungetc(c, file);
     }
 }
 
@@ -166,6 +206,7 @@ subsequent(char c)
       digit --> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
       special-subsequent --> + | - | . | @
     */
+    
     return initial(c) || isdigit(c) || 
         c == '+' || c == '-' || c == '.' || c == '@'; 
 }
@@ -174,6 +215,11 @@ static
 TOKEN*
 identifier(int c, FILE* file)
 {
+    /*
+      identifier --> initial | subsequent* | peculiar-identifier 
+      peculiar-identifier is not handled here
+    */
+
     int i = 0;
 
     token.type = T_IDENTIFIER;
@@ -181,10 +227,6 @@ identifier(int c, FILE* file)
 
     c = getc(file);
 
-    /*
-      identifier --> initial | subsequent* | peculiar-identifier 
-      peculiar-identifier is not handled here
-    */
     while (subsequent(c))
     {
         if (i == MAX_IDENTIFIER_LENGTH - 1)
@@ -193,11 +235,13 @@ identifier(int c, FILE* file)
         }
 
         token.data[i++] = c;
+	c = getc(file);
     }
 
     ungetc(c, file);
     token.data[i] = '\0';
-    
+    token.scm_type = mk_symbol(token.data);
+	
     return &token;
 }
 
@@ -209,10 +253,11 @@ character(FILE* file)
       character --> #\ any-character | #\ character-name
       character-name -> space | newline
     */
+    
     int i = 0;
     int c = getc(file);
 
-    while (!delimiter(c) || c != EOF)
+    while (!delimiter(c) && c != EOF)
     {
         if (i == MAX_IDENTIFIER_LENGTH - 1)
         {
@@ -220,6 +265,7 @@ character(FILE* file)
         }
 
         token.data[i++] = c;
+	c = getc(file);
     }
 
     ungetc(c, file);
@@ -251,11 +297,12 @@ character(FILE* file)
     {
         assert(0 && "Need to handle this in a better way");
     }
+    return &token;
 }
 
 static
 TOKEN*
-number(char c, FILE* file, int posistive)
+number(char c, FILE* file, int positive)
 {
     int i = 0;
     token.type = T_NUMBER;
@@ -275,8 +322,54 @@ number(char c, FILE* file, int posistive)
     ungetc(c, file);
 
     token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, posistive);
+    token.scm_type = mk_number(token.data, i, positive);
 
+    return &token;
+}
+
+static
+TOKEN*
+string(FILE* file)
+{
+    /* string --> " string-element* " */
+    /* string-element -> any character other than " or \ | \" | \\ */
+    
+    int c;
+    int i = 0;
+    token.type = T_STRING;
+    do
+    {
+	if (i == MAX_IDENTIFIER_LENGTH - 1)
+        {
+            assert(0 && "Need to handle this in a better way");
+        }
+	c = getc(file);
+	if (c == '"')
+	{
+	    break;
+	}
+	if (c == '\\')
+	{
+	    token.data[i++] = c;
+	    c = getc(file);
+	    if (c == '"' || c == '\\')
+	    {
+		token.data[i++] = c;
+	    }
+	    else 
+	    {
+		parse_error("STRING: wrong escapes.");
+	    }
+	}
+	else
+	{
+	    token.data[i++] = c;
+	}
+    } while(TRUE);
+
+    token.data[i++] = '\0';
+    token.scm_type = mk_string_with_length(token.data, i);
+    
     return &token;
 }
 
@@ -291,7 +384,8 @@ static
 TOKEN*
 next_token(FILE* file)
 {
-    int c;
+    int c
+	;
     TOKEN* result = NULL;
 
     if (pushed_token_ptr != NULL)
@@ -328,7 +422,7 @@ next_token(FILE* file)
         /* 
            boolean --> #t | #f 
          */
-        if (cc == ('t' || 'f'))
+        if (cc == 't' || cc == 'f')
         {
             token.type = T_BOOLEAN;
             token.data[0] = '\0';
@@ -339,18 +433,19 @@ next_token(FILE* file)
            character --> #\ any-character | #\ character-name 
            character-name -> space | newline  
         */
-        else if (cc = '\\')
+        else if (cc == '\\')
         {
             result = character(file);
         }
-        /* 
-           token --> ... #(  ... 
-        */
-        else if (cc = '(')
+	else if (cc == '(')
         {
             token.type = T_INITIAL_VECTOR;
             result = &token;
         }
+	else
+	{
+	    parse_error("NEXT_TOKEN: bad # sequence");
+	}
     }
     /* 
        number --> num-2 | num-8 | num-10 | num-16 
@@ -438,6 +533,12 @@ next_token(FILE* file)
             result = &token;
         }
     }
+    /* string --> " string-element* " */
+    /* string-element -> any character other than " or \ | \" | \\ */
+    else if (c == '"')
+    {
+	result = string(file);
+    }
     /* 
        | ( | ) | [ | ] | #( |  ' | ` | , | ,@ | . 
        #( and . are handled before this
@@ -474,6 +575,8 @@ next_token(FILE* file)
             break;
         }
     }
+
+    return result;
 }
 
 /*
@@ -484,25 +587,89 @@ simple-datum --> boolean | number | character | string | symbol
 symbol --> identifier
 compound-datum --> list | vector | constructor 
 list --> (datum*) | (datum+ . datum) | abbreviation
-abbreviation --> abbrev-prefix | datum
+abbreviation --> abbrev-prefix datum
 abbrev-prefix --> ' | ` | , | ,@
 vector --> #(datum*)
 constructor --> [ symbol datum* ]
 
 */
 
-void
-parse_error(const char* error)
-{
-}
+static type* datum(FILE* file);
 
 static
 type*
 abbreviation(FILE* file)
 {
     /* 
-       abbreviation --> abbrev-prefix | datum 
+       abbreviation --> abbrev-prefix datum 
+       abbrev-prefix --> ' | ` | , | ,@
     */
+    type* result = NULL;
+    TOKEN* token = next_token(file);
+
+    if (token == NULL)
+    {
+	return NULL;
+    }
+    
+    if (token->type == '\'')
+    {
+	type* d = datum(file);
+	
+	if (d == NULL)
+	{
+	    parse_error("ABBREVIATION: quoted datum is NULL.");
+	}
+	else if (is_empty_pair(d))
+	{
+	    result = nil();
+	}
+	else
+	{
+	    result = mk_quoted(d);
+	}
+    }
+    else if (token->type == '`')
+    {
+	type* d = datum(file);
+	
+	if (d == NULL)
+	{
+	    parse_error("ABBREVIATION: quasiquoted datum is NULL.");
+	}
+
+	result = cons(mk_symbol("quasiquote"), d);
+    }
+    else if (token->type == ',')
+    {
+	token = next_token(file);
+	
+	const char* unquote;
+        if (token->type == '@')
+        {
+            unquote = "unquote-splicing";
+        }
+        else
+        {
+            unquote = "unquote";
+	    unget_token(token);
+        }
+	
+	type* d = datum(file);
+
+	if (d == NULL)
+	{
+	    parse_error("ABBREVIATION: unquote datum is NULL.");
+	}
+	
+	result = cons(mk_symbol(unquote), cons(d, nil()));
+    }
+    else
+    {
+	unget_token(token);
+    }
+    
+    return result;
 }
 
 static
@@ -510,19 +677,32 @@ type*
 datum_plus(FILE* file)
 {
     /* 
-       (datum+ . datum) 
+       (datum+ . datum)
      */
     type* result = NULL;
     TOKEN* token = next_token(file);
     
     if (token == NULL)
     {
-        parse_error("DATUM_PLUS: premature end on tokens");
+        parse_error("DATUM_PLUS: token null");
     }
 
-    if (token->type == '.')
+    if (token->type == ')')
+    {
+	unget_token(token);
+	result = nil();
+    }
+    else if (token->type == '.')
     {
         result = datum(file);
+	if (result == NULL)
+	{
+	    parse_error("DATUM_PLUS: . follows by NULL");
+	}
+	else if (is_nil(result))
+	{
+	    parse_error("DATUM_PLUS: . follows by '()");
+	}
     }
     else
     {
@@ -531,12 +711,10 @@ datum_plus(FILE* file)
 
         if (d == NULL)
         {
-            result = nil();
+	    parse_error("DATUM_PLUS: datum null");
         }
-        else
-        {
-            result = cons(d, datum_plus(file));
-        }
+	result = cons(d, datum_plus(file));
+
     }
     
     return result;
@@ -552,31 +730,28 @@ list(FILE* file)
     type* result = NULL;
     TOKEN* token = next_token(file);
 
-    if (token == NULL)
+    if (token->type == '(')
     {
-        parse_error("LIST: can not find (");
-    } 
-    else 
+	type* d = datum(file);
+	if (d == NULL)
+	{
+	    result = cons(nil(), nil());
+	}
+	else
+	{
+	    result = cons(d, datum_plus(file));
+	}
+        
+	token = next_token(file);
+	if (token->type != ')')
+	{
+	    parse_error("LIST: can not find )");
+	}
+    }
+    else
     {
-        if (token->type != '(')
-        {
-            type* d = datum(file);
-            if (d != NULL)
-            {
-                result = cons(d, datum_plus(file));
-            }
-            
-            token = next_token(file);
-            if (token->type != ')')
-            {
-                parse_error("LIST: can not find )");
-            }
-        }
-        else
-        {
-            unget_token(token);
-            result = abbreviation(file);
-        }
+	unget_token(token);
+	result = abbreviation(file);
     }
     
     return result;
@@ -584,11 +759,50 @@ list(FILE* file)
 
 static
 type*
-vector(FILE* file)
+datum_star(FILE* file)
+{
+    /* 
+       datum*
+     */
+    type* result = nil();
+    type* d = datum(file);
+    
+    while (d != NULL)
+    {
+	result = cons(d, result);
+	d = datum(file);
+    }
+
+    return result;
+}
+
+static
+type*
+parse_vector(FILE* file)
 {
     /*
        vector --> #(datum*)
     */
+    type* result = NULL;
+    TOKEN* token = next_token(file);
+    
+    if (token->type == T_INITIAL_VECTOR)
+    {
+	type* l = reverse(datum_star(file));
+	result = list_to_vector(l);
+	
+	token = next_token(file);
+	if (token->type != ')')
+	{
+	    parse_error("VECTOR: missing )");
+	}
+    }
+    else
+    {
+	unget_token(token);
+    }
+    
+    return result;
 }
 
 static
@@ -598,7 +812,7 @@ constructor(FILE* file)
     /*   
        constructor --> [ symbol datum* ]
     */
-
+    return NULL;
 }
 
 static
@@ -613,14 +827,10 @@ compound_datum(FILE* file)
     
     if (result == NULL)
     {
-        result = vector(file);
+        result = parse_vector(file);
         if(result == NULL)
         {
             result = constructor(file);
-            if (result == NULL)
-            {
-                parse_error("COMPUND_DATUM:");
-            }
         }
     }
 
@@ -697,4 +907,3 @@ rread()
 {
     return read_from_file(stdin);
 }
-

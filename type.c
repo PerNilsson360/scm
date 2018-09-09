@@ -174,7 +174,7 @@ is_pair(const type* pair)
 int 
 is_empty_pair(const type* sexp)
 {
-    return is_pair(sexp) && is_nil(car(sexp)) && is_nil(car(cdr(sexp)));
+    return is_pair(sexp) && is_nil(car(sexp)) && is_nil(cdr(sexp));
 }
 
 unsigned int 

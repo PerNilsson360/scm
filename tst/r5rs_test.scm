@@ -59,7 +59,14 @@
 	 ))
 
 (define (test-memq?)
-  (begin ))
+  (begin (expect (equal? (memq 'a '(a b c)) '(a b c)))
+	 (expect (equal? (memq 'b '(a b c)) '(b c)))
+	 (expect (equal? (memq 'a '(b c d)) #f))
+	 (expect (equal? (memq (list 'a) '(b (a) c)) #f))
+	 (expect (equal? (member (list 'a) '(b (a) c)) '((a) c)))
+	 ; (expect (equal? (memq 101 ’(100 101 102)) unspecified
+	 (expect (equal? (memv 101 '(100 101 102)) '(101 102)))
+	 ))
 
 (define (test-assq)
   (let ((e '((a 1) (b 2) (c 3))))
@@ -141,6 +148,7 @@
   (test-eq?)
   (test-eqv?)
   (test-equal?)
+  (test-memq?)
   (test-assq)
   (test-let)
   (test-case)
