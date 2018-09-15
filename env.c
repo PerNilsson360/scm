@@ -14,10 +14,10 @@
 #include "common.h"
 #include "primitive_procedure.h"
 
-type* 
-mk_env(type* data)
+TYPE* 
+mk_env(TYPE* data)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -26,71 +26,71 @@ mk_env(type* data)
     }
 
     result->type = ENVIRONMENT;
-    result->data = data;
+    result->d.t = data;
 
     return result; 
 }
 
 int
-is_env(const type* sexp)
+is_env(const TYPE* sexp)
 {
     return sexp->type == ENVIRONMENT;
 }
 
 int
-is_empty_env(const type* env)
+is_empty_env(const TYPE* env)
 {
     assert(is_env(env));
-    return is_nil(env->data);
+    return is_nil(env->d.t);
 }
 
-type*
-enclosing_environment(const type* env)
+TYPE*
+enclosing_environment(const TYPE* env)
 {
-    return cdr(env->data);
+    return cdr(env->d.t);
 }
 
 int
-is_last_frame(const type* env)
+is_last_frame(const TYPE* env)
 {
     return is_empty_env(enclosing_environment(env));
 }
 
-type*
-first_frame(type* env)
+TYPE*
+first_frame(TYPE* env)
 {
-    return car(env->data);
+    return car(env->d.t);
 }
 
-type* 
-make_frame(type* vars, type * vals)
+TYPE* 
+make_frame(TYPE* vars, TYPE* vals)
 {
     return cons(vars, vals);
 }
 
-type*
-frame_vars(type* frame)
+TYPE*
+frame_vars(TYPE* frame)
 {
     return car(frame);
 }
 
-type*
-frame_vals(type* frame)
+TYPE*
+frame_vals(TYPE* frame)
 {
     return cdr(frame);
 }
 
 void
-add_binding_to_frame(type* var, type* val, type* frame)
+add_binding_to_frame(TYPE* var, TYPE* val, TYPE* frame)
 {
     set_car(frame, cons(var, car(frame)));
     set_cdr(frame, cons(val, cdr(frame)));
 }
 
-type* lookup_env_loop(type* var, type* env);
+TYPE* lookup_env_loop(TYPE* var, TYPE* env);
 
 int
-lookup_scan(type* var, type* vars, type* vals, type** result)
+lookup_scan(TYPE* var, TYPE* vars, TYPE* vals, TYPE** result)
 {
     int rc = FALSE;
 
@@ -110,10 +110,10 @@ lookup_scan(type* var, type* vars, type* vals, type** result)
     return rc;
 }
 
-type* 
-lookup_env_loop(type* var, type* env)
+TYPE* 
+lookup_env_loop(TYPE* var, TYPE* env)
 {
-    type* result;
+    TYPE* result;
     int rc;
 
     while (!is_last_frame(env)) 
@@ -121,7 +121,7 @@ lookup_env_loop(type* var, type* env)
         env = enclosing_environment(env);
     }
 
-    type* frame = first_frame(env);    
+    TYPE* frame = first_frame(env);    
     rc = lookup_scan(var, frame_vars(frame), frame_vals(frame), &result);
 
     if(rc == FALSE)
@@ -142,10 +142,10 @@ lookup_env_loop(type* var, type* env)
 }
 
 static
-type*
-get_var_from_frame(unsigned int var_index, int is_inproper_list, type* vals)
+TYPE*
+get_var_from_frame(unsigned int var_index, int is_inproper_list, TYPE* vals)
 {
-    type* result;
+    TYPE* result;
     if (var_index == 0)
     {
         if (is_inproper_list) 
@@ -166,17 +166,17 @@ get_var_from_frame(unsigned int var_index, int is_inproper_list, type* vals)
 }
 
 static 
-type*
+TYPE*
 get_var(unsigned int frame_index, 
         unsigned int var_index, 
         int is_inproper_list,
-        type* env)
+        TYPE* env)
 {
-    type* result;
+    TYPE* result;
 
     if (frame_index == 0) 
     {
-        type* f = first_frame(env);
+        TYPE* f = first_frame(env);
         result = get_var_from_frame(var_index, 
                                     is_inproper_list, 
                                     frame_vals(f));
@@ -192,8 +192,8 @@ get_var(unsigned int frame_index,
     return result;
 }
 
-type* 
-lookup_variable_value(type* var, type* env)
+TYPE* 
+lookup_variable_value(TYPE* var, TYPE* env)
 {
     assert(is_env(env) && "Env must be an environment");
 
@@ -203,19 +203,19 @@ lookup_variable_value(type* var, type* env)
     }
     else
     {
-        return get_var(((BOUND_VAR_DATA*) var->data)->frame_index,
-                       ((BOUND_VAR_DATA*) var->data)->var_index,
-                       ((BOUND_VAR_DATA*) var->data)->is_inproper_list,
+        return get_var(var->d.b->frame_index,
+                       var->d.b->var_index,
+                       var->d.b->is_inproper_list,
                        env);
     }
 }
 
-type* set_env_loop(type* var, type* val, type* env);
+TYPE* set_env_loop(TYPE* var, TYPE* val, TYPE* env);
 
-type*
-set_scan(type* var, type* val, type* vars, type* vals, type* env)
+TYPE*
+set_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* env)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (is_symbol(vars) || is_nil(vars))
     {
@@ -233,14 +233,14 @@ set_scan(type* var, type* val, type* vars, type* vals, type* env)
     return result;
 }
 
-type* 
-set_env_loop(type* var, type* val, type* env)
+TYPE* 
+set_env_loop(TYPE* var, TYPE* val, TYPE* env)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if(!is_empty_env(env))
     {
-        type* frame = first_frame(env);
+        TYPE* frame = first_frame(env);
 
         result = set_scan(var, val, frame_vars(frame), frame_vals(frame), env);
     }
@@ -256,8 +256,8 @@ set_env_loop(type* var, type* val, type* env)
 void
 set_var(unsigned int frame_index,
         unsigned int var_index,
-        type* val,
-        type* env)
+        TYPE* val,
+        TYPE* env)
 {
     while (frame_index > 0)
     {
@@ -265,7 +265,7 @@ set_var(unsigned int frame_index,
         frame_index--;
     }
 
-    type* vals = frame_vals(first_frame(env));
+    TYPE* vals = frame_vals(first_frame(env));
 
     while (var_index > 0)
     {
@@ -277,7 +277,7 @@ set_var(unsigned int frame_index,
 }
 
 void 
-set_variable_value(type* var, type* val, type* env)
+set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
     assert(is_env(env) && "Env must be a environment");
 
@@ -287,24 +287,24 @@ set_variable_value(type* var, type* val, type* env)
     }
     else
     {
-        set_var(((BOUND_VAR_DATA*) var->data)->frame_index,
-                ((BOUND_VAR_DATA*) var->data)->var_index,
+        set_var(var->d.b->frame_index,
+                var->d.b->var_index,
                 val,
                 env);
     }
 }
 
-type* 
-extend_environment(type* vars, type* vals, type* env)
+TYPE* 
+extend_environment(TYPE* vars, TYPE* vals, TYPE* env)
 {
     assert(is_env(env) && "Env must be a anvironment");
     
-    type* e = mk_env(cons(make_frame(vars, vals), env));
+    TYPE* e = mk_env(cons(make_frame(vars, vals), env));
     return e;
 }
 
 void
-define_scan(type* var, type* val, type* vars, type* vals, type* frame)
+define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 {
     if (is_symbol(vars) || is_nil(vars))
     {
@@ -321,9 +321,9 @@ define_scan(type* var, type* val, type* vars, type* vals, type* frame)
 }
 
 void 
-define_variable(type* var, type* val, type* env)
+define_variable(TYPE* var, TYPE* val, TYPE* env)
 {
-    type* frame;
+    TYPE* frame;
 
     assert(is_env(env) && "Env must be a list");
 

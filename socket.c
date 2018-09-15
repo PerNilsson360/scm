@@ -12,30 +12,31 @@
 #include "error.h"
 #include "number.h"
 #include "socket.h"
+#include "util.h"
 #include "str.h"
 
 /* arbitrary backlog value */
 #define BACK_LOGG 50
 
 static void
-populate_sockaddr(const type* addr, const type* port, struct sockaddr_in* saddr)
+populate_sockaddr(const TYPE* addr, const TYPE* port, struct sockaddr_in* saddr)
 {
     saddr->sin_family = AF_INET;
-    assert_throw((int) port->data < 65535, TYPE_ERROR, "Port is to large");
+    assert_throw(port->d.i < 65535, TYPE_ERROR, "Port is to large");
 
-    printf("populating ip port %d\n", port->data);
+    printf("populating ip port %d\n", port->d.i);
 
-    saddr->sin_port = htons((int) port->data);
+    saddr->sin_port = htons(port->d.i);
 
-    if (strcmp(addr->data, "INADDR-ANY") == 0)
+    if (strcmp(addr->d.s, "INADDR-ANY") == 0)
     {
         saddr->sin_addr.s_addr = INADDR_ANY;
     }
     else
     {
-        printf("populating ip addr %s\n", addr->data);
+        printf("populating ip addr %s\n", addr->d.s);
         struct in_addr a;
-        assert_throw(inet_aton((char*) addr->data, &a) != 0, 
+        assert_throw(inet_aton(addr->d.s, &a) != 0, 
                      TYPE_ERROR, 
                      "Could not convert string ip to in_addr\n");
         
@@ -43,8 +44,8 @@ populate_sockaddr(const type* addr, const type* port, struct sockaddr_in* saddr)
     }
 }
 
-type* 
-mk_udp_socket(const type* addr, const type* port)
+TYPE* 
+mk_udp_socket(const TYPE* addr, const TYPE* port)
 {
     struct sockaddr_in saddr;
 
@@ -52,7 +53,7 @@ mk_udp_socket(const type* addr, const type* port)
                  TYPE_ERROR,
                  "MK_UDP_SOCKET: expexts a string and a number as arguments");
     
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -61,9 +62,9 @@ mk_udp_socket(const type* addr, const type* port)
     }
 
     result->type = UDP_SOCKET;
-    result->data = (void*)socket(PF_INET, SOCK_DGRAM, 0);
+    result->d.i = socket(PF_INET, SOCK_DGRAM, 0);
         
-    if ((int) result->data < 0)
+    if (result->d.i < 0)
     {
         perror("MK_UDO_SOCKET, socket");
         throw_error(OS_ERROR, "UDP_SOCKET: failed to create socket");
@@ -71,7 +72,7 @@ mk_udp_socket(const type* addr, const type* port)
 
     populate_sockaddr(addr, port, &saddr);
    
-    if (bind((int) result->data, (struct sockaddr *) &saddr, sizeof(saddr)) < 0)
+    if (bind(result->d.i, (struct sockaddr *) &saddr, sizeof(saddr)) < 0)
     {
         perror("MK_SOCKET, bind");
         throw_error(OS_ERROR, "UDP_SOCKET: failed to bind");
@@ -81,26 +82,26 @@ mk_udp_socket(const type* addr, const type* port)
 }
 
 
-type*
-udp_socket_recv(const type* socket, type* buffer)
+TYPE*
+udp_socket_recv(const TYPE* socket, TYPE* buffer)
 {
     assert_throw(socket->type == UDP_SOCKET && is_string(buffer), 
                  TYPE_ERROR,
                  "UDP_SOCKET_RECV: expects a socket and a string as arguments");
  
-    int n_bytes = recv((int) socket->data, 
-                       buffer->data, 
-                       strlen(buffer->data), 
+    int n_bytes = recv(socket->d.i, 
+                       buffer->d.s, 
+                       strlen(buffer->d.s), 
                        0);
 
     return mk_number_from_int(n_bytes);
 }
 
 void
-udp_socket_sendto(const type* socket, 
-                  const type* buffer, 
-                  const type* addr, 
-                  const type* port)
+udp_socket_sendto(const TYPE* socket, 
+                  const TYPE* buffer, 
+                  const TYPE* addr, 
+                  const TYPE* port)
 {
     struct sockaddr_in saddr;
     socklen_t size = sizeof(saddr);
@@ -115,9 +116,9 @@ udp_socket_sendto(const type* socket,
 
     populate_sockaddr(addr, port, &saddr);
     
-    int result = sendto((int) socket->data, 
-                        buffer->data, 
-                        strlen(buffer->data), 
+    int result = sendto(socket->d.i, 
+                        buffer->d.s, 
+                        strlen(buffer->d.s), 
                         0, 
                         (struct sockaddr *) &saddr, 
                         size);
@@ -130,8 +131,8 @@ udp_socket_sendto(const type* socket,
     }
 }
 
-type* 
-mk_server_socket(const type* addr, const type* port)
+TYPE* 
+mk_server_socket(const TYPE* addr, const TYPE* port)
 {
     struct sockaddr_in saddr;
 
@@ -140,7 +141,7 @@ mk_server_socket(const type* addr, const type* port)
                  "MAKE_SERVER_SOCKET: expects a string and "
                  "a number as arguments");
 
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -149,9 +150,9 @@ mk_server_socket(const type* addr, const type* port)
     }
 
     result->type = SERVER_SOCKET;
-    result->data = (void*)socket(PF_INET, SOCK_STREAM, 0);
+    result->d.i = socket(PF_INET, SOCK_STREAM, 0);
     
-    if (result->data < 0)
+    if (result->d.i < 0)
     {
         perror("MAKE_SERVER_SOCKET");
         throw_error(OS_ERROR,
@@ -161,14 +162,14 @@ mk_server_socket(const type* addr, const type* port)
 
     populate_sockaddr(addr, port, &saddr);
 
-    if (bind ((int)result->data, (struct sockaddr *) &saddr, sizeof(saddr)) < 0)
+    if (bind ((int)result->d.i, (struct sockaddr *) &saddr, sizeof(saddr)) < 0)
     {
         perror("MAKE_SERVER_SOCKET");
         throw_error(OS_ERROR,
                     "MAKE_SERVER_SOCKET: could not bind socket");
     }
     
-    if (listen((int)result->data, BACK_LOGG) < 0)
+    if (listen((int)result->d.i, BACK_LOGG) < 0)
     {
         perror("MAKE_SERVER_SOCKET");
         throw_error(OS_ERROR,
@@ -178,17 +179,17 @@ mk_server_socket(const type* addr, const type* port)
     return result;
 }
 
-type* 
-server_socket_accept(const type* server_socket)
+TYPE* 
+server_socket_accept(const TYPE* server_socket)
 {
     assert_throw(server_socket->type == SERVER_SOCKET, 
                  TYPE_ERROR,
                  "SERVER_SOCKET_ACCEPT: expects a socket as argument");
 
-    type* result;
+    TYPE* result;
     struct sockaddr_in clientname;
     int size = sizeof(clientname);
-    int fd = accept((int)server_socket->data,
+    int fd = accept(server_socket->d.i,
                     (struct sockaddr *) &clientname,
                     &size);
     if (fd < 0)
@@ -202,7 +203,7 @@ server_socket_accept(const type* server_socket)
             inet_ntoa (clientname.sin_addr),
             ntohs (clientname.sin_port));
     
-    result = mloc(sizeof(type));
+    result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -211,13 +212,13 @@ server_socket_accept(const type* server_socket)
     }
 
     result->type = TCP_SOCKET;
-    result->data = (void*) fd;
+    result->d.i = fd;
     
     return result;
 }
 
-type* 
-mk_tcp_socket(const type* addr, const type* port)
+TYPE* 
+mk_tcp_socket(const TYPE* addr, const TYPE* port)
 {
     struct sockaddr_in saddr;
 
@@ -225,7 +226,7 @@ mk_tcp_socket(const type* addr, const type* port)
                  TYPE_ERROR,
                  "MK_TCP_SOCKET: expexts a string and a number as arguments");
     
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -234,9 +235,9 @@ mk_tcp_socket(const type* addr, const type* port)
     }
 
     result->type = TCP_SOCKET;
-    result->data = (void*)socket(PF_INET, SOCK_STREAM, 0);
+    result->d.i = socket(PF_INET, SOCK_STREAM, 0);
         
-    if ((int) result->data < 0)
+    if (result->d.i < 0)
     {
         perror("MK_TCP_SOCKET, socket");
         throw_error(OS_ERROR, "MK_TCP_SOCKET: failed to make socket");
@@ -244,7 +245,7 @@ mk_tcp_socket(const type* addr, const type* port)
 
     populate_sockaddr(addr, port, &saddr);
    
-    if (connect((int) result->data, 
+    if (connect(result->d.i, 
                 (struct sockaddr *) &saddr, 
                 sizeof(saddr)) < 0)
     {
@@ -255,8 +256,8 @@ mk_tcp_socket(const type* addr, const type* port)
     return result;
 }
 
-type* 
-tcp_socket_recv(const type* socket, type* buffer)
+TYPE* 
+tcp_socket_recv(const TYPE* socket, TYPE* buffer)
 {
     int n_bytes;
 
@@ -264,9 +265,9 @@ tcp_socket_recv(const type* socket, type* buffer)
                  TYPE_ERROR,
                  "TCP_SOCKET_RECV: expects a socket and a string as arguments");
  
-    n_bytes = recv((int) socket->data, 
-                   buffer->data, 
-                   strlen(buffer->data), 
+    n_bytes = recv(socket->d.i, 
+                   buffer->d.s, 
+                   strlen(buffer->d.s), 
                    0);
 
     return mk_number_from_int(n_bytes);
@@ -274,7 +275,7 @@ tcp_socket_recv(const type* socket, type* buffer)
 }
 
 void 
-tcp_socket_send(const type* tcp_socket, const type* buffer)
+tcp_socket_send(const TYPE* tcp_socket, const TYPE* buffer)
 {
     int n_bytes;
     
@@ -282,9 +283,9 @@ tcp_socket_send(const type* tcp_socket, const type* buffer)
                  TYPE_ERROR,
                  "TCP_SOCKET_SEND: expects a socket and a string as arguments");
 
-    n_bytes = write((int)tcp_socket->data, 
-                    buffer->data, 
-                    strlen(buffer->data));
+    n_bytes = write(tcp_socket->d.i, 
+                    buffer->d.s, 
+                    strlen(buffer->d.s));
 
     if (n_bytes < 0)
     {
@@ -294,7 +295,7 @@ tcp_socket_send(const type* tcp_socket, const type* buffer)
 }
 
 void 
-socket_close(const type* socket)
+socket_close(const TYPE* socket)
 {
     assert_throw(socket->type == UDP_SOCKET ||
                  socket->type == TCP_SOCKET ||
@@ -302,5 +303,5 @@ socket_close(const type* socket)
                  TYPE_ERROR,
                  "SOCKET_CLOSE: expects a socket as argument");
 
-    close((int)socket->data);
+    close(socket->d.i);
 }

@@ -3,8 +3,8 @@
 
 #include "type.h"
 
-type* mk_char(char c);
-int is_char(const type* sexp);
-type* char_to_integer(const type* sexp);
+TYPE* mk_char(char c);
+int is_char(const TYPE* sexp);
+TYPE* char_to_integer(const TYPE* sexp);
 
 #endif

@@ -2,20 +2,20 @@
 #define _SOCKET_H_
 #include "type.h"
 
-type* mk_udp_socket(const type* addr, const type* port);
-type* udp_socket_recv(const type* udp_socket, type* buffer);
-void udp_socket_sendto(const type* udp_socket, 
-                       const type* buffer, 
-                       const type* addr, 
-                       const type* port); 
+TYPE* mk_udp_socket(const TYPE* addr, const TYPE* port);
+TYPE* udp_socket_recv(const TYPE* udp_socket, TYPE* buffer);
+void udp_socket_sendto(const TYPE* udp_socket, 
+                       const TYPE* buffer, 
+                       const TYPE* addr, 
+                       const TYPE* port); 
 
-type* mk_server_socket(const type* addr, const type* port);
-type* server_socket_accept(const type* server_socket);
+TYPE* mk_server_socket(const TYPE* addr, const TYPE* port);
+TYPE* server_socket_accept(const TYPE* server_socket);
 
-type* mk_tcp_socket(const type* addr, const type* port);
-type* tcp_socket_recv(const type* tcp_socket, type* buffer);
-void tcp_socket_send(const type* tcp_socket, const type* buffer);
+TYPE* mk_tcp_socket(const TYPE* addr, const TYPE* port);
+TYPE* tcp_socket_recv(const TYPE* tcp_socket, TYPE* buffer);
+void tcp_socket_send(const TYPE* tcp_socket, const TYPE* buffer);
 
-void socket_close(const type* socket);
+void socket_close(const TYPE* socket);
 
 #endif

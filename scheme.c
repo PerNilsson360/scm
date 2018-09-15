@@ -16,16 +16,17 @@
 #include "port.h"
 #include "primitive_procedure.h"
 #include "stack.h"
+#include "read.h"
 
 static 
 void
-populate_initial_environment(type* env)
+populate_initial_environment(TYPE* env)
 {
-    type* sexp;
+    TYPE* sexp;
     const char* prelude = 
         "/home/per/prg/c++/scheme/prelude_no_translation.scm";
 
-    type* port = open_input_file(mk_string_with_length(prelude, 
+    TYPE* port = open_input_file(mk_string_with_length(prelude, 
                                                        strlen(prelude)));
 
     do
@@ -75,10 +76,10 @@ populate_initial_environment(type* env)
 int
 main()
 {   
-    type* env;
+    TYPE* env;
     const char* e = "environment";
-    type* environment_symbol;
-    type* sexp;
+    TYPE* environment_symbol;
+    TYPE* sexp;
 
     GC_INIT();
     

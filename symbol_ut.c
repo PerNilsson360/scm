@@ -9,9 +9,9 @@ void tst_symbol()
     const char* s1 = "s1";
     const char* s2 = "s2";
         
-    type* symbol1 = mk_symbol(s1);
-    type* symbol2 = mk_symbol(s2);
-    type* symbol3 = mk_symbol(s1);
+    TYPE* symbol1 = mk_symbol(s1);
+    TYPE* symbol2 = mk_symbol(s2);
+    TYPE* symbol3 = mk_symbol(s1);
 
     assert(!is_symbol_eq(symbol1, symbol2));
     assert(is_symbol_eq(symbol1, symbol3));

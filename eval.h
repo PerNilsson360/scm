@@ -3,9 +3,9 @@
 
 #include "type.h"
 
-type* eval(type* sexp, type* env);
-type* eval_no_translation(type* sexp, type* env);
-int is_tagged_list(const type* exp, type* symbol);
+TYPE* eval(TYPE* sexp, TYPE* env);
+TYPE* eval_no_translation(TYPE* sexp, TYPE* env);
+int is_tagged_list(const TYPE* exp, TYPE* symbol);
 
 
 #endif

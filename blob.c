@@ -6,21 +6,22 @@
 #include <gc.h>
 
 #include "error.h"
+#include "util.h"
 #include "type.h"
 #include "number.h"
 #include "symbol.h"
 #include "blob.h"
 
 int 
-is_blob(const type* sexp)
+is_blob(const TYPE* sexp)
 {
     return !is_nil(sexp) && sexp->type == BLOB;
 }
 
-type* 
-mk_blob(const type* k)
+TYPE* 
+mk_blob(const TYPE* k)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
         
     if (result == NULL)
     {
@@ -29,74 +30,70 @@ mk_blob(const type* k)
     }
 
     result->type = BLOB;
-    result->data = mloc(sizeof(PAIR_DATA));
+    result->d.bl = mloc(sizeof(BLOB_DATA));
 
-    if (result->data == NULL)
+    if (result->d.bl == NULL)
     {
         fprintf(stderr, "MAKE_BLOB: could not allocate memory for data");
         exit(1);
     }
 
-    unsigned int length = (unsigned int)k->data;
+    unsigned int length = k->d.bl->length;
 
-   ((PAIR_DATA*) result->data)->car = mloc(sizeof(unsigned char) * length);
+    result->d.bl->data = mloc(sizeof(unsigned char) * length);
 
-    if (((PAIR_DATA*) result->data)->car == NULL)
+    if (result->d.bl->data == NULL)
     {
         fprintf(stderr, "MAKE_BLOB: could not allocate memory for array");
         exit(1);
     }
 
-    ((PAIR_DATA*) result->data)->cdr = (type*)length;
+    result->d.bl->length = length;
 
     return result;
 }
 
-type* 
-blob_length(const type* blob)
+TYPE* 
+blob_length(const TYPE* blob)
 {
-    return mk_number_from_int((unsigned int)((PAIR_DATA*) blob->data)->cdr);
+    return mk_number_from_int(blob->d.bl->length);
 }
 
-type* 
-blob_u8_ref(const type* blob, const type* k)
+TYPE* 
+blob_u8_ref(const TYPE* blob, const TYPE* k)
 {
-    unsigned int index = (unsigned int) k->data;
+    unsigned int index = k->d.i;
 
-    if (index >= (unsigned int)((PAIR_DATA*) blob->data)->cdr)
+    if (index >= blob->d.bl->length)
     {
         throw_error(CONSTRAINT_ERROR, "BLOB_U8_REF: k is out of range");
     }
 
-    unsigned char* a = (unsigned char*)((PAIR_DATA*) blob->data)->car;
+    unsigned char* a = blob->d.bl->data;
 
     return mk_number_from_int(a[index]);
 }
 
 void 
-blob_u8_set(const type* blob, const type* k, const type* u8)
+blob_u8_set(const TYPE* blob, const TYPE* k, const TYPE* u8)
 {
-    unsigned int index = (unsigned int) k->data;
+    unsigned int index = k->d.i;
     
-    if (index >= (unsigned int)((PAIR_DATA*) blob->data)->cdr)
+    if (index >= blob->d.bl->length)
     {
         throw_error(CONSTRAINT_ERROR, "BLOB_U8_REF: k is out of range");
     }
 
-    int data = (int) u8->data;
-
-    unsigned char* a = (unsigned char*)((PAIR_DATA*) blob->data)->car;
-
-    a[index] = data;
+    blob->d.bl->data[index] = u8->d.i;
 }
 
 void 
-display_blob(const type* blob, FILE* file)
+display_blob(const TYPE* blob, FILE* file)
 {
     assert(is_blob(blob));
 
-    unsigned int length = (unsigned int)((PAIR_DATA*) blob->data)->cdr;
-    unsigned char* a = (unsigned char*)((PAIR_DATA*) blob->data)->car;
+    unsigned int length = blob->d.bl->length;
+    unsigned char* a = blob->d.bl->data;
 
     unsigned int i;
 

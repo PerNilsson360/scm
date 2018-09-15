@@ -3,17 +3,18 @@
 
 #include "type.h"
 
-type* it_bin_pred(const type* list,
-                  int (pred) (const type* left, const type* right));
-type* fold_right(type* (* f) (const type* left, const type* right), 
-                 const type* list, 
-                 type* identity);
-type* map1(type* (*f) (const type* arg), type* list);
+TYPE* it_bin_pred(const TYPE* list,
+                  int (pred) (const TYPE* left, const TYPE* right));
+TYPE* fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right), 
+                 const TYPE* list, 
+                 TYPE* identity);
+TYPE* map1(TYPE* (*f) (const TYPE* arg), TYPE* list);
 /* makes a pair of lists out of a association list */
-type* unzip(const type* list);
-type* reverse(const type* list);
-type* append(const type* list, const type* obj);
-type* assq(const type* obj, const type* list);
+TYPE* unzip(const TYPE* list);
+TYPE* reverse(const TYPE* list);
+TYPE* append(const TYPE* list, const TYPE* obj);
+TYPE* assq(const TYPE* obj, const TYPE* list);
 void nstrcpy(char* s1, const char* s2, unsigned int length);
 void* mloc(size_t n);
+
 #endif

@@ -71,7 +71,7 @@ struct TOKEN
 {
     int type;
     char data[MAX_IDENTIFIER_LENGTH];
-    type* scm_type;
+    TYPE* scm_type;
 };
 typedef struct TOKEN  TOKEN;
 
@@ -642,17 +642,17 @@ constructor --> [ symbol datum* ]
 
 */
 
-static type* datum(FILE* file);
+static TYPE* datum(FILE* file);
 
 static
-type*
+TYPE*
 abbreviation(FILE* file)
 {
     /* 
        abbreviation --> abbrev-prefix datum 
        abbrev-prefix --> ' | ` | , | ,@
     */
-    type* result = NULL;
+    TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
     if (token == NULL)
@@ -662,7 +662,7 @@ abbreviation(FILE* file)
     
     if (token->type == '\'')
     {
-	type* d = datum(file);
+	TYPE* d = datum(file);
 	
 	if (d == NULL)
 	{
@@ -679,7 +679,7 @@ abbreviation(FILE* file)
     }
     else if (token->type == '`')
     {
-	type* d = datum(file);
+	TYPE* d = datum(file);
 	
 	if (d == NULL)
 	{
@@ -703,7 +703,7 @@ abbreviation(FILE* file)
 	    unget_token(token);
         }
 	
-	type* d = datum(file);
+	TYPE* d = datum(file);
 
 	if (d == NULL)
 	{
@@ -721,13 +721,13 @@ abbreviation(FILE* file)
 }
 
 static
-type*
+TYPE*
 datum_plus(FILE* file)
 {
     /* 
        (datum+ . datum)
      */
-    type* result = NULL;
+    TYPE* result = NULL;
     TOKEN* token = next_token(file);
     
     if (token == NULL)
@@ -755,7 +755,7 @@ datum_plus(FILE* file)
     else
     {
         unget_token(token);
-        type* d = datum(file);
+        TYPE* d = datum(file);
 
         if (d == NULL)
         {
@@ -769,18 +769,18 @@ datum_plus(FILE* file)
 }
 
 static
-type*
+TYPE*
 list(FILE* file)
 {
     /* 
        list --> (datum*) | (datum+ . datum) | abbreviation 
      */
-    type* result = NULL;
+    TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
     if (token->type == '(')
     {
-	type* d = datum(file);
+	TYPE* d = datum(file);
 	if (d == NULL)
 	{
 	    result = cons(nil(), nil());
@@ -806,14 +806,14 @@ list(FILE* file)
 }
 
 static
-type*
+TYPE*
 datum_star(FILE* file)
 {
     /* 
        datum*
      */
-    type* result = nil();
-    type* d = datum(file);
+    TYPE* result = nil();
+    TYPE* d = datum(file);
     
     while (d != NULL)
     {
@@ -825,18 +825,18 @@ datum_star(FILE* file)
 }
 
 static
-type*
+TYPE*
 parse_vector(FILE* file)
 {
     /*
        vector --> #(datum*)
     */
-    type* result = NULL;
+    TYPE* result = NULL;
     TOKEN* token = next_token(file);
     
     if (token->type == T_INITIAL_VECTOR)
     {
-	type* l = reverse(datum_star(file));
+	TYPE* l = reverse(datum_star(file));
 	result = list_to_vector(l);
 	
 	token = next_token(file);
@@ -854,7 +854,7 @@ parse_vector(FILE* file)
 }
 
 static
-type*
+TYPE*
 constructor(FILE* file)
 {
     /*   
@@ -864,14 +864,14 @@ constructor(FILE* file)
 }
 
 static
-type*
+TYPE*
 compound_datum(FILE* file)
 {
     /* 
        compound-datum --> list | vector | constructor  
     */
 
-    type* result = list(file);
+    TYPE* result = list(file);
     
     if (result == NULL)
     {
@@ -886,14 +886,14 @@ compound_datum(FILE* file)
 }
 
 static
-type*
+TYPE*
 simple_datum(FILE* file)
 {
     /* 
        simple-datum --> boolean | number | character | string | symbol
        symbol --> identifier
      */
-    type* result = NULL;
+    TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
     if (token != NULL)
@@ -916,13 +916,13 @@ simple_datum(FILE* file)
 }
 
 static
-type*
+TYPE*
 datum(FILE* file)
 {
     /* 
        datum --> simple-datum  | compound-datum 
     */
-    type* result;
+    TYPE* result;
     
     do
     {
@@ -944,7 +944,7 @@ datum(FILE* file)
 }
 
 static 
-type* 
+TYPE* 
 read_from_file(FILE* file)
 {
     paren_depth = 0;
@@ -952,17 +952,17 @@ read_from_file(FILE* file)
 }
 
 static
-type* 
-read_from_port(const type* port)
+TYPE* 
+read_from_port(const TYPE* port)
 {
     assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,
                  "READ_FROM_PORT: port is not an input port");
 
-    return read_from_file(((PORT_DATA*)port->data)->file);
+    return read_from_file(port->d.po->file);
 }
 
-type* 
+TYPE* 
 rread()
 {
     return read_from_file(stdin);

@@ -15,6 +15,7 @@
 #include "number.h"
 #include "procedure.h"
 #include "graphics.h"
+#include "char.h"
 
 static Display *display;
 static Window win;
@@ -26,11 +27,11 @@ static unsigned int point_x = 0;
 static unsigned int point_y = 0;
 
 static int 
-_get_height(const type* exp, int display_height)
+_get_height(const TYPE* exp, int display_height)
 {
     int result;
 
-    type* height = assq(mk_symbol("height"), exp);
+    TYPE* height = assq(mk_symbol("height"), exp);
     
     if (is_nil(height) || is_nil(cdr(height)) || !is_number(car(cdr(height))))
     {
@@ -38,18 +39,18 @@ _get_height(const type* exp, int display_height)
     }
     else
     {
-        result = (int) (car(cdr(height))->data);
+        result = car(cdr(height))->d.i;
     }
     
     return result;
 }
 
 static int 
-_get_width(const type* exp, int display_width)
+_get_width(const TYPE* exp, int display_width)
 {
     int result;
 
-    type* width = assq(mk_symbol("width"), exp);
+    TYPE* width = assq(mk_symbol("width"), exp);
     
     if (is_nil(width) || is_nil(cdr(width)) || !is_number(car(cdr(width))))
     {
@@ -57,28 +58,28 @@ _get_width(const type* exp, int display_width)
     }
     else
     {
-        result = (int) (car(cdr(width))->data);
+        result = car(cdr(width))->d.i;
     }
     
     return result;
 }
 
 char*
-_get_window_name(const type* exp)
+_get_window_name(const TYPE* exp)
 {
     char* result = "Scheme graphics";
-    type* name = assq(mk_symbol("window-name"), exp);
+    TYPE* name = assq(mk_symbol("window-name"), exp);
     
     if (!is_nil(name) && !is_nil(cdr(name)) && is_string(car(cdr(name))))
     {
-        result = (char*)(car(cdr(name))->data);
+        result = car(cdr(name))->d.s;
     }
     
     return result;
 }
 
 void
-gr_open(const type* exp)
+gr_open(const TYPE* exp)
 {
     int x = 0; 
     int y = 0;
@@ -191,21 +192,21 @@ gr_close()
 }
 
 void 
-gr_move_to(const type* x, const type* y)
+gr_move_to(const TYPE* x, const TYPE* y)
 {
-    point_x = (unsigned int) x->data;
-    point_y = (unsigned int) y->data;
+    point_x = (unsigned int) x->d.i;
+    point_y = (unsigned int) y->d.i;
 }
 
 void
-gr_draw_char(const type* exp)
+gr_draw_char(const TYPE* exp)
 {
     assert_throw(is_char(exp), 
                  TYPE_ERROR,
                  "GR_DRAW_CHAR: expects a char as argument");
 
     char string[2];
-    string[0] = (int)exp->data;
+    string[0] = exp->d.i;
     string[1] = '\0';
 
     XDrawString(display,
@@ -218,7 +219,7 @@ gr_draw_char(const type* exp)
 }
 
 void 
-gr_draw_string(const type* exp)
+gr_draw_string(const TYPE* exp)
 {
     assert_throw(is_string(exp), 
                  TYPE_ERROR,
@@ -229,22 +230,22 @@ gr_draw_string(const type* exp)
                 gc,
                 point_x,
                 point_y,
-                (char*)exp->data, 
-                strlen((char*)exp->data));
+                exp->d.s, 
+                strlen(exp->d.s));
 }
 
 void 
-gr_set_font(const type* exp)
+gr_set_font(const TYPE* exp)
 {
 }
 
 void 
-gr_set_text_size(const type* exp)
+gr_set_text_size(const TYPE* exp)
 {
 }
 
-type*
-gr_text_size(const type* exp)
+TYPE*
+gr_text_size(const TYPE* exp)
 {
     assert_throw(is_string(exp), 
                  TYPE_ERROR,
@@ -255,12 +256,12 @@ gr_text_size(const type* exp)
     XCharStruct char_sizes;
     
     text_width = XTextWidth(font_struct, 
-                            (char*) exp->data, 
-                            strlen((char*) exp->data));
+                            exp->d.s, 
+                            strlen(exp->d.s));
 
     XTextExtents(font_struct,
-                 (char*) exp->data,
-                 strlen((char*) exp->data),
+                 exp->d.s,
+                 strlen(exp->d.s),
                  &direction,
                  &ascent,
                  &descent,
@@ -271,7 +272,7 @@ gr_text_size(const type* exp)
 }
 
 void 
-gr_set_foreground(const type* exp)
+gr_set_foreground(const TYPE* exp)
 {
     assert_throw(is_number(exp), 
                  TYPE_ERROR,
@@ -279,20 +280,20 @@ gr_set_foreground(const type* exp)
 
     XSetForeground(display, 
                    gc, 
-                   (unsigned long) exp->data ^ WhitePixel(display, screen_number));
+                   (unsigned long) exp->d.i ^ WhitePixel(display, screen_number));
 }
 
-type* 
+TYPE* 
 x_events_queued()
 {
     return mk_number_from_int(XEventsQueued(display, QueuedAfterReading));
 }
 
-type*
+TYPE*
 x_next_event()
 {
-    type* result;
-    type* window;
+    TYPE* result;
+    TYPE* window;
     XEvent event;
 
     XNextEvent(display, &event);
@@ -344,11 +345,11 @@ x_next_event()
 }
 
 void 
-x_fill_arc(const type* drawable, 
-           const type* width, 
-           const type* height, 
-           const type* angle1, 
-           const type* angle2)
+x_fill_arc(const TYPE* drawable, 
+           const TYPE* width, 
+           const TYPE* height, 
+           const TYPE* angle1, 
+           const TYPE* angle2)
 {
     assert_throw(is_number(drawable), 
                  TYPE_ERROR,
@@ -372,14 +373,14 @@ x_fill_arc(const type* drawable,
 
 
     XFillArc(display, 
-             (int)drawable->data,
+             drawable->d.i,
              gc,
              point_x, 
              point_y, 
-             (int)width->data, 
-             (int)height->data, 
-             (int)angle1->data, 
-             (int)angle2->data);
+             width->d.i, 
+             height->d.i, 
+             angle1->d.i, 
+             angle2->d.i);
 }
 
 void
@@ -388,7 +389,7 @@ x_flush()
     XFlush(display);
 }
 
-type* 
+TYPE* 
 gr_root_win()
 {
     return mk_number_from_int(win);

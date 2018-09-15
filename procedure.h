@@ -3,10 +3,10 @@
 
 #include "type.h"
 
-type* mk_procedure(type* parameters, type* body, type* env);
-type* is_compound_procedure(const type* procedure);
-type* procedure_parameters(type* procedure);
-type* procedure_body(type* procedure);
-type* procedure_environment(type* procedure);
+TYPE* mk_procedure(TYPE* parameters, TYPE* body, TYPE* env);
+TYPE* is_compound_procedure(const TYPE* procedure);
+TYPE* procedure_parameters(TYPE* procedure);
+TYPE* procedure_body(TYPE* procedure);
+TYPE* procedure_environment(TYPE* procedure);
 
 #endif

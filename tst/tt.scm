@@ -1,24 +1,15 @@
-(define hypoth '())
-(define goal '())
+;; A scheme translation of
+;; http://math.andrej.com/2012/11/08/
+;;        how-to-implement-dependent-type-theory-i 
 
-(define (tagged-list? exp tag) (and (pair? exp) (eq? (car exp) tag)))
-(define (impl? term) (and (tagged-list? term 'impl) (= (length term) 3)))
-(define (hypothesis term) (set! hypoth (cons term hypoth)))
-(define (theorem term) 
-  (if (null? goal) 
-      (set! goal (cons term goal))
-      (error "Wrong command in proving mode")))
-
-(define (reset) (set! hypoth '()) (set! goal '()))
-(define (show) 
-  (display 'hypothesis:) (display hypoth) (newline)
-  (display '---------) (newline) (display 'goals:) (display goal) (newline))
-
-(define (intro name) 
-  (if (null? goal) 
-      (error "There is no goal")
-      (let ((i (car goal)))
-	(if (impl? i)
-	    (begin (set! hypoth (cons (cons name (cadr i)) hypoth))
-		   (set! goal (cons (caddr i) (cdr goal))))
-	    (error "goal is not an implication")))))
+;; (** Abstract syntax of expressions. *)
+;; type expr =
+;;   | Var of variable
+;;   | Universe of int
+;;   | Pi of abstraction
+;;   | Lambda of abstraction
+;;   | App of expr * expr
+ 
+;; (** An abstraction [(x,t,e)] indicates
+;;;    that [x] of type [t] is bound in [e]. *)
+;; and abstraction = variable * expr * expr

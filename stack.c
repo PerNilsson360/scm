@@ -4,7 +4,7 @@
 #include "type.h"
 #include "stack.h"
 
-static type* stack = 0;
+static TYPE* stack = 0;
 void
 stack_init()
 {

@@ -21,17 +21,17 @@ tst_env_extend_environment()
     const char* s1 = "v1";
     const char* s2 = "v2";
 
-    type* var1 = mk_symbol(s1);
-    type* var2 = mk_symbol(s2);
-    type* vars = cons(var1, var2);
+    TYPE* var1 = mk_symbol(s1);
+    TYPE* var2 = mk_symbol(s2);
+    TYPE* vars = cons(var1, var2);
 
-    type* val1 = mk_number_from_int(1);
-    type* val2 = mk_number_from_int(2);
-    type* val3 = mk_number_from_int(3);
+    TYPE* val1 = mk_number_from_int(1);
+    TYPE* val2 = mk_number_from_int(2);
+    TYPE* val3 = mk_number_from_int(3);
 
-    type* var2val = cons(val2, cons(val3, nil())); 
-    type* vals = cons(val1, var2val);
-    type* env = extend_environment(vars, vals, mk_env(nil()));
+    TYPE* var2val = cons(val2, cons(val3, nil())); 
+    TYPE* vals = cons(val1, var2val);
+    TYPE* env = extend_environment(vars, vals, mk_env(nil()));
     
     assert(is_eq(lookup_variable_value(var1, env), val1));
     assert(is_eq(lookup_variable_value(var2, env), var2val));
@@ -45,12 +45,12 @@ tst_env_extend_environment()
 void 
 tst_env_set_variable_value()
 {
-    type* env = extend_environment(nil(), nil(), mk_env(nil()));
+    TYPE* env = extend_environment(nil(), nil(), mk_env(nil()));
     const char* s = "v1";
     
-    type* var = mk_symbol(s);
-    type* val1 = mk_number_from_int(100);
-    type* val2 = mk_number_from_int(200);
+    TYPE* var = mk_symbol(s);
+    TYPE* val1 = mk_number_from_int(100);
+    TYPE* val2 = mk_number_from_int(200);
 
     define_variable(var, val1, env);
     set_variable_value(var, val2, env);
@@ -61,11 +61,11 @@ tst_env_set_variable_value()
 static void
 _tst_lookup_defined_varaible()
 {
-    type* env = extend_environment(nil(), nil(), mk_env(nil()));
+    TYPE* env = extend_environment(nil(), nil(), mk_env(nil()));
     const char* s = "v1";
     
-    type* var = mk_symbol(s);
-    type* val = mk_number_from_int(100);
+    TYPE* var = mk_symbol(s);
+    TYPE* val = mk_number_from_int(100);
     
     define_variable(var, val, env);
     
@@ -92,13 +92,13 @@ _tst_lookup_undefined_variable()
 
     if (!success)
     {
-        type* env = extend_environment(nil(), nil(), mk_env(nil()));
+        TYPE* env = extend_environment(nil(), nil(), mk_env(nil()));
         
         const char* s = "v1";
         
-        type* var = mk_symbol(s);
+        TYPE* var = mk_symbol(s);
         
-        type* result = lookup_variable_value(var, env);
+        TYPE* result = lookup_variable_value(var, env);
     }
 }
 

@@ -3,18 +3,11 @@
 
 #include "type.h"
 
-struct vector
-{
-    type* length;
-    type** slots;
-};
-typedef struct vector vector;
-
-int is_vector(const type* sexp);
-type* mk_vector(const type* length, const type* obj);
-type* list_to_vector(const type* list);
-type* vector_length(const type* sexp);
-type* vector_ref(const type* sexp, int k);
-void vector_set(type* sexp, int k, const type* obj);
+int is_vector(const TYPE* sexp);
+TYPE* mk_vector(const TYPE* length, const TYPE* obj);
+TYPE* list_to_vector(const TYPE* list);
+TYPE* vector_length(const TYPE* sexp);
+TYPE* vector_ref(const TYPE* sexp, int k);
+void vector_set(TYPE* sexp, int k, const TYPE* obj);
 
 #endif

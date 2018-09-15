@@ -8,20 +8,20 @@
 
 
 void 
-nano_sleep(type* seconds, type* micro_seconds)
+nano_sleep(TYPE* seconds, TYPE* micro_seconds)
 {
-    assert_throw(is_number(seconds) && (int) seconds->data >= 0,
+    assert_throw(is_number(seconds) && seconds->d.i >= 0,
                  TYPE_ERROR,
                  "NANO_SLEEP: seconds must be a number >= 0");
     
-    assert_throw(is_number(micro_seconds) && (int) micro_seconds->data >= 0,
+    assert_throw(is_number(micro_seconds) && micro_seconds->d.i >= 0,
                  TYPE_ERROR,
                  "NANO_SLEEP: micro-second must be a number >= 0");
     
     struct timespec sleep_time = 
     { 
-	(int) seconds->data, 
-	(int) micro_seconds->data
+	seconds->d.i, 
+	micro_seconds->d.i
     };
     
     if (nanosleep(&sleep_time, NULL) == -1)

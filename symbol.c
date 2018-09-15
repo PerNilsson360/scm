@@ -16,22 +16,22 @@
 
 #define NIL "'()"
 
-static type* symbol_table;
-static type* _nil_;
+static TYPE* symbol_table;
+static TYPE* _nil_;
 
 static int
-_equal_(const type* left, const type* right)
+_equal_(const TYPE* left, const TYPE* right)
 {
-    return strcmp(right->data, left->data) == 0;
+    return strcmp(right->d.s, left->d.s) == 0;
 }
 
 unsigned int
-_symbol_hash_(const type* symbol)
+_symbol_hash_(const TYPE* symbol)
 {
     char* s;
     unsigned int result = 0;
 
-    s = (char*) symbol->data;
+    s = symbol->d.s;
 
     for (; *s != 0; s++)
     {
@@ -44,7 +44,7 @@ _symbol_hash_(const type* symbol)
 void
 init_symbol_table()
 {
-    _nil_ = mloc(sizeof(type));
+    _nil_ = mloc(sizeof(TYPE));
     
     if (_nil_ == NULL)
     {
@@ -53,15 +53,15 @@ init_symbol_table()
     }
         
     _nil_->type = SYMBOL;
-    _nil_->data = mloc(sizeof(char) * strlen(NIL));
+    _nil_->d.s = mloc(sizeof(char) * strlen(NIL));
     
-    if (_nil_->data == NULL)
+    if (_nil_->d.s == NULL)
     {
         fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
         exit(1);
     }
     
-    strcpy(_nil_->data, NIL);
+    strcpy(_nil_->d.s, NIL);
 
     symbol_table = mk_hash_table(_equal_, _symbol_hash_);
     _else_keyword_symbol_ = mk_symbol("else");
@@ -86,12 +86,17 @@ init_symbol_table()
     _quasiquote_keyword_symbol_ = mk_symbol("quasiquote");
 }
 
-type* 
+TYPE* 
 mk_symbol(const char* symbol)
 {
-    type lookup_symbol;
-    type* result;
-    type* symbol_in_table;
+    const TYPE lookup_symbol =
+    {
+	.type = SYMBOL,
+	.d.s = (char*) symbol
+    };
+    
+    TYPE* result;
+    TYPE* symbol_in_table;
 
     /* special handling for nil since hash_table is using it */
     if (strcmp(symbol, "'()") == 0)
@@ -99,15 +104,12 @@ mk_symbol(const char* symbol)
         return _nil_;
     }
 
-    lookup_symbol.type = SYMBOL;
-    lookup_symbol.data = (void*) symbol; 
-
     symbol_in_table = hash_table_ref(symbol_table, &lookup_symbol);
 
 
     if (is_nil(symbol_in_table))
     {
-        result = mloc(sizeof(type));
+        result = mloc(sizeof(TYPE));
         
         if (result == NULL)
         {
@@ -116,15 +118,15 @@ mk_symbol(const char* symbol)
         }
         
         result->type = SYMBOL;
-        result->data = mloc(sizeof(char) * strlen(symbol));
+        result->d.s = mloc(sizeof(char) * strlen(symbol));
         
-        if (result->data == NULL)
+        if (result->d.s == NULL)
         {
             fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
             exit(1);
         }
     
-        strcpy(result->data, symbol);
+        strcpy(result->d.s, symbol);
         
         hash_table_set(symbol_table, result, result);
     }
@@ -137,41 +139,41 @@ mk_symbol(const char* symbol)
 }
 
 int 
-is_symbol(const type* symbol)
+is_symbol(const TYPE* symbol)
 {
     return symbol->type == SYMBOL;
 }
 
 int 
-is_symbol_eq(const type* left, const type* right)
+is_symbol_eq(const TYPE* left, const TYPE* right)
 {
     return left == right;
 }
 
-type* 
-string_to_symbol(const type* string)
+TYPE* 
+string_to_symbol(const TYPE* string)
 {
     assert_throw(is_string(string),
                  TYPE_ERROR,
                  "STRING_TO_SYMBOL: argument must be a string");
 
-    return mk_symbol(string->data);
+    return mk_symbol(string->d.s);
 }
 
-type* 
+TYPE* 
 nil()
 {
     return _nil_;
 }
 
 int
-is_nil(const type* pair)
+is_nil(const TYPE* pair)
 {
     return pair == _nil_; 
 }
 
 int 
-is_reserved_symbol(const type* symbol)
+is_reserved_symbol(const TYPE* symbol)
 {
     int result = FALSE;
 

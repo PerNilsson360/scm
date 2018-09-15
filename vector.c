@@ -7,18 +7,18 @@
 #include "error.h"
 #include "number.h"
 #include "vector.h"
-
+#include "util.h"
 int
-is_vector(const type* sexp)
+is_vector(const TYPE* sexp)
 {
     return sexp->type == VECTOR;
 }
 
-type*
-_mk_vector(const type* length)
+TYPE*
+_mk_vector(const TYPE* length)
 {
     
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -27,32 +27,31 @@ _mk_vector(const type* length)
     }
 
     result->type = VECTOR;
-    result->data = mloc(sizeof(vector));
+    result->d.v = mloc(sizeof(vector));
 
-    if (result->data == NULL)
+    if (result->d.v == NULL)
     {
         fprintf(stderr, "MK_VECTOR: could not allocate memory for data");
         exit(1);
     }
 
-    ((vector*) result->data)->slots = mloc(sizeof(type*) * 
-					   (unsigned int)length->data); 
+    result->d.v->slots = mloc(sizeof(TYPE*) * length->d.i); 
 
-    if (((vector*) result->data)->slots == NULL)
+    if (result->d.v->slots == NULL)
     {
         fprintf(stderr, "MK_VECTOR: could not allocate memory for slots");
         exit(1);
     }
 
-    ((vector*) result->data)->length = (type*) length;
+    result->d.v->length = (TYPE*) length;
 
     return result;
 }
 
-type* 
-mk_vector(const type* length, const type* obj)
+TYPE* 
+mk_vector(const TYPE* length, const TYPE* obj)
 {
-    type* result;
+    TYPE* result;
     int i;
 
     assert_throw(is_number(length),
@@ -61,67 +60,67 @@ mk_vector(const type* length, const type* obj)
     
     result = _mk_vector(length);
    
-    for (i = 0; i < (int) length->data; i++)
+    for (i = 0; i < length->d.i; i++)
     {
-        ((vector*) result->data)->slots[i] = (type*) obj;
+        result->d.v->slots[i] = (TYPE*) obj;
     }
 
     return result;
 }
 
-type* 
-list_to_vector(const type* list)
+TYPE* 
+list_to_vector(const TYPE* list)
 {
     int i;
     int len = length(list);
-    type* result = _mk_vector(mk_number_from_int(len));
+    TYPE* result = _mk_vector(mk_number_from_int(len));
     
-    const type* hd = list;
+    const TYPE* hd = list;
     for (i = 0; i < len; i++) 
     {
-        ((vector*) result->data)->slots[i] = (type *) car(hd);
+        result->d.v->slots[i] = (TYPE *) car(hd);
         hd = cdr(hd);
     }
 
     return result;
 }
 
-type* 
-vector_length(const type* sexp)
+TYPE* 
+vector_length(const TYPE* sexp)
 {
     assert_throw(is_vector(sexp),
                  TYPE_ERROR,
                  "VECTOR_LENGTH: wrong type in argument");
 
-    return ((vector*) sexp->data)->length;
+    return sexp->d.v->length;
 }
 
 
-type* 
-vector_ref(const type* sexp, int k)
+TYPE* 
+vector_ref(const TYPE* sexp, int k)
 {
     assert_throw(is_vector(sexp),
                  TYPE_ERROR,
                  "VECTOR_REF: first argument must be a vector");
     
-    assert_throw(k >= 0 && k < (int) ((vector*) sexp->data)->length->data,
+    assert_throw(k >= 0 && k < sexp->d.v->length->d.i,
                  TYPE_ERROR,
                  "VECTOR_REF: k is out of range");
 
-    return ((vector*) sexp->data)->slots[k];
+    return sexp->d.v->slots[k];
 }
 
 void
-vector_set(type* sexp, int k, const type* obj)
+vector_set(TYPE* sexp, int k, const TYPE* obj)
 {
     assert_throw(is_vector(sexp),
                  TYPE_ERROR,
                  "VECTOR_SET: first argument must be a vector");
 
-    assert_throw(k >= 0 && k < (int) ((vector*) sexp->data)->length->data,
+    assert_throw(k >= 0 && k < sexp->d.v->length->d.i,
                  TYPE_ERROR,
                  "VECTOR_SET: k is out of range");
 
-    ((vector*) sexp->data)->slots[k] = (type*) obj;
+    sexp->d.v->slots[k] = (TYPE*) obj;
 }
 

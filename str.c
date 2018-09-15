@@ -13,7 +13,7 @@
 #include "char.h"
 
 int
-is_string(const type* sexp)
+is_string(const TYPE* sexp)
 {
     return 
         sexp->type == STRING || 
@@ -21,15 +21,15 @@ is_string(const type* sexp)
 }
 
 int
-is_mutable_string(const type* sexp)
+is_mutable_string(const TYPE* sexp)
 {
     return sexp->type == STRING;
 }
 
-type* 
+TYPE* 
 mk_string_type(unsigned int size)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -37,26 +37,25 @@ mk_string_type(unsigned int size)
         exit(1);
     }
 
-    result->data = mloc(sizeof(char) * (size + 1));
+    result->d.s = mloc(sizeof(char) * (size + 1));
 
-    if (result->data == NULL)
+    if (result->d.s == NULL)
     {
         fprintf(stderr, "MK_STRING: could not allocate memory for data");
         exit(1);
     }
 
-    ((char*) result->data)[size] = '\0';
+    result->d.s[size] = '\0';
 
     result->type = STRING;
 
     return result;
 }
 
-type* 
-mk_string(const type* length, const type* character)
+TYPE* 
+mk_string(const TYPE* length, const TYPE* character)
 {
-    int string_length = (unsigned int) length->data;
-    type* result = mk_string_type(string_length);
+    int string_length = length->d.i;
     int i;
 
     assert_throw(is_number(length),
@@ -66,20 +65,21 @@ mk_string(const type* length, const type* character)
     assert_throw(is_char(character),
                  TYPE_ERROR,
                  "MK_STRING: character must be a char");
-
+    
+    TYPE* result = mk_string_type(string_length);
 
     for (i = 0; i < string_length; i++)
     {
-        ((char*) result->data)[i] = (char) (int) character->data;
+        result->d.s[i] = character->d.i;
     }
     
     return result;
 }
 
-static type*
-_mk_string_from_chars(type* string, const type* char_list, unsigned int i)
+static TYPE*
+_mk_string_from_chars(TYPE* string, const TYPE* char_list, unsigned int i)
 {
-    type* result = string;
+    TYPE* result = string;
 
     if (!is_nil(char_list))
     {
@@ -87,17 +87,17 @@ _mk_string_from_chars(type* string, const type* char_list, unsigned int i)
                      TYPE_ERROR,
                      "_MK_STRING_FROM_CHARS: list must contain chars");
 
-        ((char*) string->data)[i] = (char) (int) car(char_list)->data;
+        string->d.s[i] = car(char_list)->d.i;
         result = _mk_string_from_chars(string, cdr(char_list), ++i);
     }
 
     return result;
 }
 
-type* 
-mk_string_from_chars(const type* char_list)
+TYPE* 
+mk_string_from_chars(const TYPE* char_list)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     assert_throw(is_true(is_list(char_list)),
                  TYPE_ERROR,
@@ -110,28 +110,28 @@ mk_string_from_chars(const type* char_list)
     return result;
 }
 
-type* 
+TYPE* 
 mk_string_with_length(const char* string, unsigned int length)
 {
-    type* result = mk_string_type(length);
+    TYPE* result = mk_string_type(length);
 
-    nstrcpy(result->data, string, length);
+    nstrcpy(result->d.s, string, length);
 
     return result;
 }
 
-type* 
-string_length(const type* sexp)
+TYPE* 
+string_length(const TYPE* sexp)
 {
     assert_throw(is_string(sexp),
                  TYPE_ERROR,
                  "STRING_LENGTH: sexp must be a string");
  
-    return mk_number_from_int(strlen((char*) sexp->data));
+    return mk_number_from_int(strlen(sexp->d.s));
 }
 
-type* 
-string_ref(const type* sexp, const type* k)
+TYPE* 
+string_ref(const TYPE* sexp, const TYPE* k)
 {
     assert_throw(is_string(sexp),
                  TYPE_ERROR,
@@ -146,11 +146,11 @@ string_ref(const type* sexp, const type* k)
                  TYPE_ERROR,
                  "STRING_REF: 0 >= k < string_length(sexp) does not hold");
 
-    return mk_char(((char*)sexp->data)[(int)k->data]);
+    return mk_char(sexp->d.s[k->d.i]);
 }
 
 void 
-string_set(const type* sexp, const type* k, const type* character)
+string_set(const TYPE* sexp, const TYPE* k, const TYPE* character)
 {
     assert_throw(is_mutable_string(sexp),
                  TYPE_ERROR,
@@ -169,11 +169,11 @@ string_set(const type* sexp, const type* k, const type* character)
                  TYPE_ERROR,
                  "STRING_SET: cgharacter must be a char");
 
-    ((char*) sexp->data)[(int) k->data] = (char) (int) character->data;
+    sexp->d.s[k->d.i] = character->d.i;
 }
 
-type* 
-string_eq(const type* left, const type* right)
+TYPE* 
+string_eq(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -183,11 +183,11 @@ string_eq(const type* left, const type* right)
                  TYPE_ERROR,
                  "STRING_EQ: right must be a string");
 
-    return mk_boolean(strcmp((char*) left->data, (char*) right->data) == 0);
+    return mk_boolean(strcmp(left->d.s, right->d.s) == 0);
 }
 
-type* 
-string_ci_eq(const type* left, const type* right)
+TYPE* 
+string_ci_eq(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -198,12 +198,11 @@ string_ci_eq(const type* left, const type* right)
                  "STRING_CI_EQ: right must be a string");
 
 
-    return mk_boolean(strcasecmp((char*) left->data, 
-                                 (char*) right->data) == 0);;
+    return mk_boolean(strcasecmp(left->d.s, right->d.s) == 0);
 }
 
-type* 
-string_lt(const type* left, const type* right)
+TYPE* 
+string_lt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -213,11 +212,11 @@ string_lt(const type* left, const type* right)
                  TYPE_ERROR,
                  "STRING_LT: right must be a string");
 
-    return mk_boolean(strcmp((char*) left->data, (char*) right->data) < 0);
+    return mk_boolean(strcmp(left->d.s, right->d.s) < 0);
 }
 
-type* 
-string_gt(const type* left, const type* right)
+TYPE* 
+string_gt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -227,25 +226,25 @@ string_gt(const type* left, const type* right)
                  TYPE_ERROR,
                  "STRING_GT: right must be a string");
 
-    return mk_boolean(strcmp((char*) left->data, (char*) right->data) > 0);
+    return mk_boolean(strcmp(left->d.s, right->d.s) > 0);
 }
 
-type* 
-string_lt_eq(const type* left, const type* right)
+TYPE* 
+string_lt_eq(const TYPE* left, const TYPE* right)
 {
     return mk_boolean(is_true(string_lt(left, right)) || 
                       is_true(string_eq(left, right)));
 }
 
-type* 
-string_gt_eq(const type* left, const type* right)
+TYPE* 
+string_gt_eq(const TYPE* left, const TYPE* right)
 {
     return mk_boolean(is_true(string_gt(left, right)) || 
                       is_true(string_eq(left, right)));
 }
 
-type* 
-string_ci_lt(const type* left, const type* right)
+TYPE* 
+string_ci_lt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -255,11 +254,11 @@ string_ci_lt(const type* left, const type* right)
                  TYPE_ERROR,
                  "STRING_CI_LT: right must be a string");
 
-    return mk_boolean(strcasecmp((char*) left->data, (char*) right->data) < 0);
+    return mk_boolean(strcasecmp(left->d.s, right->d.s) < 0);
 }
 
-type* 
-string_ci_gt(const type* left, const type* right)
+TYPE* 
+string_ci_gt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_string(left),
                  TYPE_ERROR,
@@ -269,28 +268,28 @@ string_ci_gt(const type* left, const type* right)
                  TYPE_ERROR,
                  "STRING_CI_GT: right must be a string");
 
-    return mk_boolean(strcasecmp((char*) left->data, (char*) right->data) > 0);
+    return mk_boolean(strcasecmp(left->d.s, right->d.s) > 0);
 }
 
-type* 
-string_ci_lt_eq(const type* left, const type* right)
+TYPE* 
+string_ci_lt_eq(const TYPE* left, const TYPE* right)
 {
     return mk_boolean(is_true(string_ci_lt(left, right)) || 
                       is_true(string_ci_eq(left, right)));
 }
 
-type* 
-string_ci_gt_eq(const type* left, const type* right)
+TYPE* 
+string_ci_gt_eq(const TYPE* left, const TYPE* right)
 {
     return mk_boolean(is_true(string_ci_gt(left, right)) || 
                       is_true(string_ci_eq(left, right)));
 }
 
-type* 
-substring(const type* sexp, const type* start, const type* end)
+TYPE* 
+substring(const TYPE* sexp, const TYPE* start, const TYPE* end)
 {
     int size;
-    type* result;
+    TYPE* result;
     int dst; 
     int src;
 
@@ -313,28 +312,28 @@ substring(const type* sexp, const type* start, const type* end)
                  "SUBSTRING: 0 <= start <= end <= string_length(sexp)"
                  " must hold");
 
-    size = (int) end->data - (int) start->data;
+    size = end->d.i - start->d.i;
 
     result = mk_string_type(size);
     
-    for (dst = 0, src = (int) start->data;
+    for (dst = 0, src = start->d.i;
          dst < size;
          dst++, src++)
     {
-        assert(src < (int) end->data);
-        ((char*) result->data)[dst] = ((char*) sexp->data)[src];
+        assert(src < end->d.i);
+        (result->d.s)[dst] = sexp->d.s[src];
     }
 
     return result;
 }
 
-type* 
-string_append(const type* left, const type* right)
+TYPE* 
+string_append(const TYPE* left, const TYPE* right)
 {
     int left_size;
     int right_size;
     int size;
-    type* result;
+    TYPE* result;
     int i;
     int dst;
 
@@ -346,8 +345,8 @@ string_append(const type* left, const type* right)
                  TYPE_ERROR,
                  "SUBSTRING: right must be a number");
 
-    left_size = (int) string_length(left)->data;
-    right_size = (int) string_length(right)->data;
+    left_size = string_length(left)->d.i;
+    right_size = string_length(right)->d.i;
 
     size = left_size + right_size;
 
@@ -355,49 +354,49 @@ string_append(const type* left, const type* right)
     
     for (i = 0; i < left_size; i++)
     {
-        ((char*) result->data)[i] = ((char*) left->data)[i];
+        result->d.s[i] = left->d.s[i];
     }
 
     for (dst = 0; i < size; i++, dst++)
     {
-        ((char*) result->data)[i] = ((char*) right->data)[dst];
+        result->d.s[i] = right->d.s[dst];
     }
 
     return result;
 }
 
-type* 
-string_to_list(const type* sexp)
+TYPE* 
+string_to_list(const TYPE* sexp)
 {
     assert(0);
     return 0;
 }
 
-type* 
-list_to_string(const type* sexp)
+TYPE* 
+list_to_string(const TYPE* sexp)
 {
     assert(0);
     return 0;
 }
 
-type* 
-string_copy(const type* sexp)
+TYPE* 
+string_copy(const TYPE* sexp)
 {
     assert(0);
     return 0;
 }
 
 /* returns a immutable string where data points to the interned symbol data */
-type* 
-symbol_to_string(const type* symbol)
+TYPE* 
+symbol_to_string(const TYPE* symbol)
 {
-    type* result;
+    TYPE* result;
 
     assert_throw(is_symbol(symbol),
                  TYPE_ERROR,
                  "SYMBOL_TO_STRING: wrong argument type must be symbol");
 
-    result = mloc(sizeof(type));
+    result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -405,7 +404,7 @@ symbol_to_string(const type* symbol)
         exit(1);
     }
 
-    result->data = symbol->data;
+    result->d.s = symbol->d.s;
     result->type = IMMUTABLE_STRING;
 
     return result;

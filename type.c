@@ -15,13 +15,13 @@
 #include "eval.h"
 #include "util.h"
 
-type* 
-mk_bound_var(type* symbol, 
+TYPE* 
+mk_bound_var(TYPE* symbol, 
              unsigned int frame_index, 
              unsigned int var_index,
              int is_inproper_list)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -30,31 +30,31 @@ mk_bound_var(type* symbol,
     }
 
     result->type = BOUND_VAR;
-    result->data = mloc(sizeof(BOUND_VAR_DATA));
+    result->d.b = mloc(sizeof(BOUND_VAR_DATA));
     
-    if (result->data == NULL)
+    if (result->d.b == NULL)
     {
         fprintf(stderr, "MK_VAR_VAR: could not allocate memory for data");
         exit(1);
     }
 
-    ((BOUND_VAR_DATA*) result->data)->symbol = symbol;
-    ((BOUND_VAR_DATA*) result->data)->frame_index = frame_index;
-    ((BOUND_VAR_DATA*) result->data)->var_index = var_index;
-    ((BOUND_VAR_DATA*) result->data)->is_inproper_list = is_inproper_list;
+    result->d.b->symbol = symbol;
+    result->d.b->frame_index = frame_index;
+    result->d.b->var_index = var_index;
+    result->d.b->is_inproper_list = is_inproper_list;
 
     return result;
 }
 
-int is_bound_var(const type* exp)
+int is_bound_var(const TYPE* exp)
 {
     return exp->type == BOUND_VAR;
 }
 
-type* 
+TYPE* 
 mk_none()
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -63,22 +63,22 @@ mk_none()
     }
 
     result->type = NONE;
-    result->data = 0;
+    result->d.i = 0;
 
     return result;
 }
 
 int 
-is_none(const type* sexp)
+is_none(const TYPE* sexp)
 {
     return sexp->type == NONE;
 }
 
 
-type* 
-cons(const type* car, const type* cdr)
+TYPE* 
+cons(const TYPE* car, const TYPE* cdr)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -87,22 +87,22 @@ cons(const type* car, const type* cdr)
     }
 
     result->type = PAIR;
-    result->data = mloc(sizeof(PAIR_DATA));
+    result->d.p = mloc(sizeof(PAIR_DATA));
 
-    if (result->data == NULL)
+    if (result->d.p == NULL)
     {
         fprintf(stderr, "CONS: could not allocate memory for data");
         exit(1);
     }
 
-    ((PAIR_DATA*) result->data)->car = (type*) car;
-    ((PAIR_DATA*) result->data)->cdr = (type*) cdr;
+    result->d.p->car = (TYPE*) car;
+    result->d.p->cdr = (TYPE*) cdr;
 
     return result; 
 }
 
-type* 
-car(const type* list)
+TYPE* 
+car(const TYPE* list)
 {
     if (list->type != PAIR)
     {
@@ -112,11 +112,11 @@ car(const type* list)
 	assert(0);  
     }
 
-    return ((PAIR_DATA*) list->data)->car;
+    return list->d.p->car;
 }
 
-type* 
-cdr(const type* list)
+TYPE* 
+cdr(const TYPE* list)
 {
     if (list->type != PAIR)
     {
@@ -125,29 +125,29 @@ cdr(const type* list)
         assert_throw(FALSE, TYPE_ERROR, "CDR: not a pair");
     }
 
-    return ((PAIR_DATA*) list->data)->cdr;
+    return list->d.p->cdr;
 }
 
 void 
-set_car(type* list, const type* value)
+set_car(TYPE* list, const TYPE* value)
 {
     assert_throw(is_pair(list), TYPE_ERROR, "SET-CAR: not a pair");
 
-    ((PAIR_DATA*) list->data)->car = (type*)value;
+    list->d.p->car = (TYPE*)value;
 }
 
 void 
-set_cdr(type* list, const type* value)
+set_cdr(TYPE* list, const TYPE* value)
 {
     assert_throw(is_pair(list), TYPE_ERROR, "SET-CDR: not a pair");
     
-    ((PAIR_DATA*) list->data)->cdr = (type*)value;
+    list->d.p->cdr = (TYPE*)value;
 }
 
-type* 
-is_list(const type* sexp)
+TYPE* 
+is_list(const TYPE* sexp)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (is_nil(sexp))
     {
@@ -166,19 +166,19 @@ is_list(const type* sexp)
 }
 
 int 
-is_pair(const type* pair)
+is_pair(const TYPE* pair)
 {
     return pair->type == PAIR;
 }
 
 int 
-is_empty_pair(const type* sexp)
+is_empty_pair(const TYPE* sexp)
 {
     return is_pair(sexp) && is_nil(car(sexp)) && is_nil(cdr(sexp));
 }
 
 unsigned int 
-length(const type* pair)
+length(const TYPE* pair)
 {
     unsigned int result = 0;
         
@@ -193,13 +193,13 @@ length(const type* pair)
 }
 
 int
-is_eq(const type* left, const type* right)
+is_eq(const TYPE* left, const TYPE* right)
 {
-    return left->data == right->data;
+    return left->d.s == right->d.s;
 }
 
 int
-is_eqv(const type* left, const type* right)
+is_eqv(const TYPE* left, const TYPE* right)
 {
     int result = FALSE;
     if (is_number(left) && is_number(right))
@@ -208,34 +208,34 @@ is_eqv(const type* left, const type* right)
     }
     else
     {
-        result = left->data == right->data;
+        result = left->d.s == right->d.s;
     }
     
     return result;
 }
 
-type* 
-mk_quoted(const type* sexp)
+TYPE* 
+mk_quoted(const TYPE* sexp)
 {
     return cons(_quote_keyword_symbol_, cons(sexp, nil()));
 }
 
 int 
-is_quoted(const type* sexp)
+is_quoted(const TYPE* sexp)
 {
     return is_tagged_list(sexp, _quote_keyword_symbol_) && length(sexp) < 3;
 }
 
-type* 
-quotation_value(const type* sexp)
+TYPE* 
+quotation_value(const TYPE* sexp)
 {
     return car(cdr(sexp));
 }
 
-type* 
+TYPE* 
 mk_boolean(int t)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -245,27 +245,27 @@ mk_boolean(int t)
 
     result->type = BOOLEAN;
     
-    result->data = (void*) t;
+    result->d.i = t;
     
     return result;
 }
 
 int 
-is_boolean(const type* sexp)
+is_boolean(const TYPE* sexp)
 {
     return sexp->type == BOOLEAN;
 }
 
-type* 
-not(const type* sexp)
+TYPE* 
+not(const TYPE* sexp)
 {
     return mk_boolean(!is_true(sexp));
 }
 
 int 
-is_true(const type* sexp)
+is_true(const TYPE* sexp)
 {
     return !(sexp != NULL && 
              sexp->type == BOOLEAN && 
-             ((int) sexp->data == FALSE));
+             sexp->d.i == FALSE);
 }

@@ -5,20 +5,11 @@
 
 #define HASH_TABLE_DEFAULT_SIZE 1024
 
-struct HASH_TABLE_DATA
-{
-    int (*equal)(const type* left, const type* right);
-    unsigned int (*hash)(const type* key);
-    type* vector;
-    int vector_size;
-};
-typedef struct HASH_TABLE_DATA  HASH_TABLE_DATA;
+TYPE* mk_hash_table(int (*equal) (const TYPE* left, const TYPE* right),
+                          unsigned int (*hash) (const TYPE* key));
 
-type* mk_hash_table(int (*equal) (const type* left, const type* right),
-                          unsigned int (*hash) (const type* key));
-
-type* hash_table_ref(const type* hash_table, const type* key);
-void hash_table_delete(type* hash_table, const type* key);
-void hash_table_set(type* hash_table, const type* key, const type* data);
+TYPE* hash_table_ref(const TYPE* hash_table, const TYPE* key);
+void hash_table_delete(TYPE* hash_table, const TYPE* key);
+void hash_table_set(TYPE* hash_table, const TYPE* key, const TYPE* data);
 
 #endif

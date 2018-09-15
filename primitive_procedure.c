@@ -24,68 +24,62 @@
 #include "hash_table.h"
 #include "primitive_procedure.h"
 
-struct FUNCTION
-{
-    type* (*f) (const type* arguments, const type* env);
-};
-typedef struct FUNCTION  FUNCTION;
-
 int _debug_ = 0;
 
-static type* _debug_symbol_;
-static type* _pair_predicate_symbol_;
-static type* _cons_symbol_;
-static type* _car_symbol_;
-static type* _cdr_symbol_;
-static type* _set_car_symbol_;
-static type* _set_cdr_symbol_;
-static type* _null_predicate_symbol_;
-static type* _symbol_predicate_symbol_;
-static type* _symbol_to_string_symbol_;
-static type* _string_to_symbol_symbol_;
-static type* _number_to_string_symbol_;
-static type* _eq_predicate_symbol_;
-static type* _eqv_predicate_symbol_;
-static type* _number_predicate_symbol_;
-static type* _complex_predicate_symbol_;
-static type* _real_predicate_symbol_;
-static type* _rational_predicate_symbol_;
-static type* _integer_predicate_symbol_;
-static type* _exact_predicate_symbol_;
-static type* _inexact_predicate_symbol_;
-static type* _equal_symbol_;
-static type* _less_symbol_;
-static type* _greater_symbol_;
-static type* _less_equal_symbol_;
-static type* _greater_equal_symbol_;
-static type* _zero_predicate_symbol_;
-static type* _positive_predicate_symbol_;
-static type* _negative_predicate_symbol_;
-static type* _odd_predicate_symbol_;
-static type* _even_predicate_symbol_;
-static type* _max_symbol_;
-static type* _min_symbol_;
-static type* _plus_symbol_;
-static type* _mul_symbol_;
-static type* _minus_symbol_;
-static type* _div_symbol_;
-static type* _abs_symbol_;
-static type* _quotient_symbol_;
-static type* _remainder_symbol_;
-static type* _modulo_symbol_;
-static type* _gcd_symbol_;
-static type* _lcm_symbol_;
-static type* _boolean_predicate_symbol_;
-static type* _not_symbol_;
+static TYPE* _debug_symbol_;
+static TYPE* _pair_predicate_symbol_;
+static TYPE* _cons_symbol_;
+static TYPE* _car_symbol_;
+static TYPE* _cdr_symbol_;
+static TYPE* _set_car_symbol_;
+static TYPE* _set_cdr_symbol_;
+static TYPE* _null_predicate_symbol_;
+static TYPE* _symbol_predicate_symbol_;
+static TYPE* _symbol_to_string_symbol_;
+static TYPE* _string_to_symbol_symbol_;
+static TYPE* _number_to_string_symbol_;
+static TYPE* _eq_predicate_symbol_;
+static TYPE* _eqv_predicate_symbol_;
+static TYPE* _number_predicate_symbol_;
+static TYPE* _complex_predicate_symbol_;
+static TYPE* _real_predicate_symbol_;
+static TYPE* _rational_predicate_symbol_;
+static TYPE* _integer_predicate_symbol_;
+static TYPE* _exact_predicate_symbol_;
+static TYPE* _inexact_predicate_symbol_;
+static TYPE* _equal_symbol_;
+static TYPE* _less_symbol_;
+static TYPE* _greater_symbol_;
+static TYPE* _less_equal_symbol_;
+static TYPE* _greater_equal_symbol_;
+static TYPE* _zero_predicate_symbol_;
+static TYPE* _positive_predicate_symbol_;
+static TYPE* _negative_predicate_symbol_;
+static TYPE* _odd_predicate_symbol_;
+static TYPE* _even_predicate_symbol_;
+static TYPE* _max_symbol_;
+static TYPE* _min_symbol_;
+static TYPE* _plus_symbol_;
+static TYPE* _mul_symbol_;
+static TYPE* _minus_symbol_;
+static TYPE* _div_symbol_;
+static TYPE* _abs_symbol_;
+static TYPE* _quotient_symbol_;
+static TYPE* _remainder_symbol_;
+static TYPE* _modulo_symbol_;
+static TYPE* _gcd_symbol_;
+static TYPE* _lcm_symbol_;
+static TYPE* _boolean_predicate_symbol_;
+static TYPE* _not_symbol_;
 
-static type* _make_string_symbol_;
+static TYPE* _make_string_symbol_;
 
-static type* _primitive_procedure_table_;
+static TYPE* _primitive_procedure_table_;
 
 #define MAKE_VOID_WRAPPER_NO_ARG(c_name)                                \
 static                                                                  \
-type*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
+TYPE*                                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
 {                                                                       \
     assert_throw(length(arguments) == 0,                                \
                  APPLY_ERROR,                                           \
@@ -97,8 +91,8 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
 
 #define MAKE_WRAPPER_ONE_ARG(c_name)                                    \
 static                                                                  \
-type*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
+TYPE*                                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
 {                                                                       \
     assert_throw(length(arguments) == 1,                                \
                  APPLY_ERROR,                                           \
@@ -108,8 +102,8 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
 
 #define MAKE_VOID_WRAPPER_ONE_ARG(c_name)                                    \
 static                                                                  \
-type*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
+TYPE*                                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
 {                                                                       \
     assert_throw(length(arguments) == 1,                                \
                  APPLY_ERROR,                                           \
@@ -120,8 +114,8 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)    \
 
 #define MAKE_PREDICATE_WRAPPER_ONE_ARG(c_name)          \
 static                                                  \
-type*                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
+TYPE*                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
 {                                                       \
     assert_throw(length(arguments) == 1,                \
                  APPLY_ERROR,                           \
@@ -132,8 +126,8 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
 
 #define MAKE_WRAPPER_TWO_ARGS(c_name)                   \
 static                                                  \
-type*                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
+TYPE*                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
 {                                                       \
     assert_throw(length(arguments) == 2,                \
                  APPLY_ERROR,                           \
@@ -143,8 +137,8 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
 
 #define MAKE_PREDICATE_WRAPPER_TWO_ARGS(c_name)         \
 static                                                  \
-type*                                                   \
-_ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
+TYPE*                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
 {                                                       \
     assert_throw(length(arguments) == 2,                \
                  APPLY_ERROR,                           \
@@ -159,10 +153,10 @@ _ ## c_name ## _ ## procedure ## _(const type* arguments, const type* env)  \
                    mk_primitive_procedure(_ ## c_name ## _ ## procedure ## _))
 
 static
-type* 
-mk_primitive_procedure(type* (f) (const type* arguments, const type* env))
+TYPE* 
+mk_primitive_procedure(TYPE* (f) (const TYPE* arguments, const TYPE* env))
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -172,9 +166,9 @@ mk_primitive_procedure(type* (f) (const type* arguments, const type* env))
         exit(1);
     }
 
-    result->data = mloc(sizeof(FUNCTION));
+    result->d.f = mloc(sizeof(FUNCTION));
 
-    if (result->data == NULL)
+    if (result->d.f == NULL)
     {
         fprintf(stderr, "MK_PRIMITIVE_PROCEDURE: could not allocate "
                 "memory for FUNCTION");
@@ -182,14 +176,14 @@ mk_primitive_procedure(type* (f) (const type* arguments, const type* env))
     }
     
     result->type = PRIMITIVE_PROCEDURE;
-    ((FUNCTION*)result->data)->f = f;
+    result->d.f->f = f;
 
     return result;
 }
 
 static 
-type* 
-_debug_procedure_(const type* arguments, const type* env)
+TYPE* 
+_debug_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -207,8 +201,8 @@ MAKE_WRAPPER_ONE_ARG(car);
 MAKE_WRAPPER_ONE_ARG(cdr);
 
 static 
-type* 
-_set_car_procedure_(const type* arguments, const type* env)
+TYPE* 
+_set_car_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 2,
                  APPLY_ERROR,
@@ -219,8 +213,8 @@ _set_car_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_set_cdr_procedure_(const type* arguments, const type* env)
+TYPE* 
+_set_cdr_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 2,
                  APPLY_ERROR,
@@ -243,8 +237,8 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_number);
 
 
 static 
-type* 
-_complex_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_complex_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -254,8 +248,8 @@ _complex_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_real_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_real_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -265,8 +259,8 @@ _real_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_rational_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_rational_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -276,8 +270,8 @@ _rational_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_integer_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_integer_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -287,8 +281,8 @@ _integer_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_exact_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_exact_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -303,8 +297,8 @@ _exact_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_inexact_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_inexact_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,         
@@ -319,36 +313,36 @@ _inexact_predicate_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_equal_procedure_(const type* arguments, const type* env)
+TYPE* 
+_equal_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return it_bin_pred(arguments, &is_number_equal);
 }
 
 static 
-type* 
-_less_procedure_(const type* arguments, const type* env)
+TYPE* 
+_less_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return it_bin_pred(arguments, &is_number_lt);
 }
 
 static 
-type* 
-_greater_procedure_(const type* arguments, const type* env)
+TYPE* 
+_greater_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return it_bin_pred(arguments, &is_number_gt);
 }
 
 static 
-type* 
-_less_equal_procedure_(const type* arguments, const type* env)
+TYPE* 
+_less_equal_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return it_bin_pred(arguments, &is_number_lt_eq);
 }
 
 static 
-type* 
-_greater_equal_procedure_(const type* arguments, const type* env)
+TYPE* 
+_greater_equal_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return it_bin_pred(arguments, &is_number_gt_eq);
 }
@@ -360,8 +354,8 @@ MAKE_WRAPPER_ONE_ARG(is_number_odd);
 MAKE_WRAPPER_ONE_ARG(is_number_even);
 
 static 
-type* 
-_max_procedure_(const type* arguments, const type* env)
+TYPE* 
+_max_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) > 0,
                  APPLY_ERROR,
@@ -371,8 +365,8 @@ _max_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_min_procedure_(const type* arguments, const type* env)
+TYPE* 
+_min_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) > 0,
                  APPLY_ERROR,
@@ -382,22 +376,22 @@ _min_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_plus_procedure_(const type* arguments, const type* env)
+TYPE* 
+_plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return fold_right(&add_number, arguments, mk_number("0", 1, TRUE)); 
 }
 
 static 
-type* 
-_mul_procedure_(const type* arguments, const type* env)
+TYPE* 
+_mul_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE)); 
 }
 
 static 
-type* 
-_minus_procedure_(const type* arguments, const type* env)
+TYPE* 
+_minus_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) > 0,
                  APPLY_ERROR,
@@ -407,8 +401,8 @@ _minus_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_div_procedure_(const type* arguments, const type* env)
+TYPE* 
+_div_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) > 0,
                  APPLY_ERROR,
@@ -418,16 +412,16 @@ _div_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_abs_procedure_(const type* arguments, const type* env)
+TYPE* 
+_abs_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_quotient_procedure_(const type* arguments, const type* env)
+TYPE* 
+_quotient_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
@@ -436,24 +430,24 @@ _quotient_procedure_(const type* arguments, const type* env)
 MAKE_WRAPPER_TWO_ARGS(remainder_number);
 
 static 
-type* 
-_modulo_procedure_(const type* arguments, const type* env)
+TYPE* 
+_modulo_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_gcd_procedure_(const type* arguments, const type* env)
+TYPE* 
+_gcd_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_lcm_procedure_(const type* arguments, const type* env)
+TYPE* 
+_lcm_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
@@ -464,8 +458,8 @@ MAKE_WRAPPER_ONE_ARG(not);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_string);
 
 static 
-type* 
-_make_string_procedure_(const type* arguments, const type* env)
+TYPE* 
+_make_string_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1 || length(arguments) == 2,
                  APPLY_ERROR,
@@ -482,8 +476,8 @@ _make_string_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_string_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return mk_string_from_chars(arguments);
 }
@@ -492,8 +486,8 @@ MAKE_WRAPPER_ONE_ARG(string_length);
 MAKE_WRAPPER_TWO_ARGS(string_ref);
 
 static 
-type* 
-_string_set_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_set_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 3,
                  APPLY_ERROR,
@@ -511,72 +505,72 @@ MAKE_WRAPPER_TWO_ARGS(string_eq);
 MAKE_WRAPPER_TWO_ARGS(string_ci_eq);
 
 static 
-type* 
-_string_less_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_less_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_greater_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_greater_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_less_equal_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_less_equal_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_greater_equal_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_greater_equal_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_ci_less_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_ci_less_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_ci_greater_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_ci_greater_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_ci_less_equal_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_ci_less_equal_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_ci_greater_equal_predicate_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_ci_greater_equal_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_substring_procedure_(const type* arguments, const type* env)
+TYPE* 
+_substring_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 3,
                  APPLY_ERROR,
@@ -588,8 +582,8 @@ _substring_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_string_append_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_append_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return fold_right(&string_append, 
                       arguments, 
@@ -597,24 +591,24 @@ _string_append_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_string_to_list_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_to_list_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_copy_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_copy_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_string_fill_procedure_(const type* arguments, const type* env)
+TYPE* 
+_string_fill_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
@@ -623,8 +617,8 @@ _string_fill_procedure_(const type* arguments, const type* env)
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_vector);
 
 static 
-type* 
-_make_vector_procedure_(const type* arguments, const type* env)
+TYPE* 
+_make_vector_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 1 ||  length(arguments) == 2,
@@ -642,8 +636,8 @@ _make_vector_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_vector_procedure_(const type* arguments, const type* env)
+TYPE* 
+_vector_procedure_(const TYPE* arguments, const TYPE* env)
 {
     return list_to_vector(arguments);
 }
@@ -651,49 +645,49 @@ _vector_procedure_(const type* arguments, const type* env)
 MAKE_WRAPPER_ONE_ARG(vector_length);
 
 static 
-type* 
-_vector_ref_procedure_(const type* arguments, const type* env)
+TYPE* 
+_vector_ref_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 2,
         APPLY_ERROR,
         "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in vector-ref");
     
-    type* k = car(cdr(arguments));
+    TYPE* k = car(cdr(arguments));
 
     assert_throw(is_number(k),
                  APPLY_ERROR,
                  "VECTOR_SET: second argument must be a number");
     
 
-    return vector_ref(car(arguments), (int) k->data);
+    return vector_ref(car(arguments), k->d.i);
 }
 
 static 
-type* 
-_vector_set_procedure_(const type* arguments, const type* env)
+TYPE* 
+_vector_set_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 3,
         APPLY_ERROR,
         "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in vector-set!");
 
-    type* k = car(cdr(arguments));
+    TYPE* k = car(cdr(arguments));
     
     assert_throw(is_number(k),
                  APPLY_ERROR,
                  "VECTOR_SET: second argument must be a number");
 
     vector_set(car(arguments), 
-               (int) k->data, 
+               k->d.i, 
                car(cdr(cdr(arguments))));
     
     return mk_none();
 }
 
 static 
-type* 
-_vector_to_list_procedure_(const type* arguments, const type* env)
+TYPE* 
+_vector_to_list_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
@@ -702,24 +696,24 @@ _vector_to_list_procedure_(const type* arguments, const type* env)
 MAKE_WRAPPER_ONE_ARG(list_to_vector);
 
 static 
-type* 
-_vector_fill_procedure_(const type* arguments, const type* env)
+TYPE* 
+_vector_fill_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
 }
 
 static 
-type* 
-_quit_procedure_(const type* arguments, const type* env)
+TYPE* 
+_quit_procedure_(const TYPE* arguments, const TYPE* env)
 {
     exit(0);
     return NULL;
 }
 
 static 
-type* 
-_read_procedure_(const type* arguments, const type* env)
+TYPE* 
+_read_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0 || length(arguments) == 1,
@@ -737,8 +731,8 @@ _read_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_read_char_procedure_(const type* arguments, const type* env)
+TYPE* 
+_read_char_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0 || length(arguments) == 1,
@@ -756,8 +750,8 @@ _read_char_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_peek_char_procedure_(const type* arguments, const type* env)
+TYPE* 
+_peek_char_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0 || length(arguments) == 1,
@@ -779,8 +773,8 @@ MAKE_VOID_WRAPPER_ONE_ARG(display);
 MAKE_VOID_WRAPPER_NO_ARG(newline);
 
 static 
-type* 
-_error_procedure_(const type* arguments, const type* env)
+TYPE* 
+_error_procedure_(const TYPE* arguments, const TYPE* env)
 {
     error(arguments);
 
@@ -796,8 +790,8 @@ MAKE_VOID_WRAPPER_ONE_ARG(close_input_port);
 MAKE_VOID_WRAPPER_ONE_ARG(close_output_port);
 
 static 
-type* 
-_nano_sleep_procedure_(const type* arguments, const type* env)
+TYPE* 
+_nano_sleep_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 2,
@@ -813,8 +807,8 @@ MAKE_WRAPPER_TWO_ARGS(mk_udp_socket);
 MAKE_WRAPPER_TWO_ARGS(udp_socket_recv);
 
 static
-type*
-_udp_socket_sendto_procedure_(const type* arguments, const type* env)
+TYPE*
+_udp_socket_sendto_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 4,
@@ -835,8 +829,8 @@ MAKE_WRAPPER_TWO_ARGS(mk_tcp_socket);
 MAKE_WRAPPER_TWO_ARGS(tcp_socket_recv);
 
 static 
-type* 
-_tcp_socket_send_procedure_(const type* arguments, const type* env) 
+TYPE* 
+_tcp_socket_send_procedure_(const TYPE* arguments, const TYPE* env) 
 {
       assert_throw(
           length(arguments) == 2,
@@ -855,8 +849,8 @@ MAKE_WRAPPER_ONE_ARG(blob_length);
 MAKE_WRAPPER_TWO_ARGS(blob_u8_ref);
 
 static 
-type* 
-_blob_u8_set_procedure_(const type* arguments, const type* env)
+TYPE* 
+_blob_u8_set_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 3,
@@ -871,8 +865,8 @@ _blob_u8_set_procedure_(const type* arguments, const type* env)
 }
 
 static
-type*
-_gr_open_procedure_(const type* arguments, const type* env)
+TYPE*
+_gr_open_procedure_(const TYPE* arguments, const TYPE* env)
 {
     unsigned int len = length(arguments);
     
@@ -899,8 +893,8 @@ _gr_open_procedure_(const type* arguments, const type* env)
 }
 
 static
-type*
-_gr_close_procedure_(const type* arguments, const type* env)
+TYPE*
+_gr_close_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0,
@@ -913,8 +907,8 @@ _gr_close_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_gr_move_to_procedure_(const type* arguments, const type* env)
+TYPE* 
+_gr_move_to_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 2,
@@ -934,8 +928,8 @@ MAKE_WRAPPER_ONE_ARG(gr_text_size);
 MAKE_VOID_WRAPPER_ONE_ARG(gr_set_foreground);
 
 static 
-type* 
-_x_events_queued_procedure_(const type* arguments, const type* env)
+TYPE* 
+_x_events_queued_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0,
@@ -947,8 +941,8 @@ _x_events_queued_procedure_(const type* arguments, const type* env)
 
 
 static 
-type* 
-_x_next_event_procedure_(const type* arguments, const type* env)
+TYPE* 
+_x_next_event_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0,
@@ -959,8 +953,8 @@ _x_next_event_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_x_flush_procedure_(const type* arguments, const type* env)
+TYPE* 
+_x_flush_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0,
@@ -973,8 +967,8 @@ _x_flush_procedure_(const type* arguments, const type* env)
 }
 
 static 
-type* 
-_x_fill_arc_procedure_(const type* arguments, const type* env)
+TYPE* 
+_x_fill_arc_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 5,
@@ -991,8 +985,8 @@ _x_fill_arc_procedure_(const type* arguments, const type* env)
 }
 
 static
-type*
-_gr_root_win_procedure_(const type* arguments, const type* env)
+TYPE*
+_gr_root_win_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
         length(arguments) == 0,
@@ -1276,7 +1270,7 @@ init_primitive_procedures()
 }
 
 int
-is_symbol_primitive_procedure(const type* procedure)
+is_symbol_primitive_procedure(const TYPE* procedure)
 {
     return 
         is_symbol(procedure) 
@@ -1284,15 +1278,15 @@ is_symbol_primitive_procedure(const type* procedure)
 }
 
 int
-is_primitive_procedure(const type* procedure)
+is_primitive_procedure(const TYPE* procedure)
 {
     return !is_nil(procedure) && procedure->type == PRIMITIVE_PROCEDURE;
 }
 
-type* 
-find_primitive_procedure(const type* symbol)
+TYPE* 
+find_primitive_procedure(const TYPE* symbol)
 {
-    type* result;
+    TYPE* result;
     
     assert(is_symbol(symbol) && "symbol must be a symbol");
 
@@ -1303,18 +1297,18 @@ find_primitive_procedure(const type* symbol)
     return result;
 }
 
-type* 
-apply_primitive_procedure(const type* procedure, 
-                          const type* arguments,
-                          const type* env)
+TYPE* 
+apply_primitive_procedure(const TYPE* procedure, 
+                          const TYPE* arguments,
+                          const TYPE* env)
 {
-    type* result;
+    TYPE* result;
 
     assert(!is_nil(procedure) && 
            procedure->type == PRIMITIVE_PROCEDURE &&
            "APPLY_PRIMITIVE_PROCEDURE: wrong type of stored procedure");
     
-    result = ((FUNCTION*)procedure->data)->f(arguments, env);
+    result = procedure->d.f->f(arguments, env);
 
     return result;
 }

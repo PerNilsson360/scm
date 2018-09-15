@@ -17,36 +17,37 @@
 #include "port.h"
 #include "io.h"
 #include "blob.h"
+#include "util.h"
 
 #define MAX_IDENTIFIER_LENGTH 1024
 
 static char read_buffer[MAX_IDENTIFIER_LENGTH];
 static int paren_depth;
 
-static type* read_from_file(FILE* file);
-static type* read_hex_number(FILE* file, int i);
+static TYPE* read_from_file(FILE* file);
+static TYPE* read_hex_number(FILE* file, int i);
 
-static void display_on_file(const type* sexp, FILE* file);
-static void display_pair(const type* sexp, FILE* file);
-static void display_symbol(const type* sexp, FILE* file);
-static void display_number(const type* sexp, FILE* file);
-static void display_char(const type* sexp, FILE* file);
-static void display_boolean(const type* sexp, FILE* file);
-static void display_vector(const type* sexp, int i, FILE* file);
-static void display_string(const type* string, FILE* file);
-static void display_bound_var(const type* sexp, FILE* file);
+static void display_on_file(const TYPE* sexp, FILE* file);
+static void display_pair(const TYPE* sexp, FILE* file);
+static void display_symbol(const TYPE* sexp, FILE* file);
+static void display_number(const TYPE* sexp, FILE* file);
+static void display_char(const TYPE* sexp, FILE* file);
+static void display_boolean(const TYPE* sexp, FILE* file);
+static void display_vector(const TYPE* sexp, int i, FILE* file);
+static void display_string(const TYPE* string, FILE* file);
+static void display_bound_var(const TYPE* sexp, FILE* file);
 
 int
-is_eof_object(const type* sexp)
+is_eof_object(const TYPE* sexp)
 {
     return !is_nil(sexp) && sexp->type == ENDOFFILE;
 }
 
 static
-type*
+TYPE*
 mk_eof()
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -206,11 +207,11 @@ match_right_paren(FILE* file)
     paren_depth--;
 }
 
-static type* 
+static TYPE* 
 read_list(FILE* file)
 {
-    type* result;
-    type* car = read_from_file(file);
+    TYPE* result;
+    TYPE* car = read_from_file(file);
     int c;
     
     skip_whitespace(file);
@@ -237,10 +238,10 @@ read_list(FILE* file)
     return result;
 }
 
-static type*
+static TYPE*
 read_char(FILE* file, unsigned int i)
 {
-    type* result;
+    TYPE* result;
     
     int c = get_printable_char(file);
     char result_char = 0;
@@ -304,7 +305,7 @@ read_char(FILE* file, unsigned int i)
     return result;
 }
 
-static type* 
+static TYPE* 
 read_vector()
 {
     assert(FALSE && "READ_VECTOR: Not implemente");
@@ -312,10 +313,10 @@ read_vector()
 }
 
 
-static type* 
+static TYPE* 
 read_hash_exp(FILE* file)
 {
-    type* result = 0;
+    TYPE* result = 0;
     
     int c = get_printable_char(file);
 
@@ -349,10 +350,10 @@ read_hash_exp(FILE* file)
     return result;
 }
 
-static type*
+static TYPE*
 read_identifier(FILE* file, unsigned int i)
 {
-    type* result = 0;
+    TYPE* result = 0;
 
     int c = get_printable_char(file);
     
@@ -371,10 +372,10 @@ read_identifier(FILE* file, unsigned int i)
     return result;
 }
 
-static type*
+static TYPE*
 read_number(FILE* file, int i)
 {
-    type* result = 0;
+    TYPE* result = 0;
     const char* number;
 
     int c = get_printable_char(file);
@@ -402,10 +403,10 @@ read_number(FILE* file, int i)
     return result;
 }
 
-static type*
+static TYPE*
 read_hex_number(FILE* file, int i)
 {
-    type* result = 0;
+    TYPE* result = 0;
     const char* number;
 
     int c = get_printable_char(file);
@@ -425,10 +426,10 @@ read_hex_number(FILE* file, int i)
 }
 
 
-static type*
+static TYPE*
 read_string(FILE* file, unsigned int i)
 {
-    type* result = 0;
+    TYPE* result = 0;
 
     int c1 = getc(file);
     int c2;
@@ -484,10 +485,10 @@ read_until_end_of_line(FILE* file)
 }
 
 static 
-type*
+TYPE*
 read_from_file(FILE* file)
 {
-    type* result = 0;
+    TYPE* result = 0;
 
     int c = get_printable_char(file);
 
@@ -518,7 +519,7 @@ read_from_file(FILE* file)
     }
     else if (c == '\'')
     {
-        type* sexp = read_from_file(file);
+        TYPE* sexp = read_from_file(file);
 
         if (is_nil(sexp))
         {
@@ -531,7 +532,7 @@ read_from_file(FILE* file)
     }
     else if (c == '`')
     {
-        type* sexp = read_from_file(file);
+        TYPE* sexp = read_from_file(file);
 
         if (is_nil(sexp))
         {
@@ -547,7 +548,7 @@ read_from_file(FILE* file)
     {
         int c = get_printable_char(file);
         const char* quotetag;
-        type* sexp;
+        TYPE* sexp;
 
         if (c == '@')
         {
@@ -637,28 +638,28 @@ read_from_file(FILE* file)
     return result; 
 }
 
-type* 
-read_from_port(const type* port)
+TYPE* 
+read_from_port(const TYPE* port)
 {
     assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,
                  "READ_FROM_PORT: port is not an input port");
 
     paren_depth = 0;
-    return read_from_file(((PORT_DATA*)port->data)->file);
+    return read_from_file(port->d.po->file);
 }
 
-type* 
-read_char_from_port(const type* port)
+TYPE* 
+read_char_from_port(const TYPE* port)
 {
-    type* result;
+    TYPE* result;
     int c;
 
     assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,
                  "READ_CHAR_FROM_PORT: port is not an input port");
 
-    c = getc(((PORT_DATA*)port->data)->file);
+    c = getc(port->d.po->file);
 
     if (c == EOF) 
     {
@@ -672,10 +673,10 @@ read_char_from_port(const type* port)
     return result;
 }
 
-type* 
-peek_char_from_port(const type* port)
+TYPE* 
+peek_char_from_port(const TYPE* port)
 {
-    type* result;
+    TYPE* result;
     FILE* file;
     int c;
 
@@ -683,7 +684,7 @@ peek_char_from_port(const type* port)
                  TYPE_ERROR,
                  "READ_CHAR_FROM_PORT: port is not an input port");
 
-    file = ((PORT_DATA*)port->data)->file;
+    file = port->d.po->file;
 
     c = getc(file);
     ungetc(c, file);
@@ -700,7 +701,7 @@ peek_char_from_port(const type* port)
     return result;
 }
 
-type* 
+TYPE* 
 read()
 {
     paren_depth = 0;
@@ -708,7 +709,7 @@ read()
 }
 
 static void
-display_inside_list(const type* sexp, FILE* file)
+display_inside_list(const TYPE* sexp, FILE* file)
 {
     if (sexp == NULL)
     {
@@ -777,15 +778,15 @@ display_inside_list(const type* sexp, FILE* file)
 }
 
 static void
-display_pair(const type* sexp, FILE* file)
+display_pair(const TYPE* sexp, FILE* file)
 {
-    if (is_pair(((PAIR_DATA*)sexp->data)->car))
+    if (is_pair(sexp->d.p->car))
     {
-        display_on_file(((PAIR_DATA*)sexp->data)->car, file);
+        display_on_file(sexp->d.p->car, file);
     }
     else
     {
-        display_inside_list(((PAIR_DATA*)sexp->data)->car, file);
+        display_inside_list(sexp->d.p->car, file);
     }
 
     if (!is_pair(cdr(sexp)) && !is_nil(cdr(sexp)))
@@ -793,29 +794,29 @@ display_pair(const type* sexp, FILE* file)
         fprintf(file, " .");
     }
 
-    if (!is_nil(((PAIR_DATA*)sexp->data)->cdr))
+    if (!is_nil(sexp->d.p->cdr))
     {
         fprintf(file, " ");
-        display_inside_list(((PAIR_DATA*)sexp->data)->cdr, file);           
+        display_inside_list(sexp->d.p->cdr, file);           
     }
 }
 
 static void
-display_symbol(const type* sexp, FILE* file)
+display_symbol(const TYPE* sexp, FILE* file)
 {
-    fprintf(file, "%s", (char*) sexp->data);
+    fprintf(file, "%s", sexp->d.s);
 }
 
 static void
-display_number(const type* sexp, FILE* file)
+display_number(const TYPE* sexp, FILE* file)
 {
-    fprintf(file, "%d", (int) sexp->data);
+    fprintf(file, "%d", sexp->d.i);
 }
 
 static void 
-display_char(const type* sexp, FILE* file)
+display_char(const TYPE* sexp, FILE* file)
 {
-    switch ((int) sexp->data)
+    switch (sexp->d.i)
     {
     case 0x10:
         fprintf(file, "#\\space");
@@ -830,12 +831,12 @@ display_char(const type* sexp, FILE* file)
         fprintf(file, "#\\lf");
         break;
     default:
-        fprintf(file, "#\\%c", sexp->data);
+        fprintf(file, "#\\%c", (char)sexp->d.i);
     }
 }
 
 static void 
-display_boolean(const type* sexp, FILE* file)
+display_boolean(const TYPE* sexp, FILE* file)
 {
     assert(is_boolean(sexp) && "DISPLAY_BOOLEAN: Not a boolean sexp");
 
@@ -850,44 +851,44 @@ display_boolean(const type* sexp, FILE* file)
 }
 
 static void
-display_vector(const type* sexp, int i, FILE* file)
+display_vector(const TYPE* sexp, int i, FILE* file)
 {
     assert(is_vector(sexp) && "DISPLAY_VECTOR: Not a vector sexp");
 
-    if (i < (int) vector_length(sexp)->data) 
+    if (i < vector_length(sexp)->d.i) 
     {
         if (i > 0)
         {
             fprintf(file, " ");
         }
 
-        display_on_file(((vector*)sexp->data)->slots[i], file);
+        display_on_file(sexp->d.v->slots[i], file);
         display_vector(sexp, ++i, file);
     }
 }
 
 static void 
-display_string(const type* sexp, FILE* file)
+display_string(const TYPE* sexp, FILE* file)
 {
     assert(is_string(sexp) && "DISPLAY_STRING: Not a string sexp");
-    fprintf(file, "\"%s\"", (char*) sexp->data);
+    fprintf(file, "\"%s\"", sexp->d.s);
 }
 
 static 
 void 
-display_bound_var(const type* sexp, FILE* file)
+display_bound_var(const TYPE* sexp, FILE* file)
 {
     fprintf(file, "<");
-    display_symbol(((BOUND_VAR_DATA*) sexp->data)->symbol, file);
+    display_symbol(sexp->d.b->symbol, file);
     fprintf(file, 
             ":%u:%u:%d>", 
-            ((BOUND_VAR_DATA*) sexp->data)->frame_index,
-            ((BOUND_VAR_DATA*) sexp->data)->var_index,
-            ((BOUND_VAR_DATA*) sexp->data)->is_inproper_list);
+            sexp->d.b->frame_index,
+            sexp->d.b->var_index,
+	    sexp->d.b->is_inproper_list);
 }
 
 static void 
-display_on_file(const type* sexp, FILE* file)
+display_on_file(const TYPE* sexp, FILE* file)
 {
     if (sexp != NULL)
     {
@@ -925,7 +926,7 @@ display_on_file(const type* sexp, FILE* file)
 }
 
 void 
-display(const type* sexp)
+display(const TYPE* sexp)
 {
     display_on_file(sexp, stdout);
 }
@@ -944,7 +945,7 @@ newline()
 }
 
 void 
-error(const type* sexp)
+error(const TYPE* sexp)
 {
     display(sexp);
     assert_throw(FALSE,
@@ -953,7 +954,7 @@ error(const type* sexp)
 }
 
 void 
-display_debug(const type* sexp)
+display_debug(const TYPE* sexp)
 {
     printf("Object: ");
     display(sexp);

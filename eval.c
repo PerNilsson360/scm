@@ -34,7 +34,7 @@ static void* reg_unev;
 static
 inline
 int
-is_self_evaluating(const type* sexp)
+is_self_evaluating(const TYPE* sexp)
 {
     return 
         is_number(sexp) ||
@@ -49,105 +49,105 @@ is_self_evaluating(const type* sexp)
 static
 inline
 int
-is_variable(const type* exp)
+is_variable(const TYPE* exp)
 {
     return is_symbol(exp) || is_bound_var(exp);
 }
 
 int
-is_tagged_list(const type* exp, type* symbol)
+is_tagged_list(const TYPE* exp, TYPE* symbol)
 {
     return is_pair(exp) && is_eq(car(exp), symbol);
 }
 
 int
-is_assignment(type* exp)
+is_assignment(TYPE* exp)
 {
     return is_tagged_list(exp, _set_keyword_symbol_);
 }
 
-type*
-assignment_variable(type* exp)
+TYPE*
+assignment_variable(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-type*
-assignment_value(type* exp)
+TYPE*
+assignment_value(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
 
 int
-is_definition(type* exp)
+is_definition(TYPE* exp)
 {
     return is_tagged_list(exp, _define_keyword_symbol_);
 }
 
-type*
-definition_variable(type* exp)
+TYPE*
+definition_variable(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-type*
-mk_definition(type* var, type* value)
+TYPE*
+mk_definition(TYPE* var, TYPE* value)
 {
     cons(_define_keyword_symbol_, cons(var, cons(value, nil())));
 }
 
-type*
-definition_value(type* exp)
+TYPE*
+definition_value(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
 
 int
-is_lambda(type* exp)
+is_lambda(TYPE* exp)
 {
     return is_tagged_list(exp, _lambda_keyword_symbol_);
 }
 
-type* 
-lambda_parameters(type* exp)
+TYPE* 
+lambda_parameters(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-type*
-lambda_body(type* exp)
+TYPE*
+lambda_body(TYPE* exp)
 {
     return cdr(cdr(exp));
 }
 
-type*
-mk_lambda(type* parameters, type* body)
+TYPE*
+mk_lambda(TYPE* parameters, TYPE* body)
 {
     return cons(_lambda_keyword_symbol_, cons(parameters, body));
 }
 
 int
-is_if(type* exp)
+is_if(TYPE* exp)
 {
     return is_tagged_list(exp, _if_keyword_symbol_);
 }
 
-type* 
-if_predicate(type* exp)
+TYPE* 
+if_predicate(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-type*
-if_consequent(type* exp)
+TYPE*
+if_consequent(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
 
-type*
-if_alternative(type* exp)
+TYPE*
+if_alternative(TYPE* exp)
 {
-    type* result = mk_none();
+    TYPE* result = mk_none();
     
     if (!is_nil(cdr(cdr(cdr(exp)))))
     {
@@ -157,8 +157,8 @@ if_alternative(type* exp)
     return result;
 }
 
-type*
-mk_if(type* predicate, type* consequent, type* alternative)
+TYPE*
+mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
 {
     return cons(_if_keyword_symbol_,
                 cons(predicate,
@@ -167,45 +167,45 @@ mk_if(type* predicate, type* consequent, type* alternative)
 }
 
 int
-is_begin(type* exp)
+is_begin(TYPE* exp)
 {
     return is_tagged_list(exp, _begin_keyword_symbol_);
 }
 
-type* 
-begin_actions(type* exp)
+TYPE* 
+begin_actions(TYPE* exp)
 {
     return cdr(exp);
 }
 
 int
-is_last_exp(type* exps)
+is_last_exp(TYPE* exps)
 {
     return is_nil(cdr(exps));
 }
 
-type* 
-first_exp(type* exps)
+TYPE* 
+first_exp(TYPE* exps)
 {
     return car(exps);
 }
 
-type* 
-rest_exps(type* exps)
+TYPE* 
+rest_exps(TYPE* exps)
 {
     return cdr(exps);
 }
 
-type*
-mk_begin(type* exp)
+TYPE*
+mk_begin(TYPE* exp)
 {
     return cons(_begin_keyword_symbol_, exp);
 }
 
-type*
-sequence_to_exp(type* seq)
+TYPE*
+sequence_to_exp(TYPE* seq)
 {
-    type* result;
+    TYPE* result;
 
     if (is_nil(seq))
     {
@@ -224,84 +224,84 @@ sequence_to_exp(type* seq)
 }
 
 int 
-is_application(const type* sexp)
+is_application(const TYPE* sexp)
 {
     return is_pair(sexp);
 }
 
-type* 
-operator(type* exp)
+TYPE* 
+operator(TYPE* exp)
 {
     return car(exp);
 }
 
-type*
-operands(type* exp)
+TYPE*
+operands(TYPE* exp)
 {
     return cdr(exp);
 }
 
-type*
-first_operand(type* operands)
+TYPE*
+first_operand(TYPE* operands)
 {
     return car(operands);
 }
 
 int
-last_operand(type* operands)
+last_operand(TYPE* operands)
 {
     return is_nil(cdr(operands));
 }
 
 int 
-no_operands(type* operands)
+no_operands(TYPE* operands)
 {
     return is_nil(operands);
 }
 
-type*
-rest_operands(type* operands)
+TYPE*
+rest_operands(TYPE* operands)
 {
     return cdr(operands);
 }
 
 /* Derived expressions */
 int
-is_cond(type* exp)
+is_cond(TYPE* exp)
 {
     return is_tagged_list(exp, _cond_keyword_symbol_);
 }
 
-type*
-cond_clauses(type* exp)
+TYPE*
+cond_clauses(TYPE* exp)
 {
     return cdr(exp);
 }
 
-type*
-cond_predicate(type* clause)
+TYPE*
+cond_predicate(TYPE* clause)
 {
     return car(clause);
 }
 
-type*
-cond_actions(type* clause)
+TYPE*
+cond_actions(TYPE* clause)
 {
     return cdr(clause);
 }
 
 int
-is_cond_else_clause(type* clause)
+is_cond_else_clause(TYPE* clause)
 {
     return is_eq(cond_predicate(clause), _else_keyword_symbol_); 
 }
 
-type*
-expand_clauses(type* clauses)
+TYPE*
+expand_clauses(TYPE* clauses)
 {
-    type* result;
-    type* first;
-    type* rest;
+    TYPE* result;
+    TYPE* first;
+    TYPE* rest;
 
     if (is_nil(clauses))
     {
@@ -336,39 +336,39 @@ expand_clauses(type* clauses)
     return result;
 }
 
-type*
-cond_to_if(type* exp)
+TYPE*
+cond_to_if(TYPE* exp)
 {
     return expand_clauses(cond_clauses(exp));
 }
 
 int
-is_match(const type* exp)
+is_match(const TYPE* exp)
 {
     return is_tagged_list(exp, _match_keyword_symbol_);
 }
 
-type*
-mk_match(type* key, type* clauses)
+TYPE*
+mk_match(TYPE* key, TYPE* clauses)
 {
     return cons(_match_keyword_symbol_, cons(key, clauses));
 }
 
 
-type*
-match_key(type* exp)
+TYPE*
+match_key(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-type*
-match_clauses(type* exp)
+TYPE*
+match_clauses(TYPE* exp)
 {
     return cdr(cdr(exp));
 }
 
-static type*
-find(const type* var, type* vars, type* vals)
+static TYPE*
+find(const TYPE* var, TYPE* vars, TYPE* vals)
 {
     if (is_nil(vars)) return nil();
     else if (is_eq(var, car(vars))) return car(vals);
@@ -376,12 +376,12 @@ find(const type* var, type* vars, type* vals)
 }
 
 static int
-add_var_if_consistent(const type* var, 
-                      const type* val, 
-                      type** vars, type** vals)
+add_var_if_consistent(const TYPE* var, 
+                      const TYPE* val, 
+                      TYPE** vars, TYPE** vals)
 {
     int result = FALSE;
-    type* old_val = find(var, *vars, *vals);
+    TYPE* old_val = find(var, *vars, *vals);
 
     if (is_nil(old_val))
     {
@@ -398,27 +398,27 @@ add_var_if_consistent(const type* var,
 }
 
 static int
-is_pattern_var(const type* var)
+is_pattern_var(const TYPE* var)
 {
-    return (is_symbol(var) && (((char*)var->data)[0] == '?'));
+    return (is_symbol(var) && (var->d.s[0] == '?'));
 }
 
-static type*
-name_from_pattern_var(const type* var)
+static TYPE*
+name_from_pattern_var(const TYPE* var)
 {
-    const char* s = ((const char*)var->data);
+    const char* s = var->d.s;
     s++;
     return mk_symbol(s);
 }
 
 static int
-is_wildcard_pattern(const type* pattern)
+is_wildcard_pattern(const TYPE* pattern)
 {
-    return strlen((char*)pattern->data) == 1;
+    return strlen(pattern->d.s) == 1 && pattern->d.s[0] == '?'; 
 }
 
 static int
-pattern_match(const type* data, const type* pattern, type** vars, type** vals)
+pattern_match(const TYPE* data, const TYPE* pattern, TYPE** vars, TYPE** vals)
 {
     int result = FALSE;
 
@@ -454,16 +454,16 @@ pattern_match(const type* data, const type* pattern, type** vars, type** vals)
 /* reg_val contains the match key and reg_unev contains the clauses */
 /* vars and vals contains the variable bindings from the match */
 static int 
-find_matching_match_clause(const type* key, 
-                           const type* clauses, 
-                           type** vars, 
-                           type** vals, 
-                           type** eval_exp)
+find_matching_match_clause(const TYPE* key, 
+                           const TYPE* clauses, 
+                           TYPE** vars, 
+                           TYPE** vals, 
+                           TYPE** eval_exp)
 {
     int result = FALSE;
-    type* first_clause;
-    type* tmp_vars = nil();
-    type* tmp_vals = nil();
+    TYPE* first_clause;
+    TYPE* tmp_vars = nil();
+    TYPE* tmp_vals = nil();
 
     if (!is_nil(clauses))
     {
@@ -489,39 +489,39 @@ find_matching_match_clause(const type* key,
 }
 
 int 
-is_apply(const type* exp)
+is_apply(const TYPE* exp)
 {
     const char* apply = "apply";   
     return is_tagged_list(exp, mk_symbol(apply));
 }
 
-type*
-apply_arguments(const type* exp)
+TYPE*
+apply_arguments(const TYPE* exp)
 {
     return cdr(cdr(exp));
 }
 
-type*
-apply_procedure(const type* exp)
+TYPE*
+apply_procedure(const TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 int 
-is_delay(const type* exp)
+is_delay(const TYPE* exp)
 {
     return is_tagged_list(exp, _delay_keyword_symbol_);
 }
 
 int 
-is_stream_cons(const type* exp)
+is_stream_cons(const TYPE* exp)
 {
     return is_tagged_list(exp, _stream_cons_keyword_symbol_);
 }
 
 
 int
-is_improper_list(const type* exp)
+is_improper_list(const TYPE* exp)
 {
     if (is_nil(exp))
     {
@@ -538,7 +538,7 @@ is_improper_list(const type* exp)
 }
 
 int
-improper_list_length(const type* exp)
+improper_list_length(const TYPE* exp)
 {
     if (is_pair(exp)) 
     {
@@ -551,7 +551,7 @@ improper_list_length(const type* exp)
 }
 
 int 
-min_procedure_parameters(const type* exp)
+min_procedure_parameters(const TYPE* exp)
 {
     if (is_improper_list(exp))
     {
@@ -566,10 +566,10 @@ min_procedure_parameters(const type* exp)
 void
 hairy_eval()
 {
-    type* vars;                 /* used in match */
-    type* vals;                 /* used in match */
+    TYPE* vars;                 /* used in match */
+    TYPE* vals;                 /* used in match */
 
-    type* reg_exp_debug = nil();
+    TYPE* reg_exp_debug = nil();
     reg_val = nil();
     reg_cont = &&done;
     reg_proc = nil();
@@ -643,7 +643,7 @@ ev_match_key_evaluated:
                                    reg_unev, 
                                    &vars, 
                                    &vals, 
-                                   (type**)&reg_exp))
+                                   (TYPE**)&reg_exp))
     {
         if (length(vars) > 0)
         {
@@ -871,14 +871,14 @@ done:
 
 /* translation to name free lambda expressions */
 static 
-type* 
-extend_context(const type* vars, const type* context)
+TYPE* 
+extend_context(const TYPE* vars, const TYPE* context)
 {
     return cons(vars, context);
 }
 
 static int 
-symbol_exist_in_improper_list(const type* symbol, const type* list)
+symbol_exist_in_improper_list(const TYPE* symbol, const TYPE* list)
 {
     int result;
 
@@ -911,7 +911,7 @@ symbol_exist_in_improper_list(const type* symbol, const type* list)
 
 static
 void
-add_definition_to_context(const type* var, type* context)
+add_definition_to_context(const TYPE* var, TYPE* context)
 {
     if (!is_nil(context) && !symbol_exist_in_improper_list(var, context)) 
     {
@@ -921,8 +921,8 @@ add_definition_to_context(const type* var, type* context)
 
 static
 int
-get_var_index(const type* var, 
-              const type* vars, 
+get_var_index(const TYPE* var, 
+              const TYPE* vars, 
               int index, 
               int* is_inproper_list)
 {
@@ -958,10 +958,10 @@ get_var_index(const type* var,
 }
 
 static 
-type* 
-symbol_to_bound_var(type* var, type* context, unsigned int frame_index)
+TYPE* 
+symbol_to_bound_var(TYPE* var, TYPE* context, unsigned int frame_index)
 {
-    type* result;
+    TYPE* result;
 
     if (is_nil(context)) 
     {
@@ -989,10 +989,10 @@ symbol_to_bound_var(type* var, type* context, unsigned int frame_index)
 }
 
 static
-type*
-get_vars_from_match(type* pattern)
+TYPE*
+get_vars_from_match(TYPE* pattern)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (is_symbol(pattern))
     {
@@ -1003,7 +1003,7 @@ get_vars_from_match(type* pattern)
     }
     else if (is_pair(pattern))
     {
-        type* first = car(pattern);
+        TYPE* first = car(pattern);
         
         if (is_pattern_var(first) && !is_wildcard_pattern(first))
         {
@@ -1012,7 +1012,7 @@ get_vars_from_match(type* pattern)
         }
         else if (is_pair(first))
         {
-            type* vars = get_vars_from_match(first);
+            TYPE* vars = get_vars_from_match(first);
 
             if (is_nil(vars)) 
             {
@@ -1032,14 +1032,14 @@ get_vars_from_match(type* pattern)
     return result;
 }
 
-static type* exp_to_name_free_exp(type* exp, type* context);
+static TYPE* exp_to_name_free_exp(TYPE* exp, TYPE* context);
 
 static
-type*
-match_clauses_to_name_free(type* clauses, 
-                           type* context)
+TYPE*
+match_clauses_to_name_free(TYPE* clauses, 
+                           TYPE* context)
 {
-    type* result;
+    TYPE* result;
 
     if (is_nil(clauses))
     {
@@ -1047,11 +1047,11 @@ match_clauses_to_name_free(type* clauses,
     } 
     else
     {
-        type* first = car(clauses);
-        type* pattern = car(first);
-        type* body = cdr(first);
-        type* vars = get_vars_from_match(pattern);
-        type* match_body_context;
+        TYPE* first = car(clauses);
+        TYPE* pattern = car(first);
+        TYPE* body = cdr(first);
+        TYPE* vars = get_vars_from_match(pattern);
+        TYPE* match_body_context;
 
         if (is_nil(vars))
         {
@@ -1073,17 +1073,17 @@ match_clauses_to_name_free(type* clauses,
 }
 
 static 
-type*
-scan_internal_defs(type* exps)
+TYPE*
+scan_internal_defs(TYPE* exps)
 {
-  type* result = nil();
+  TYPE* result = nil();
         
   while (!is_nil(exps))
   {
-      type* exp = car(exps);
+      TYPE* exp = car(exps);
       if (is_definition(exp))
       {
-	  type* var = definition_variable(exp);
+	  TYPE* var = definition_variable(exp);
 	  result = cons(var, result);
       }
       exps = cdr(exps);
@@ -1094,7 +1094,7 @@ scan_internal_defs(type* exps)
 
 static
 void
-add_defs_to_context(type* defs, type* ctx)
+add_defs_to_context(TYPE* defs, TYPE* ctx)
 {
   while (!is_nil(defs))
   {
@@ -1104,10 +1104,10 @@ add_defs_to_context(type* defs, type* ctx)
 }
 
 static 
-type*
-exp_to_name_free_exp(type* exp, type* context)
+TYPE*
+exp_to_name_free_exp(TYPE* exp, TYPE* context)
 {
-    type* result;
+    TYPE* result;
     
     if (is_nil(exp))
     {
@@ -1119,10 +1119,10 @@ exp_to_name_free_exp(type* exp, type* context)
     }
     else if (is_lambda(exp))
     {
-        type* vars = lambda_parameters(exp);
-	type* ctx = extend_context(vars, context);
-	type* body = lambda_body(exp);
-	type* defs = scan_internal_defs(body);
+        TYPE* vars = lambda_parameters(exp);
+	TYPE* ctx = extend_context(vars, context);
+	TYPE* body = lambda_body(exp);
+	TYPE* defs = scan_internal_defs(body);
 	add_defs_to_context(defs, ctx);
         result = mk_lambda(vars, 
                            exp_to_name_free_exp(body,
@@ -1130,23 +1130,23 @@ exp_to_name_free_exp(type* exp, type* context)
     } 
     else if (is_definition(exp))
     {
-        type* var = definition_variable(exp);
-	type* val = definition_value(exp);
+        TYPE* var = definition_variable(exp);
+	TYPE* val = definition_value(exp);
         result = mk_definition(var,
                                exp_to_name_free_exp(val, context));
     }
     else if (is_match(exp))
     {
-        type* key = match_key(exp);
-        type* clauses = match_clauses(exp);
+        TYPE* key = match_key(exp);
+        TYPE* clauses = match_clauses(exp);
 
         result = mk_match(exp_to_name_free_exp(key, context), 
                           match_clauses_to_name_free(clauses, context));
     }
     else if (is_pair(exp))
     {
-        type* hd = exp_to_name_free_exp(car(exp), context);
-        type* tl = exp_to_name_free_exp(cdr(exp), context);
+        TYPE* hd = exp_to_name_free_exp(car(exp), context);
+        TYPE* tl = exp_to_name_free_exp(cdr(exp), context);
         result = cons(hd, tl);
     } 
     else if (is_symbol(exp))
@@ -1161,8 +1161,8 @@ exp_to_name_free_exp(type* exp, type* context)
     return result;
 }
 
-type*
-eval(type* exp, type* env)
+TYPE*
+eval(TYPE* exp, TYPE* env)
 {
     reg_exp = cons(mk_symbol("--internal-translate--"),
                    cons(mk_quoted(exp), nil()));
@@ -1174,8 +1174,8 @@ eval(type* exp, type* env)
     return reg_val;
 }
 
-type*
-eval_no_translation(type* exp, type* env)
+TYPE*
+eval_no_translation(TYPE* exp, TYPE* env)
 {
     reg_exp = exp_to_name_free_exp(exp, nil());
     reg_env = env;

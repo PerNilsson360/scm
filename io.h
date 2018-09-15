@@ -3,14 +3,14 @@
 
 #include "type.h" 
 
-type* read();
-type* read_from_port(const type* port);
-type* read_char_from_port(const type* port);
-type* peek_char_from_port(const type* port);
-int is_eof_object(const type* sexp);
-void display(const type* sexp);
+TYPE* read();
+TYPE* read_from_port(const TYPE* port);
+TYPE* read_char_from_port(const TYPE* port);
+TYPE* peek_char_from_port(const TYPE* port);
+int is_eof_object(const TYPE* sexp);
+void display(const TYPE* sexp);
 void newline();
-void error(const type* sexp);
-void display_debug(const type* sexp);
+void error(const TYPE* sexp);
+void display_debug(const TYPE* sexp);
 
 #endif

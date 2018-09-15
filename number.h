@@ -3,28 +3,28 @@
 
 #include "type.h"
 
-type* mk_number_from_int(int n);
-type* mk_number(const char* symbol, unsigned int length, int positive);
-type* mk_hex_number(const char* symbol, unsigned int length);
-int is_number(const type* number);
-int is_number_equal(const type* left, const type* right);
-int is_number_lt(const type* left, const type* right);
-int is_number_gt(const type* left, const type* right);
-int is_number_lt_eq(const type* left, const type* right);
-int is_number_gt_eq(const type* left, const type* right);
-type* is_number_zero(const type* left);
-type* is_number_positive(const type* left);
-type* is_number_negative(const type* left);
-type* is_number_odd(const type* left);
-type* is_number_even(const type* left);
-type* max_number(const type* left, const type* right);
-type* min_number(const type* left, const type* right);
-type* add_number(const type* left, const type* right);
-type* mul_number(const type* left, const type* right);
-type* sub_numbers(const type* numbers);
-type* div_numbers(const type* numbers);
-type* remainder_number(const type* left, const type* right);
-type* number_to_string(const type* n);
+TYPE* mk_number_from_int(int n);
+TYPE* mk_number(const char* symbol, unsigned int length, int positive);
+TYPE* mk_hex_number(const char* symbol, unsigned int length);
+int is_number(const TYPE* number);
+int is_number_equal(const TYPE* left, const TYPE* right);
+int is_number_lt(const TYPE* left, const TYPE* right);
+int is_number_gt(const TYPE* left, const TYPE* right);
+int is_number_lt_eq(const TYPE* left, const TYPE* right);
+int is_number_gt_eq(const TYPE* left, const TYPE* right);
+TYPE* is_number_zero(const TYPE* left);
+TYPE* is_number_positive(const TYPE* left);
+TYPE* is_number_negative(const TYPE* left);
+TYPE* is_number_odd(const TYPE* left);
+TYPE* is_number_even(const TYPE* left);
+TYPE* max_number(const TYPE* left, const TYPE* right);
+TYPE* min_number(const TYPE* left, const TYPE* right);
+TYPE* add_number(const TYPE* left, const TYPE* right);
+TYPE* mul_number(const TYPE* left, const TYPE* right);
+TYPE* sub_numbers(const TYPE* numbers);
+TYPE* div_numbers(const TYPE* numbers);
+TYPE* remainder_number(const TYPE* left, const TYPE* right);
+TYPE* number_to_string(const TYPE* n);
 
-unsigned int number_hash(const type* number);
+unsigned int number_hash(const TYPE* number);
 #endif

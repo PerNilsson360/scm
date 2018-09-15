@@ -4,15 +4,16 @@
 #include <gc.h>
 
 #include "io.h"
+#include "util.h"
 #include "symbol.h"
 #include "error.h"
 #include "procedure.h"
 #include "primitive_procedure.h"
 
-type*  
-mk_procedure(type* parameters, type* body, type* env)
+TYPE*  
+mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -21,19 +22,19 @@ mk_procedure(type* parameters, type* body, type* env)
     }
     
     result->type = PROCEDURE;
-    result->data = cons(parameters, cons(body, cons(env, nil())));
+    result->d.t = cons(parameters, cons(body, cons(env, nil())));
 
     return result;
 }
 
-type*
-is_compound_procedure(const type* procedure)
+TYPE*
+is_compound_procedure(const TYPE* procedure)
 {
     return mk_boolean(!is_nil(procedure) && procedure->type == PROCEDURE);
 }
 
-type* 
-procedure_parameters(type* procedure)
+TYPE* 
+procedure_parameters(TYPE* procedure)
 {
     if (!is_true(is_compound_procedure(procedure))) 
     {
@@ -42,26 +43,26 @@ procedure_parameters(type* procedure)
                     "PROCEDURE_PARAMETERS: procedure must be a procedure");
     }
 
-    return car(procedure->data);
+    return car(procedure->d.t);
 }
 
-type* 
-procedure_body(type* procedure)
+TYPE* 
+procedure_body(TYPE* procedure)
 {
     assert_throw(is_true(is_compound_procedure(procedure)),
                  TYPE_ERROR,
                  "PROCEDURE_BODY: procedure must be a procedure");
 
-    return car(cdr(procedure->data));
+    return car(cdr(procedure->d.t));
 }
 
-type* 
-procedure_environment(type* procedure)
+TYPE* 
+procedure_environment(TYPE* procedure)
 {
     assert_throw(is_true(is_compound_procedure(procedure)),
                  TYPE_ERROR,
                  "PROCEDURE_ENVIRONMENT: procedure must be a procedure");
 
-    return car(cdr(cdr(procedure->data)));
+    return car(cdr(cdr(procedure->d.t)));
 }
 

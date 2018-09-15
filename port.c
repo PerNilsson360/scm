@@ -7,12 +7,13 @@
 #include "error.h"
 #include "port.h"
 #include "str.h"
+#include "util.h"
 
 static
-type* 
+TYPE* 
 mk_port(FILE* file, int read_port)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -20,9 +21,9 @@ mk_port(FILE* file, int read_port)
         exit(1);
     }
 
-    result->data = mloc(sizeof(PORT_DATA));
+    result->d.po = mloc(sizeof(PORT_DATA));
 
-    if (result->data == NULL)
+    if (result->d.po == NULL)
     {
         fprintf(stderr, "MK_PORT: could not allocate memory for PORT_DATA");
         exit(1);
@@ -30,32 +31,32 @@ mk_port(FILE* file, int read_port)
 
     result->type = PORT;
 
-    ((PORT_DATA*) result->data)->read_port = read_port;
-    ((PORT_DATA*) result->data)->file = file;
+    result->d.po->read_port = read_port;
+    result->d.po->file = file;
 
     return result;
 }
 
-type* 
-is_port(const type* obj)
+TYPE* 
+is_port(const TYPE* obj)
 {
     return mk_boolean(obj->type == PORT);
 }
 
-type* 
-is_input_port(const type* obj)
+TYPE* 
+is_input_port(const TYPE* obj)
 {
-    return mk_boolean(obj->type == PORT && ((PORT_DATA*) obj->data)->read_port);
+    return mk_boolean(obj->type == PORT && obj->d.po->read_port);
 }
 
-type* 
-is_output_port(const type* obj)
+TYPE* 
+is_output_port(const TYPE* obj)
 {
-    return mk_boolean(is_port(obj) && !((PORT_DATA*) obj->data)->read_port);
+    return mk_boolean(is_port(obj) && !obj->d.po->read_port);
 }
 
-type* 
-open_input_file(const type* filename)
+TYPE* 
+open_input_file(const TYPE* filename)
 {
     FILE* file;
     
@@ -63,7 +64,7 @@ open_input_file(const type* filename)
                  TYPE_ERROR, 
                  "OPEN_INPUT_FILE: filename is not a string");
 
-     file = fopen((char*) filename->data, "r");
+     file = fopen((char*) filename->d.s, "r");
 
      if (file == NULL)
      {
@@ -74,8 +75,8 @@ open_input_file(const type* filename)
      return mk_port(file, TRUE);
 }
 
-type* 
-open_output_file(const type* filename)
+TYPE* 
+open_output_file(const TYPE* filename)
 {
     FILE* file;
     
@@ -83,7 +84,7 @@ open_output_file(const type* filename)
                  TYPE_ERROR, 
                  "OPEN_INPUT_FILE: filename is not a string");
 
-     file = fopen((char*) filename->data, "w");
+     file = fopen(filename->d.s, "w");
 
      if (file == NULL)
      {
@@ -95,26 +96,26 @@ open_output_file(const type* filename)
 }
 
 void 
-close_input_port(const type* port)
+close_input_port(const TYPE* port)
 {
     assert_throw(is_true(is_port(port)), 
                  TYPE_ERROR, 
                  "CLOSE_INPUT_PORT: port is not a port");
     
-    if (fclose((FILE*) port->data) == EOF)
+    if (fclose(port->d.po->file) == EOF)
     {
         printf("CLOSE_INPUT_PORT: error detected when closing input port");
     }
 }
 
 void 
-close_output_port(const type* port)
+close_output_port(const TYPE* port)
 {
     assert_throw(is_true(is_port(port)), 
                  TYPE_ERROR, 
                  "CLOSE_OUTPUT_PORT: port is not a port");
     
-    if (fclose((FILE*) port->data) == EOF)
+    if (fclose(port->d.po->file) == EOF)
     {
         printf("CLOSE_OUTPUT_PORT: error detected when closing output port");
     }

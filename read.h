@@ -3,6 +3,6 @@
 
 #include "type.h"
 
-type* rread();
+TYPE* rread();
 
 #endif

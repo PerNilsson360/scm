@@ -6,6 +6,7 @@
 
 #include <gc.h>
 
+#include "type.h"
 #include "str.h"
 #include "symbol.h"
 #include "error.h"
@@ -13,10 +14,10 @@
 #include "number.h"
 #include "util.h"
 
-static type* 
+static TYPE* 
 mk_unasigned_number()
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -29,19 +30,19 @@ mk_unasigned_number()
     return result;
 }
 
-type* mk_number_from_int(int n)
+TYPE* mk_number_from_int(int n)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
 
-    result->data = (void*) n;
+    result->d.i = n;
 
     return result;
 }
 
-type* 
+TYPE* 
 mk_number(const char* symbol, unsigned int length, int positive)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
     int number = 0;
     unsigned int i = 0;
         
@@ -55,15 +56,15 @@ mk_number(const char* symbol, unsigned int length, int positive)
         }
     }
 
-    result->data = (positive ? (void*) number : (void*) (- number));
+    result->d.i = (positive ? number : (- number));
 
     return result;
 }
 
-type* 
+TYPE* 
 mk_hex_number(const char* symbol, unsigned int length)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
     int number = 0;
     unsigned int i = 0;
         
@@ -105,19 +106,19 @@ mk_hex_number(const char* symbol, unsigned int length)
         }
     }
 
-    result->data = (void*) number;
+    result->d.i = number;
 
     return result;
 }
 
 int
-is_number(const type* number)
+is_number(const TYPE* number)
 {
     return number->type == NUMBER;
 }
 
 int
-is_number_equal(const type* left, const type* right)
+is_number_equal(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -126,11 +127,11 @@ is_number_equal(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_EQUAL: right must be a number");
 
-    return (int) left->data == (int) right->data;
+    return left->d.i == right->d.i;
 }
 
 int
-is_number_lt(const type* left, const type* right)
+is_number_lt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -139,11 +140,11 @@ is_number_lt(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_LT: right must be a number");
 
-    return (int) left->data < (int) right->data;
+    return left->d.i < right->d.i;
 }
 
 int
-is_number_gt(const type* left, const type* right)
+is_number_gt(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -152,11 +153,11 @@ is_number_gt(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_GT: right must be a number");
 
-    return (int) left->data > (int) right->data;
+    return left->d.i > right->d.i;
 }
 
 int
-is_number_lt_eq(const type* left, const type* right)
+is_number_lt_eq(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -165,11 +166,11 @@ is_number_lt_eq(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_LT_EQUAL: right must be a number");
 
-    return (int) left->data <= (int) right->data;
+    return left->d.i <= right->d.i;
 }
 
 int
-is_number_gt_eq(const type* left, const type* right)
+is_number_gt_eq(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -178,59 +179,59 @@ is_number_gt_eq(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_GT_EQUAL: right must be a number");
 
-    return (int) left->data >= (int) right->data;
+    return left->d.i >= (int) right->d.i;
 }
 
-type* 
-is_number_zero(const type* n)
+TYPE* 
+is_number_zero(const TYPE* n)
 {
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_ZERO: n must be a number");
-    return mk_boolean(((int) n->data) == 0);
+    return mk_boolean((n->d.i) == 0);
 }
 
-type* 
-is_number_positive(const type* n)
+TYPE* 
+is_number_positive(const TYPE* n)
 {
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_POSITIVE: n must be a number");
 
-    return mk_boolean(((int) n->data) > 0);
+    return mk_boolean(n->d.i > 0);
 }
 
-type* is_number_negative(const type* n)
+TYPE* is_number_negative(const TYPE* n)
 {
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_NEGATIVE: n must be a number");
 
-    return mk_boolean(((int) n->data) > 0);
+    return mk_boolean(n->d.i > 0);
 }
 
-type* 
-is_number_odd(const type* n)
+TYPE* 
+is_number_odd(const TYPE* n)
 {
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_ODD: n must be a number");
 
-    return mk_boolean((((int) n->data) % 2) == 1);
+    return mk_boolean((n->d.i % 2) == 1);
 }
 
-type* 
-is_number_even(const type* n)
+TYPE* 
+is_number_even(const TYPE* n)
 {
    assert_throw(is_number(n),
 		TYPE_ERROR,
 		"IS_NUMBER_EVEN: n must be a number");
 
-    return mk_boolean((((int) n->data) % 2) == 0);
+   return mk_boolean(((n->d.i) % 2) == 0);
 }
 
-type* 
-max_number(const type* left, const type* right)
+TYPE* 
+max_number(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -239,10 +240,10 @@ max_number(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "MAX_NUMBER: right must be a number");
 
-    return  (type*) (((int) left->data) > ((int) right->data) ? left : right);
+    return (TYPE*) (left->d.i > right->d.i ? left : right);
 }
 
-type* min_number(const type* left, const type* right)
+TYPE* min_number(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -251,13 +252,13 @@ type* min_number(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "MIN_NUMBER: right must be a number");
 
-    return  (type*) (((int) left->data) < ((int) right->data) ? left : right);
+    return  (TYPE*) (left->d.i < right->d.i ? left : right);
 }
 
-type* 
-add_number(const type* left, const type* right)
+TYPE* 
+add_number(const TYPE* left, const TYPE* right)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -266,15 +267,15 @@ add_number(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "ADD_NUMBER: right must be a number");
 
-    result->data = (void*) (((int) left->data) + ((int) right->data));
+    result->d.i = left->d.i + right->d.i;
     
     return result;
 }
 
-type* 
-mul_number(const type* left, const type* right)
+TYPE* 
+mul_number(const TYPE* left, const TYPE* right)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -283,15 +284,15 @@ mul_number(const type* left, const type* right)
 	   TYPE_ERROR,
 	   "MUL_NUMBER: right must be a number");
 
-    result->data = (void*) (((int) left->data) * ((int) right->data));
+    result->d.i = left->d.i * right->d.i;
     
     return result;
 }
 
-static type* 
-_sub_two_numbers(const type* left, const type* right)
+static TYPE* 
+_sub_two_numbers(const TYPE* left, const TYPE* right)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -300,19 +301,19 @@ _sub_two_numbers(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "SUB_NUMBER: right must be a number");
 
-    result->data = (void*) ((int) left->data - (int) right->data);
+    result->d.i = left->d.i - right->d.i;
     
     return result;
 }
 
-static type* 
-_sub_numbers(const type* number, const type* numbers)
+static TYPE* 
+_sub_numbers(const TYPE* number, const TYPE* numbers)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (is_nil(numbers))
     {
-        result = (type*) number;
+        result = (TYPE*) number;
     }
     else
     {
@@ -323,10 +324,10 @@ _sub_numbers(const type* number, const type* numbers)
     return result;
 }
 
-type* 
-sub_numbers(const type* numbers)
+TYPE* 
+sub_numbers(const TYPE* numbers)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     assert(!is_nil(numbers) && "SUB_NUMBERS: list of numbers can not be nil");
 
@@ -344,10 +345,10 @@ sub_numbers(const type* numbers)
     return result;
 }
 
-static type* 
-_div_two_numbers(const type* left, const type* right)
+static TYPE* 
+_div_two_numbers(const TYPE* left, const TYPE* right)
 {
-    type* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number();
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -356,19 +357,19 @@ _div_two_numbers(const type* left, const type* right)
 		 TYPE_ERROR,
 		 "DIV_NUMBER: right must be a number");
 
-    result->data = (void*) ((int) left->data / (int) right->data);
+    result->d.i = left->d.i / right->d.i;
     
     return result;
 }
 
-static type* 
-_div_numbers(const type* number, const type* numbers)
+static TYPE* 
+_div_numbers(const TYPE* number, const TYPE* numbers)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (is_nil(numbers))
     {
-        result = (type*) number;
+        result = (TYPE*) number;
     }
     else
     {
@@ -379,10 +380,10 @@ _div_numbers(const type* number, const type* numbers)
     return result;
 }
 
-type* 
-div_numbers(const type* numbers)
+TYPE* 
+div_numbers(const TYPE* numbers)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     assert(!is_nil(numbers) && "DIV_NUMBERS: list of numbers can not be nil");
 
@@ -401,8 +402,8 @@ div_numbers(const type* numbers)
 }
 
 
-type* 
-remainder_number(const type* left, const type* right)
+TYPE* 
+remainder_number(const TYPE* left, const TYPE* right)
 {
     assert_throw(is_number(left),
                  TYPE_ERROR, 
@@ -411,13 +412,12 @@ remainder_number(const type* left, const type* right)
                  TYPE_ERROR, 
                  "REMAINDER: right must be a number");
 
-    return mk_number_from_int(
-        (int)fmodf((float)((int)left->data), (float)((int)right->data)));
+    return mk_number_from_int((int) fmodf(left->d.i, right->d.i));
 }
 
 
-type* 
-number_to_string(const type* n)
+TYPE* 
+number_to_string(const TYPE* n)
 {
     int i;
     char digits[100];
@@ -429,7 +429,7 @@ number_to_string(const type* n)
                  TYPE_ERROR, 
                  "STRING_TO_NUMBER: n must be a string");    
 
-    number = (int)n->data;
+    number = n->d.i;
 
     if (number == 0)
     {
@@ -460,8 +460,8 @@ number_to_string(const type* n)
 }
 
 unsigned int 
-number_hash(const type* number)
+number_hash(const TYPE* number)
 {
     /* @todo fix better algorithm */
-    return (unsigned int) number->data;
+    return (unsigned int) number->d.i;
 }

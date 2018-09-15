@@ -5,11 +5,12 @@
 #include "error.h"
 #include "number.h"
 #include "char.h"
+#include "util.h"
 
-type* 
+TYPE* 
 mk_char(char c)
 {
-    type* result = mloc(sizeof(type));
+    TYPE* result = mloc(sizeof(TYPE));
 
     if (result == NULL)
     {
@@ -19,22 +20,22 @@ mk_char(char c)
 
     result->type = CHAR;
     
-    result->data = (void*) ((int) c);
+    result->d.i = c;
         
     return result;
 }
 
 int
-is_char(const type* sexp)
+is_char(const TYPE* sexp)
 {
     return sexp->type == CHAR;
 }
 
-type* 
-char_to_integer(const type* sexp)
+TYPE* 
+char_to_integer(const TYPE* sexp)
 {
     assert_throw(is_char(sexp),
                  TYPE_ERROR,
                  "CHAR_TO_INTEGER: argument must be a char");
-    return mk_number_from_int((int) sexp->data);
+    return mk_number_from_int(sexp->d.i);
 }

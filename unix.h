@@ -3,6 +3,6 @@
 
 #include "type.h"
 
-void nano_sleep(type* seconds, type* micro_seconds); 
+void nano_sleep(TYPE* seconds, TYPE* micro_seconds); 
 
 #endif

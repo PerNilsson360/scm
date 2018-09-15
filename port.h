@@ -3,20 +3,13 @@
 
 #include "type.h"
 
-struct PORT_DATA
-{ 
-    int read_port;
-    FILE* file;
-};
-typedef struct PORT_DATA  PORT_DATA;
-
-type* is_port(const type* obj);
-type* is_input_port(const type* obj);
-type* is_output_port(const type* obj);
-type* open_input_file(const type* filename);
-type* open_output_file(const type* filename);
-void close_input_port(const type* port);
-void close_output_port(const type* port);
+TYPE* is_port(const TYPE* obj);
+TYPE* is_input_port(const TYPE* obj);
+TYPE* is_output_port(const TYPE* obj);
+TYPE* open_input_file(const TYPE* filename);
+TYPE* open_output_file(const TYPE* filename);
+void close_input_port(const TYPE* port);
+void close_output_port(const TYPE* port);
 
 /* SRFI 6 */
 

@@ -8,9 +8,9 @@
 
 static 
 int 
-_it_bin_pred(const type* list,
-            const type* first,
-            int (pred) (const type* left, const type* right))
+_it_bin_pred(const TYPE* list,
+            const TYPE* first,
+            int (pred) (const TYPE* left, const TYPE* right))
 {
     int result;
 
@@ -30,11 +30,11 @@ _it_bin_pred(const type* list,
     return result;
 }
 
-type* 
-it_bin_pred(const type* list,
-            int (pred) (const type* left, const type* right))
+TYPE* 
+it_bin_pred(const TYPE* list,
+            int (pred) (const TYPE* left, const TYPE* right))
 {
-    type*  result = nil();
+    TYPE*  result = nil();
 
     if (is_nil(list))
     {
@@ -48,12 +48,12 @@ it_bin_pred(const type* list,
     return result;
 }
 
-type* 
-fold_right(type* (* f) (const type* left, const type* right), 
-           const type* list, 
-           type* identity)
+TYPE* 
+fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right), 
+           const TYPE* list, 
+           TYPE* identity)
 {
-    type* result = nil(); 
+    TYPE* result = nil(); 
 
     if (is_nil(list))
     {
@@ -67,10 +67,10 @@ fold_right(type* (* f) (const type* left, const type* right),
     return result;
 }
 
-type* 
-map1(type* (*f) (const type* arg), type* list)
+TYPE* 
+map1(TYPE* (*f) (const TYPE* arg), TYPE* list)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (!is_nil(list))
     {
@@ -80,12 +80,12 @@ map1(type* (*f) (const type* arg), type* list)
     return result;
 }
 
-static type* 
-_reverse_(const type* list, const type* result)
+static TYPE* 
+_reverse_(const TYPE* list, const TYPE* result)
 {
     if (is_nil(list))
     {
-        return (type*) result;
+        return (TYPE*) result;
     }
     else
     {
@@ -93,18 +93,18 @@ _reverse_(const type* list, const type* result)
     }
 }
 
-type* 
-reverse(const type* list)
+TYPE* 
+reverse(const TYPE* list)
 {
     return _reverse_(list, nil());
 }
 
-type* 
-append(const type* left, const type* right)
+TYPE* 
+append(const TYPE* left, const TYPE* right)
 {
     if (is_nil(left)) 
     {
-        return (type*) right;
+        return (TYPE*) right;
     }
     else
     { 
@@ -112,8 +112,8 @@ append(const type* left, const type* right)
     }
 }
 
-type*
-_unzip_(const type* list, const type* left, const type* right)
+TYPE*
+_unzip_(const TYPE* list, const TYPE* left, const TYPE* right)
 {
     if (is_nil(list))
     {
@@ -127,16 +127,16 @@ _unzip_(const type* list, const type* left, const type* right)
     }
 }
 
-type* 
-unzip(const type* list)
+TYPE* 
+unzip(const TYPE* list)
 {
     return _unzip_(list, nil(), nil());
 }
 
-type* 
-assq(const type* obj, const type* list)
+TYPE* 
+assq(const TYPE* obj, const TYPE* list)
 {
-    type* result = nil();
+    TYPE* result = nil();
 
     if (!is_true(is_list(list)))
     {
@@ -145,7 +145,7 @@ assq(const type* obj, const type* list)
 
     if (!is_nil(list))
     {
-        type* a = car(list);
+        TYPE* a = car(list);
         
         if (!is_true(is_list(a)))
         {

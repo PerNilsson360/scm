@@ -2,10 +2,10 @@
 #define _ENV_H_
 #include "type.h"
 
-type* mk_env(type* data);
-type* mk_first_env_frame();
+TYPE* mk_env(TYPE* data);
+TYPE* mk_first_env_frame();
 
-int is_env(const type* sexp);
+int is_env(const TYPE* sexp);
 
 /**
  * Looks up var in the environment env.
@@ -16,7 +16,7 @@ int is_env(const type* sexp);
  * @ensures lookup_variable_value(var, define_variable(var, val, _)) == val &
  *          lookup_variable_value(var, empty_env) throws exception
  */
-type* lookup_variable_value(type* var, type* env);
+TYPE* lookup_variable_value(TYPE* var, TYPE* env);
 
 
 /**
@@ -28,7 +28,7 @@ type* lookup_variable_value(type* var, type* env);
                       forall var, val in vars, vals. 
  *                           lookup_variable_value(var, env) = val
  */
-type* extend_environment(type* vars, type* vals, type* env);
+TYPE* extend_environment(TYPE* vars, TYPE* vals, TYPE* env);
 
 /**
  * Adds the binding var, val to the environment var has to be previosly defined
@@ -42,16 +42,16 @@ type* extend_environment(type* vars, type* vals, type* env);
  *                                                  val, 
  *                                                  empty_env)) throws exception
  */
-void set_variable_value(type* var, type* val, type* env);
+void set_variable_value(TYPE* var, TYPE* val, TYPE* env);
 
 
  /**
- * Adds the binding va, val to the environment
+ * Adds the binding var, val to the environment
  *
  * @requires var is a symbol, env is a list
  *
  * @ensure lookup_variable_value(var, define_variable(var, val, env)) == val
  */
-void define_variable(type* var, type* val, type* env);
+void define_variable(TYPE* var, TYPE* val, TYPE* env);
 
 #endif

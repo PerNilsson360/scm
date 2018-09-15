@@ -15,27 +15,27 @@
 
 /* (blob? obj ) procedure */
 /* Returns #t iff obj is a blob. */
-int is_blob(const type* sexp);
+int is_blob(const TYPE* sexp);
 
 /* (make-blob k) procedure */
 /* Returns a newly allocated blob of k bytes. The initial */
 /* contents of each element is unspecified. */
-type* mk_blob(const type* k);
+TYPE* mk_blob(const TYPE* k);
 
 /* (blob-length blob) procedure */
 /* Returns the length of blob in bytes as an exact integer. */
-type* blob_length(const type* blob);
+TYPE* blob_length(const TYPE* blob);
 
 /* (blob-u8-ref blob k) procedure */
 /* Returns the kth byte of blob as an exact integer in the */
 /* range [0::255]. */
-type* blob_u8_ref(const type* blob, const type* k);
+TYPE* blob_u8_ref(const TYPE* blob, const TYPE* k);
 
 /* (blob-u8-set! blob k u8 ) procedure */
 /* Stores u8 as the kth byte of blob. u8 must be an exact */
 /* integer in the range [0::255]. The value returned by */
 /* blob-u8-set! is unspecifed. */
-void blob_u8_set(const type* blob, const type* k, const type* u8);
+void blob_u8_set(const TYPE* blob, const TYPE* k, const TYPE* u8);
 
 /* (blob-copy blob) procedure */
 /* Returns a newly allocated blob containing the same bytes */
@@ -63,6 +63,6 @@ void blob_u8_set(const type* blob, const type* k, const type* u8);
 /* is unspecified. */
 
 
-void display_blob(const type* blob, FILE* file);
+void display_blob(const TYPE* blob, FILE* file);
 
 #endif
