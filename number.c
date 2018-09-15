@@ -11,6 +11,7 @@
 #include "error.h"
 #include "common.h"
 #include "number.h"
+#include "util.h"
 
 static type* 
 mk_unasigned_number()

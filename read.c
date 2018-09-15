@@ -112,10 +112,38 @@ print_token(TOKEN* token)
     };
 }
 
+static TOKEN* next_token(FILE* file);
+static int paren_depth;
+
+static
 void
-parse_error(const char* error)
+skip_until_paren_depth_zero(FILE* file)
 {
-    assert(FALSE && "Handle this in a better way");
+    while (paren_depth > 0)
+    {
+	TOKEN* token = next_token(file);
+	if (token == NULL)
+	{
+	    break;
+	}
+	
+        if (token->type == '(')
+        {
+            paren_depth++;
+        }
+        else if (token->type == ')')
+        {
+            paren_depth--;
+        }
+    } 
+}
+
+void
+parse_error(FILE* file, const char* error)
+{
+    skip_until_paren_depth_zero(file);
+    pushed_token_ptr = NULL;
+    throw_error(PARSE_ERROR, error);
 }
 
 void
@@ -358,7 +386,7 @@ string(FILE* file)
 	    }
 	    else 
 	    {
-		parse_error("STRING: wrong escapes.");
+		parse_error(file, "STRING: wrong escapes.");
 	    }
 	}
 	else
@@ -439,12 +467,13 @@ next_token(FILE* file)
         }
 	else if (cc == '(')
         {
+	    paren_depth++;
             token.type = T_INITIAL_VECTOR;
             result = &token;
         }
 	else
 	{
-	    parse_error("NEXT_TOKEN: bad # sequence");
+	    parse_error(file, "NEXT_TOKEN: bad # sequence");
 	}
     }
     /* 
@@ -547,7 +576,19 @@ next_token(FILE* file)
     {
         switch (c)
         {
-        case '(' : case ')' : case '[' : case  ']' :  case '\'' : case '`' :
+        case '(' :
+	    paren_depth++;
+	    token.type = c;
+            token.data[0] = '\0';
+            result = &token;
+            break;
+	case ')' :
+	    paren_depth--;
+	    token.type = c;
+            token.data[0] = '\0';
+            result = &token;
+            break;
+	case '[' : case  ']' :  case '\'' : case '`' :
             token.type = c;
             token.data[0] = '\0';
             result = &token;
@@ -571,8 +612,15 @@ next_token(FILE* file)
             break;
         }
         default:
-            assert(0 && "Need to handle this in a better way");
+	{
+	    char buff[1024];
+	    snprintf(buff,
+		     1024,
+		     "NEXT_TOKEN: unknown char: %c",
+		     c);
+	    parse_error(file, buff);
             break;
+	}
         }
     }
 
@@ -618,7 +666,7 @@ abbreviation(FILE* file)
 	
 	if (d == NULL)
 	{
-	    parse_error("ABBREVIATION: quoted datum is NULL.");
+	    parse_error(file, "ABBREVIATION: quoted datum is NULL.");
 	}
 	else if (is_empty_pair(d))
 	{
@@ -635,7 +683,7 @@ abbreviation(FILE* file)
 	
 	if (d == NULL)
 	{
-	    parse_error("ABBREVIATION: quasiquoted datum is NULL.");
+	    parse_error(file, "ABBREVIATION: quasiquoted datum is NULL.");
 	}
 
 	result = cons(mk_symbol("quasiquote"), d);
@@ -659,7 +707,7 @@ abbreviation(FILE* file)
 
 	if (d == NULL)
 	{
-	    parse_error("ABBREVIATION: unquote datum is NULL.");
+	    parse_error(file, "ABBREVIATION: unquote datum is NULL.");
 	}
 	
 	result = cons(mk_symbol(unquote), cons(d, nil()));
@@ -684,7 +732,7 @@ datum_plus(FILE* file)
     
     if (token == NULL)
     {
-        parse_error("DATUM_PLUS: token null");
+        parse_error(file, "DATUM_PLUS: token null");
     }
 
     if (token->type == ')')
@@ -697,11 +745,11 @@ datum_plus(FILE* file)
         result = datum(file);
 	if (result == NULL)
 	{
-	    parse_error("DATUM_PLUS: . follows by NULL");
+	    parse_error(file, "DATUM_PLUS: . follows by NULL");
 	}
 	else if (is_nil(result))
 	{
-	    parse_error("DATUM_PLUS: . follows by '()");
+	    parse_error(file, "DATUM_PLUS: . follows by '()");
 	}
     }
     else
@@ -711,7 +759,7 @@ datum_plus(FILE* file)
 
         if (d == NULL)
         {
-	    parse_error("DATUM_PLUS: datum null");
+	    parse_error(file, "DATUM_PLUS: datum null");
         }
 	result = cons(d, datum_plus(file));
 
@@ -745,7 +793,7 @@ list(FILE* file)
 	token = next_token(file);
 	if (token->type != ')')
 	{
-	    parse_error("LIST: can not find )");
+	    parse_error(file, "LIST: can not find )");
 	}
     }
     else
@@ -794,7 +842,7 @@ parse_vector(FILE* file)
 	token = next_token(file);
 	if (token->type != ')')
 	{
-	    parse_error("VECTOR: missing )");
+	    parse_error(file, "VECTOR: missing )");
 	}
     }
     else
@@ -874,12 +922,23 @@ datum(FILE* file)
     /* 
        datum --> simple-datum  | compound-datum 
     */
-    type* result = simple_datum(file);
-
-    if (result == NULL)
+    type* result;
+    
+    do
     {
-        result = compound_datum(file);
-    }
+	result = simple_datum(file);
+	
+	if (result == NULL)
+	{
+	    result = compound_datum(file);
+	}
+
+	/* failed to read a datum clean up */
+	if (result == NULL)
+	{
+	    pushed_token_ptr = NULL;
+	}
+    } while (result == NULL);
         
     return result;
 }
@@ -888,6 +947,7 @@ static
 type* 
 read_from_file(FILE* file)
 {
+    paren_depth = 0;
     return datum(file);
 }
 

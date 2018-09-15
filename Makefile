@@ -19,9 +19,9 @@ main : $(OBJECTS) $(UT_OBJ)
 test : test.c
 	$(CC) $(CFLAGS) test.c -o test -lX11
 clean :
+	rm *.o
 	rm scheme
 	rm TAGS
-	rm *.o
 	rm tst/*~
 	rm *~
 

@@ -119,7 +119,7 @@ main()
         }
         
         stack_init();
-        sexp = read();
+        sexp = rread();
         /* display_debug(sexp); */
         display(eval(sexp, env));
 
