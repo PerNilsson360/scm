@@ -23,6 +23,7 @@
 #include "graphics.h"
 #include "hash_table.h"
 #include "primitive_procedure.h"
+#include "read.h"
 
 int _debug_ = 0;
 
@@ -722,11 +723,11 @@ _read_procedure_(const TYPE* arguments, const TYPE* env)
     
     if (length(arguments) == 0)
     {
-        return read();
+        return rread();
     }
     else
     {
-        return read_from_port(car(arguments));
+        return rread_from_port(car(arguments));
     }
 }
 
@@ -745,7 +746,8 @@ _read_char_procedure_(const TYPE* arguments, const TYPE* env)
     }
     else
     {
-        return read_char_from_port(car(arguments));
+	/* @todo */
+        return nil();//read_char_from_port(car(arguments));
     }
 }
 
@@ -764,7 +766,8 @@ _peek_char_procedure_(const TYPE* arguments, const TYPE* env)
     }
     else
     {
-        return peek_char_from_port(car(arguments));
+	/* @todo */
+        return nil();/*peek_char_from_port(car(arguments));*/
     }
 }
 

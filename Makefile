@@ -11,10 +11,10 @@ INC = -I/usr/local/include
 
 main : $(OBJECTS) $(UT_OBJ)
 	$(CC) $(CFLAGS) $(OBJECTS) scheme.c -o scheme $(LIBS)
-#	$(CC) $(CFLAGS) $(OBJECTS) $(UT_OBJ) ut.c -o ut
+	$(CC) $(CFLAGS) $(OBJECTS) $(UT_OBJ) ut.c -o ut $(LIBS)
 #	ut
 
-%.o : %.c %.h makefilen
+%.o : %.c %.h Makefilen
 	$(CC) $(CFLAGS) -c $<
 test : test.c
 	$(CC) $(CFLAGS) test.c -o test -lX11

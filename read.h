@@ -3,6 +3,7 @@
 
 #include "type.h"
 
+TYPE* rread_from_port(const TYPE* port);
 TYPE* rread();
 
 #endif

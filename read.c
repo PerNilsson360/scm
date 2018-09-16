@@ -160,10 +160,19 @@ skip_atmospheres(FILE* file)
     else if (c == ';')
     {
         /* comment --> all subsequent characters up to a line break */
-        while ((c = getc(file) != ('\n' || EOF)))
+        do 
         {
-            ;
-        }
+	    c = getc(file);
+	    if (c == '\n')
+	    {
+		break;
+	    }
+	    else if (c == EOF)
+	    {
+		ungetc(c, file); /* need generate a EOF token */
+		break;
+	    }
+        } while (TRUE);
         
         skip_atmospheres(file);
     } else {
@@ -215,8 +224,7 @@ initial(char c)
         switch (c)
         {
         case '!': case '$': case '%': case '&': case '*': case '/': case ':': 
-        case '<': case '=': case '>': case '?': case '^': case '_': case '-': 
-        case '~':
+        case '<': case '=': case '>': case '?': case '^': case '_': case '~':
             result = TRUE;
             break;
         }
@@ -434,7 +442,9 @@ next_token(FILE* file)
 
     if (c == EOF)
     {
-    /* empty */
+	token.type = EOF;
+	token.data[0] = '\0';
+	result = &token;
     }
     /* 
        identifier --> initial | subsequent* | peculiar-identifier 
@@ -907,6 +917,9 @@ simple_datum(FILE* file)
         case T_IDENTIFIER:
             result = token->scm_type;
             break;
+	case EOF:
+	    result = mk_eof();
+	    break;
         default:
             unget_token(token);
         }
@@ -924,22 +937,13 @@ datum(FILE* file)
     */
     TYPE* result;
     
-    do
-    {
-	result = simple_datum(file);
+    result = simple_datum(file);
 	
-	if (result == NULL)
-	{
-	    result = compound_datum(file);
-	}
+    if (result == NULL)
+    {
+	result = compound_datum(file);
+    }
 
-	/* failed to read a datum clean up */
-	if (result == NULL)
-	{
-	    pushed_token_ptr = NULL;
-	}
-    } while (result == NULL);
-        
     return result;
 }
 
@@ -948,12 +952,24 @@ TYPE*
 read_from_file(FILE* file)
 {
     paren_depth = 0;
-    return datum(file);
+    TYPE* result;
+    do
+    {
+	result = datum(file);
+
+	if (result == NULL)
+	{
+	    /* failed to read a datum clean up */
+	    pushed_token_ptr = NULL;
+	}
+	
+    } while (result == NULL);
+    
+    return result;
 }
 
-static
 TYPE* 
-read_from_port(const TYPE* port)
+rread_from_port(const TYPE* port)
 {
     assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,

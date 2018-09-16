@@ -269,3 +269,25 @@ is_true(const TYPE* sexp)
              sexp->type == BOOLEAN && 
              sexp->d.i == FALSE);
 }
+
+int
+is_eof_object(const TYPE* sexp)
+{
+    return !is_nil(sexp) && sexp->type == ENDOFFILE;
+}
+
+TYPE*
+mk_eof()
+{
+    TYPE* result = mloc(sizeof(TYPE));
+    
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_EOF: could not allocate memory for type");
+        exit(1);
+    }
+
+    result->type = ENDOFFILE;
+
+    return result;
+}

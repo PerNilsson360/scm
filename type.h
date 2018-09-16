@@ -148,4 +148,9 @@ TYPE* mk_boolean(int t);
 int is_boolean(const TYPE* sexp);
 TYPE* not(const TYPE* sexp);
 int is_true(const TYPE* sexp);
+
+/* EOF */
+int is_eof_object(const TYPE* sexp);
+TYPE* mk_eof();
+
 #endif

@@ -1164,7 +1164,7 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 TYPE*
 eval(TYPE* exp, TYPE* env)
 {
-    reg_exp = cons(mk_symbol("--internal-translate--"),
+    reg_exp = cons(mk_symbol("__internal-translate__"),
                    cons(mk_quoted(exp), nil()));
     reg_env = env;
     hairy_eval();

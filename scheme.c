@@ -24,14 +24,14 @@ populate_initial_environment(TYPE* env)
 {
     TYPE* sexp;
     const char* prelude = 
-        "/home/per/prg/c++/scheme/prelude_no_translation.scm";
+        "/home/per/prg/git/scm/prelude_no_translation.scm";
 
     TYPE* port = open_input_file(mk_string_with_length(prelude, 
                                                        strlen(prelude)));
 
     do
     {
-        sexp = read_from_port(port);
+        sexp = rread_from_port(port);
         
         if (!is_eof_object(sexp))
         {
@@ -49,12 +49,12 @@ populate_initial_environment(TYPE* env)
     }
     while (!is_eof_object(sexp));
 
-    prelude = "/home/per/prg/c++/scheme/prelude.scm";
+    prelude = "/home/per/prg/git/scm/prelude.scm";
     port = open_input_file(mk_string_with_length(prelude, strlen(prelude)));
 
     do
     {
-        sexp = read_from_port(port);
+        sexp = rread_from_port(port);
         
         if (!is_eof_object(sexp))
         {
@@ -77,7 +77,6 @@ int
 main()
 {   
     TYPE* env;
-    const char* e = "environment";
     TYPE* environment_symbol;
     TYPE* sexp;
 
@@ -85,12 +84,12 @@ main()
     
     init_symbol_table();
     init_primitive_procedures();
-
-    environment_symbol = mk_symbol(e);
     
-    env = extend_environment(nil(), nil(), mk_env(nil())); 
-
+    env = extend_environment(nil(), nil(), mk_env(nil()));
+    
+    environment_symbol = mk_symbol("environment");
     define_variable(environment_symbol, env, env);
+    
     /* @todo fix reading of prelude in a more robust way */
     populate_initial_environment(env);
 

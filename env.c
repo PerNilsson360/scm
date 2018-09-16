@@ -40,7 +40,6 @@ is_env(const TYPE* sexp)
 int
 is_empty_env(const TYPE* env)
 {
-    assert(is_env(env));
     return is_nil(env->d.t);
 }
 
@@ -94,17 +93,17 @@ lookup_scan(TYPE* var, TYPE* vars, TYPE* vals, TYPE** result)
 {
     int rc = FALSE;
 
-    while(!is_nil(vars))
+    while (!is_nil(vars))
     {
-        if (is_eq(var, car(vars)))
+        if (is_eq(var, vars->d.p->car))
         {
-            *result = car(vals);
+            *result = vals->d.p->car;
             rc = TRUE;
             break;
         }
 
-        vars = cdr(vars);
-        vals = cdr(vals);
+        vars = vars->d.p->cdr;
+        vals = vals->d.p->cdr;
     }
 
     return rc;
@@ -145,24 +144,12 @@ static
 TYPE*
 get_var_from_frame(unsigned int var_index, int is_inproper_list, TYPE* vals)
 {
-    TYPE* result;
-    if (var_index == 0)
+    for (;var_index != 0; var_index--)
     {
-        if (is_inproper_list) 
-        {
-            result = vals;
-        }
-        else
-        {
-            result = car(vals);
-        }
+	vals = vals->d.p->cdr;
     }
-    else
-    {
-        result = get_var_from_frame(--var_index, is_inproper_list, cdr(vals));
-    }
-
-    return result;
+    
+    return is_inproper_list ? vals : vals->d.p->car;
 }
 
 static 
@@ -174,20 +161,15 @@ get_var(unsigned int frame_index,
 {
     TYPE* result;
 
-    if (frame_index == 0) 
+    for (;frame_index != 0; frame_index--)
     {
-        TYPE* f = first_frame(env);
-        result = get_var_from_frame(var_index, 
-                                    is_inproper_list, 
-                                    frame_vals(f));
+    	env = env->d.t->d.p->cdr;
     }
-    else
-    {
-        result = get_var(--frame_index, 
-                         var_index, 
-                         is_inproper_list,
-                         enclosing_environment(env));
-    }
+
+    TYPE* f = first_frame(env);
+    result = get_var_from_frame(var_index,
+    				is_inproper_list,
+    				frame_vals(f));
     
     return result;
 }
