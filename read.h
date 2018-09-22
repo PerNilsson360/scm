@@ -3,7 +3,7 @@
 
 #include "type.h"
 
-TYPE* rread_from_port(const TYPE* port);
-TYPE* rread();
+TYPE* read_from_port(const TYPE* port);
+TYPE* scm_read();
 
 #endif

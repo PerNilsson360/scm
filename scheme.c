@@ -31,12 +31,12 @@ populate_initial_environment(TYPE* env)
 
     do
     {
-        sexp = rread_from_port(port);
+        sexp = read_from_port(port);
         
         if (!is_eof_object(sexp))
         {
             stack_init();
-            display(eval_no_translation(sexp, env));
+            eval_no_translation(sexp, env);
 
             if (fflush(NULL) == -1)
             {
@@ -54,12 +54,12 @@ populate_initial_environment(TYPE* env)
 
     do
     {
-        sexp = rread_from_port(port);
+        sexp = read_from_port(port);
         
         if (!is_eof_object(sexp))
         {
             stack_init();
-            display(eval(sexp, env));
+            eval(sexp, env);
 
             if (fflush(NULL) == -1)
             {
@@ -119,7 +119,7 @@ main()
         }
         
         stack_init();
-        sexp = rread();
+        sexp = scm_read();
         /* display_debug(sexp); */
         display(eval(sexp, env));
 

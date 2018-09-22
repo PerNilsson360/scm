@@ -969,7 +969,7 @@ read_from_file(FILE* file)
 }
 
 TYPE* 
-rread_from_port(const TYPE* port)
+read_from_port(const TYPE* port)
 {
     assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,
@@ -979,7 +979,7 @@ rread_from_port(const TYPE* port)
 }
 
 TYPE* 
-rread()
+scm_read()
 {
     return read_from_file(stdin);
 }

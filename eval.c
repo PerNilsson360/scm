@@ -265,83 +265,6 @@ rest_operands(TYPE* operands)
     return cdr(operands);
 }
 
-/* Derived expressions */
-int
-is_cond(TYPE* exp)
-{
-    return is_tagged_list(exp, _cond_keyword_symbol_);
-}
-
-TYPE*
-cond_clauses(TYPE* exp)
-{
-    return cdr(exp);
-}
-
-TYPE*
-cond_predicate(TYPE* clause)
-{
-    return car(clause);
-}
-
-TYPE*
-cond_actions(TYPE* clause)
-{
-    return cdr(clause);
-}
-
-int
-is_cond_else_clause(TYPE* clause)
-{
-    return is_eq(cond_predicate(clause), _else_keyword_symbol_); 
-}
-
-TYPE*
-expand_clauses(TYPE* clauses)
-{
-    TYPE* result;
-    TYPE* first;
-    TYPE* rest;
-
-    if (is_nil(clauses))
-    {
-        result = mk_boolean(FALSE);
-    }
-    else
-    {
-        first = car(clauses);
-        rest = cdr(clauses);
-
-        if (is_cond_else_clause(first))
-        {
-            if (is_nil(rest))
-            {
-                result = sequence_to_exp(cond_actions(first));
-            }
-            else
-            {
-                result = nil(); /* dummy to silence compiler */
-                throw_error(EVAL_ERROR, 
-                            "EXPAND_CLAUSES: else is not last in cond.");
-            }
-        }
-        else
-        {
-            result = mk_if(cond_predicate(first),
-                           sequence_to_exp(cond_actions(first)),
-                           expand_clauses(rest));
-        }
-    }
-
-    return result;
-}
-
-TYPE*
-cond_to_if(TYPE* exp)
-{
-    return expand_clauses(cond_clauses(exp));
-}
-
 int
 is_match(const TYPE* exp)
 {
@@ -592,7 +515,6 @@ eval_dispatch:
     else if (is_if(reg_exp)){goto ev_if;}
     else if (is_lambda(reg_exp)){goto ev_lambda;}
     else if (is_begin(reg_exp)){goto ev_begin;}
-    else if (is_cond(reg_exp)){goto ev_cond;}
     else if (is_match(reg_exp)){goto ev_match;}
     else if (is_delay(reg_exp)){goto ev_delay;}
     else if (is_stream_cons(reg_exp)){goto ev_stream_cons;}
@@ -621,9 +543,6 @@ ev_begin:
     reg_unev = begin_actions(reg_exp);
     save(reg_cont);
     goto ev_sequence;
-ev_cond:
-    reg_exp = cond_to_if(reg_exp);
-    goto eval_dispatch;
 ev_match:
     save(reg_exp);
     save(reg_cont);
@@ -838,7 +757,6 @@ ev_definition_1:
     restore(&reg_env);
     restore(&reg_unev);
     define_variable(reg_unev, reg_val, reg_env);
-    reg_val = mk_none();
     goto *reg_cont;
     /* Apply */
 apply_dispatch:

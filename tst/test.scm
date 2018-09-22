@@ -571,10 +571,47 @@
 
 (define (inner-def->let body defines)
   (if (null? body)
-      
-
 
 (define (foo)
   (let ((a (lambda (x) (display x)))
 	(b (lambda (y) (+ y 1))))
     (a (b 1))))
+
+;; translating cond expressions to if expressions
+(define (mk-if predicate consequent alternative)
+  (cons 'if
+	(cons (predicate
+	       (cons consequent
+		     (cons alternative '()))))))
+
+(define (mk-begin exp) (cons 'begin exp))
+(define (last-exp? exp) (null? (cdr exp)))
+(define (first-exp exp) (car exp))
+
+(define (sequence->exp exp)
+  (if (null? exp)
+      '()
+      (if (last-exp? exp)
+	  (first-exp exp)
+	  (mk-begin exp))))
+
+(define (cond? exp) (tagged-list? exp 'cond))
+(define (cond-clauses exp) (cdr exp))
+(define (cond-predicate clause) (car clause))
+(define (cond-actions clause) (cdr clause))
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
+(define (expand-clauses exp)
+  (if (null? exp)
+      #f
+      (if (cond-else-clause? (car exp))
+	  (if (null? (cdr exp))
+	      (sequence->exp (cond-actions (car exp)))
+	      (error "COND: else is not last in cond."))
+	  (mk-if (cond-predicate (car exp))
+		 (sequence->exp (cond-actions (car exp)))
+		 (expand-clauses (cdr exp))))))
+(define (cond->if exp) (expand-clauses (cond-clauses exp)))
+
+
+  

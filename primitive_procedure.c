@@ -723,11 +723,11 @@ _read_procedure_(const TYPE* arguments, const TYPE* env)
     
     if (length(arguments) == 0)
     {
-        return rread();
+        return scm_read();
     }
     else
     {
-        return rread_from_port(car(arguments));
+        return read_from_port(car(arguments));
     }
 }
 
