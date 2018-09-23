@@ -31,6 +31,19 @@ is_char(const TYPE* sexp)
     return sexp->type == CHAR;
 }
 
+int
+is_char_equal(const TYPE* left, const TYPE* right)
+{
+    assert_throw(is_char(left),
+		 TYPE_ERROR,
+		 "IS_CHAR_EQUAL: left must be a char");
+    assert_throw(is_char(right),
+		 TYPE_ERROR,
+		 "IS_CHAR_EQUAL: right must be a char");
+
+    return left->d.i == right->d.i;
+}
+
 TYPE* 
 char_to_integer(const TYPE* sexp)
 {

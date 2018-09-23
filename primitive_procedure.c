@@ -746,8 +746,7 @@ _read_char_procedure_(const TYPE* arguments, const TYPE* env)
     }
     else
     {
-	/* @todo */
-        return nil();//read_char_from_port(car(arguments));
+        return read_char_from_port(car(arguments));
     }
 }
 
@@ -766,8 +765,7 @@ _peek_char_procedure_(const TYPE* arguments, const TYPE* env)
     }
     else
     {
-	/* @todo */
-        return nil();/*peek_char_from_port(car(arguments));*/
+        return peek_char_from_port(car(arguments));
     }
 }
 

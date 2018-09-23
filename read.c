@@ -969,6 +969,12 @@ read_from_file(FILE* file)
 }
 
 TYPE* 
+scm_read()
+{
+    return read_from_file(stdin);
+}
+
+TYPE* 
 read_from_port(const TYPE* port)
 {
     assert_throw(is_true(is_input_port(port)),
@@ -978,8 +984,41 @@ read_from_port(const TYPE* port)
     return read_from_file(port->d.po->file);
 }
 
-TYPE* 
-scm_read()
+TYPE*
+_read_char_from_port(FILE* file, char* c)
 {
-    return read_from_file(stdin);
+    TYPE* result;
+    
+    *c = getc(file);
+    
+    if (*c == EOF)
+    {
+	result = mk_eof();
+    }
+    else
+    {
+	result = mk_char(*c);
+    }
+
+    return result;
+}
+
+TYPE*
+read_char_from_port(const TYPE* port)
+{
+    char c;
+    FILE* file = port->d.po->file;
+    
+    return _read_char_from_port(file, &c);
+}
+
+TYPE*
+peek_char_from_port(const TYPE* port)
+{
+    char c;
+    FILE* file = port->d.po->file;
+    TYPE* result =  _read_char_from_port(file, &c);
+    ungetc(c, file);
+    
+    return result;
 }

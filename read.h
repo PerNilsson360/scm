@@ -3,7 +3,8 @@
 
 #include "type.h"
 
-TYPE* read_from_port(const TYPE* port);
 TYPE* scm_read();
-
+TYPE* read_from_port(const TYPE* port);
+TYPE* read_char_from_port(const TYPE* port);
+TYPE* peek_char_from_port(const TYPE* port);
 #endif

@@ -3,13 +3,14 @@
 
 #include <setjmp.h>
 
-#define NO_ERROR          0
-#define PARSE_ERROR       1
-#define EVAL_ERROR        2
-#define APPLY_ERROR       3
-#define TYPE_ERROR        4
-#define CONSTRAINT_ERROR  5
-#define OS_ERROR          6
+#define SETJMP_INIT       0
+#define NO_ERROR          1
+#define PARSE_ERROR       2
+#define EVAL_ERROR        3
+#define APPLY_ERROR       4
+#define TYPE_ERROR        5
+#define CONSTRAINT_ERROR  6
+#define OS_ERROR          7
 #define ERROR_INFO_LENGTH 512
 
 jmp_buf __c_env__;

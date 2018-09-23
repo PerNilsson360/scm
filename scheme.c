@@ -17,17 +17,29 @@
 #include "primitive_procedure.h"
 #include "stack.h"
 #include "read.h"
+#include "char.h"
 
 static 
 void
-populate_initial_environment(TYPE* env)
+populate_initial_environment(int argc, char** argv, TYPE* env)
 {
     TYPE* sexp;
+    TYPE* port;
     const char* prelude = 
         "/home/per/prg/git/scm/prelude_no_translation.scm";
 
-    TYPE* port = open_input_file(mk_string_with_length(prelude, 
-                                                       strlen(prelude)));
+    TYPE* argv_val = nil();
+
+    for (int i = argc - 1; i >= 0; i--)
+    {
+	TYPE* val = mk_string_with_length(argv[i], strlen(argv[i]));
+	argv_val = cons(val, argv_val);
+    }
+
+    define_variable(mk_symbol("argv"), argv_val, env);
+    
+    port = open_input_file(mk_string_with_length(prelude, 
+						 strlen(prelude)));
 
     do
     {
@@ -37,20 +49,15 @@ populate_initial_environment(TYPE* env)
         {
             stack_init();
             eval_no_translation(sexp, env);
-
-            if (fflush(NULL) == -1)
-            {
-                fprintf(stderr, 
-                        "POPULATE_INITIAL_ENVIRONMENT: "
-                        "could not flush buffers.\n");
-                exit(1);
-            }
         }        
     }
     while (!is_eof_object(sexp));
 
+    close_input_port(port);
+    
     prelude = "/home/per/prg/git/scm/prelude.scm";
-    port = open_input_file(mk_string_with_length(prelude, strlen(prelude)));
+    port = open_input_file(mk_string_with_length(prelude,
+						 strlen(prelude)));
 
     do
     {
@@ -60,41 +67,96 @@ populate_initial_environment(TYPE* env)
         {
             stack_init();
             eval(sexp, env);
-
-            if (fflush(NULL) == -1)
-            {
-                fprintf(stderr,
-                        "POPULATE_INITIAL_ENVIRONMENT: "
-                        "could not flush buffers.\n");
-                exit(1);
-            }
         }
     }
     while (!is_eof_object(sexp));
+
+    close_input_port(port);
 }
 
+void
+interactive(TYPE* env)
+{
+    TYPE* sexp;
+	
+    while (TRUE)
+    {
+        fprintf(stdout, ">");
+
+        if (fflush(NULL) == -1)
+        {
+            fprintf(stderr, "INTERACTIVE: could not flush buffers.\n");
+            exit(1);
+        }
+        
+        stack_init();
+        sexp = scm_read();
+        /* display_debug(sexp); */
+        display(eval(sexp, env));
+    }
+}
+
+void
+script_mode(int argc, char** argv, TYPE* env)
+{
+    TYPE* sexp;
+    const char* file_name = argv[1];
+    TYPE* port = open_input_file(mk_string_with_length(file_name,
+						       strlen(file_name)));
+
+    TYPE* hash = mk_char('#');
+    TYPE* newline = mk_char('\n');
+    TYPE* c = peek_char_from_port(port);
+    
+    /* if the first line has # we assume it is a "#!/..." line */
+    if (is_char_equal(c, hash))
+    {
+	do
+	{
+	    c = read_char_from_port(port);
+	}
+	while (!is_eof_object(c) && !is_char_equal(c, newline));
+    }
+    
+    do
+    {
+        stack_init();
+        sexp = read_from_port(port);
+	if (is_eof_object(sexp))
+	{
+	    break;
+	}
+        /* display_debug(sexp); */
+        eval(sexp, env);
+    }
+    while(TRUE);
+}
+    
 int
-main()
+main(int argc, char** argv)
 {   
     TYPE* env;
     TYPE* environment_symbol;
-    TYPE* sexp;
-
+    int script_has_run = FALSE;
     GC_INIT();
     
     init_symbol_table();
     init_primitive_procedures();
     
     env = extend_environment(nil(), nil(), mk_env(nil()));
-    
     environment_symbol = mk_symbol("environment");
     define_variable(environment_symbol, env, env);
     
     /* @todo fix reading of prelude in a more robust way */
-    populate_initial_environment(env);
+    populate_initial_environment(argc, argv, env);
 
-    switch(setjmp(__c_env__))
+    int status = setjmp(__c_env__);
+    
+    switch(status)
     {
+    case SETJMP_INIT:
+	/* first time in setjmp */
+	break;
     case NO_ERROR:
     case PARSE_ERROR:
     case EVAL_ERROR:
@@ -108,27 +170,20 @@ main()
         assert(FALSE && "CATCH_ERROR: not an implemented error");
     }
 
-    while (TRUE)
+    if (argc < 2)
     {
-        fprintf(stdout, ">");
-
-        if (fflush(NULL) == -1)
-        {
-            fprintf(stderr, "MAIN: could not flush buffers.\n");
-            exit(1);
-        }
-        
-        stack_init();
-        sexp = scm_read();
-        /* display_debug(sexp); */
-        display(eval(sexp, env));
-
-        if (fflush(NULL) == -1)
-        {
-            fprintf(stderr, "MAIN: could not flush buffers.\n");
-            exit(1);
-        }
+	interactive(env);
     }
-
+    else
+    {
+	if (script_has_run)
+	{
+	    fprintf(stderr, "MAIN: error in script\n");
+	    return 1;
+	}
+	script_has_run = TRUE;
+	script_mode(argc, argv, env);
+    }
+    
     return 0;
 }
