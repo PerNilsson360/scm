@@ -24,7 +24,8 @@ TYPE* string_ci_gt_eq(const TYPE* left, const TYPE* right);
 TYPE* substring(const TYPE* sexp, const TYPE* start, const TYPE* end);
 TYPE* string_append(const TYPE* left, const TYPE* right);
 TYPE* string_to_list(const TYPE* sexp); 
-TYPE* list_to_string(const TYPE* sexp); 
+TYPE* list_to_string(const TYPE* sexp);
+TYPE* string_to_number(const TYPE* sexp, const TYPE* radix); 
 TYPE* string_copy(const TYPE* sexp);
 TYPE* symbol_to_string(const TYPE* symbol);
 

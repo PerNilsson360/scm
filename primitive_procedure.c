@@ -26,55 +26,6 @@
 #include "read.h"
 
 int _debug_ = 0;
-
-static TYPE* _debug_symbol_;
-static TYPE* _pair_predicate_symbol_;
-static TYPE* _cons_symbol_;
-static TYPE* _car_symbol_;
-static TYPE* _cdr_symbol_;
-static TYPE* _set_car_symbol_;
-static TYPE* _set_cdr_symbol_;
-static TYPE* _null_predicate_symbol_;
-static TYPE* _symbol_predicate_symbol_;
-static TYPE* _symbol_to_string_symbol_;
-static TYPE* _string_to_symbol_symbol_;
-static TYPE* _number_to_string_symbol_;
-static TYPE* _eq_predicate_symbol_;
-static TYPE* _eqv_predicate_symbol_;
-static TYPE* _number_predicate_symbol_;
-static TYPE* _complex_predicate_symbol_;
-static TYPE* _real_predicate_symbol_;
-static TYPE* _rational_predicate_symbol_;
-static TYPE* _integer_predicate_symbol_;
-static TYPE* _exact_predicate_symbol_;
-static TYPE* _inexact_predicate_symbol_;
-static TYPE* _equal_symbol_;
-static TYPE* _less_symbol_;
-static TYPE* _greater_symbol_;
-static TYPE* _less_equal_symbol_;
-static TYPE* _greater_equal_symbol_;
-static TYPE* _zero_predicate_symbol_;
-static TYPE* _positive_predicate_symbol_;
-static TYPE* _negative_predicate_symbol_;
-static TYPE* _odd_predicate_symbol_;
-static TYPE* _even_predicate_symbol_;
-static TYPE* _max_symbol_;
-static TYPE* _min_symbol_;
-static TYPE* _plus_symbol_;
-static TYPE* _mul_symbol_;
-static TYPE* _minus_symbol_;
-static TYPE* _div_symbol_;
-static TYPE* _abs_symbol_;
-static TYPE* _quotient_symbol_;
-static TYPE* _remainder_symbol_;
-static TYPE* _modulo_symbol_;
-static TYPE* _gcd_symbol_;
-static TYPE* _lcm_symbol_;
-static TYPE* _boolean_predicate_symbol_;
-static TYPE* _not_symbol_;
-
-static TYPE* _make_string_symbol_;
-
 static TYPE* _primitive_procedure_table_;
 
 #define MAKE_VOID_WRAPPER_NO_ARG(c_name)                                \
@@ -239,7 +190,7 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_number);
 
 static 
 TYPE* 
-_complex_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_complex_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -250,7 +201,7 @@ _complex_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
-_real_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_real_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -261,7 +212,7 @@ _real_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
-_rational_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_rational_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -272,7 +223,7 @@ _rational_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
-_integer_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_integer_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -283,7 +234,7 @@ _integer_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
-_exact_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_exact_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
@@ -299,7 +250,7 @@ _exact_predicate_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
-_inexact_predicate_procedure_(const TYPE* arguments, const TYPE* env)
+_is_inexact_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(length(arguments) == 1,
                  APPLY_ERROR,         
@@ -597,6 +548,26 @@ _string_to_list_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
+}
+
+static 
+TYPE* 
+_string_to_number_procedure_(const TYPE* arguments, const TYPE* env)
+{
+    int nargs = length(arguments);
+    assert_throw(
+	nargs == 1 ||  nargs == 2,
+        APPLY_ERROR,
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in string->number");
+
+    if (nargs == 1)
+    {
+	return string_to_number(car(arguments), mk_number_from_int(10));
+    }
+    else
+    {
+	return string_to_number(car(arguments), car(cdr(arguments)));
+    }
 }
 
 static 
@@ -1004,186 +975,65 @@ init_primitive_procedures()
 
     ADD_PROCEDURE(debug, debug);
     
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("eval"),
-                   mk_primitive_procedure(_eval_procedure_));
-
+    ADD_PROCEDURE(eval, eval);
     ADD_PROCEDURE(is_pair, pair?);
-
-    _cons_symbol_ = mk_symbol("cons");
-    hash_table_set(_primitive_procedure_table_, 
-                   _cons_symbol_, 
-                   mk_primitive_procedure(_cons_procedure_));
-
-
-    _car_symbol_ = mk_symbol("car");
-    hash_table_set(_primitive_procedure_table_, 
-                   _car_symbol_, 
-                   mk_primitive_procedure(_car_procedure_));
-
-    _cdr_symbol_ = mk_symbol("cdr");
-    hash_table_set(_primitive_procedure_table_, 
-                   _cdr_symbol_, 
-                   mk_primitive_procedure(_cdr_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("set-car!"), 
-                   mk_primitive_procedure(_set_car_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("set-cdr!"), 
-                   mk_primitive_procedure(_set_cdr_procedure_));
-
+    ADD_PROCEDURE(cons, cons);
+    ADD_PROCEDURE(car, car);
+    ADD_PROCEDURE(cdr, cdr);
+    ADD_PROCEDURE(set_car, set-car!);
+    ADD_PROCEDURE(set_cdr, set-cdr!);
     ADD_PROCEDURE(is_nil, null?);
+
+    /* symbols */
     ADD_PROCEDURE(is_symbol, symbol?);
+    ADD_PROCEDURE(symbol_to_string, symbol->string);
+    ADD_PROCEDURE(string_to_symbol, string->symbol);
 
-    _symbol_to_string_symbol_ = mk_symbol("symbol->string");
-    hash_table_set(_primitive_procedure_table_, 
-                   _symbol_to_string_symbol_, 
-                   mk_primitive_procedure(_symbol_to_string_procedure_));
-
-    _string_to_symbol_symbol_ = mk_symbol("string->symbol");
-    hash_table_set(_primitive_procedure_table_, 
-                   _string_to_symbol_symbol_, 
-                   mk_primitive_procedure(_string_to_symbol_procedure_));
-
+    /* characters */
     ADD_PROCEDURE(char_to_integer, char->integer);
     ADD_PROCEDURE(is_char, char?);
 
-    _number_to_string_symbol_ = mk_symbol("number->string");
-    hash_table_set(_primitive_procedure_table_, 
-                   _number_to_string_symbol_, 
-                   mk_primitive_procedure(_number_to_string_procedure_));
-
+    /* equivalences */
     ADD_PROCEDURE(is_eq, eq?);
     ADD_PROCEDURE(is_eqv, eqv?);
+    
+    /* number */
+    ADD_PROCEDURE(number_to_string, number->string);
     ADD_PROCEDURE(is_number, number?);
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("complex?"), 
-                   mk_primitive_procedure(_complex_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("real?"), 
-                   mk_primitive_procedure(_real_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("rational?"), 
-                   mk_primitive_procedure(_rational_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("integer?"), 
-                   mk_primitive_procedure(_integer_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("exact?"), 
-                   mk_primitive_procedure(_exact_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("inexact?"), 
-                   mk_primitive_procedure(_inexact_predicate_procedure_));
-
-    hash_table_set(_primitive_procedure_table_, 
-                   mk_symbol("="), 
-                   mk_primitive_procedure(_equal_procedure_));
-
-    _less_symbol_ = mk_symbol("<");
-    hash_table_set(_primitive_procedure_table_, 
-                   _less_symbol_, 
-                   mk_primitive_procedure(_less_procedure_));
-
-    _greater_symbol_ = mk_symbol(">");
-    hash_table_set(_primitive_procedure_table_, 
-                   _greater_symbol_, 
-                   mk_primitive_procedure(_greater_procedure_));
-
-    _less_equal_symbol_ = mk_symbol("<=");
-    hash_table_set(_primitive_procedure_table_, 
-                   _less_equal_symbol_, 
-                   mk_primitive_procedure(_less_equal_procedure_));
-
-    _greater_equal_symbol_ = mk_symbol(">=");
-    hash_table_set(_primitive_procedure_table_, 
-                   _greater_equal_symbol_, 
-                   mk_primitive_procedure(_greater_equal_procedure_));
-
+    ADD_PROCEDURE(is_complex, complex?);
+    ADD_PROCEDURE(is_real, real?);
+    ADD_PROCEDURE(is_rational, rational?);
+    ADD_PROCEDURE(is_integer, integer?);
+    ADD_PROCEDURE(is_exact, exact?);
+    ADD_PROCEDURE(is_inexact, inexact?);
+    ADD_PROCEDURE(equal, =);
+    ADD_PROCEDURE(less, <);
+    ADD_PROCEDURE(greater, >);
+    ADD_PROCEDURE(less_equal, <=);
+    ADD_PROCEDURE(greater_equal, >=);
     ADD_PROCEDURE(is_number_zero, zero?);
     ADD_PROCEDURE(is_number_positive, positive?);
     ADD_PROCEDURE(is_number_negative, negative?);
     ADD_PROCEDURE(is_number_odd, odd?);
     ADD_PROCEDURE(is_number_even, even?);
+    ADD_PROCEDURE(max, max?);
+    ADD_PROCEDURE(min, min?);
+    ADD_PROCEDURE(plus, +);
+    ADD_PROCEDURE(mul, *);
+    ADD_PROCEDURE(minus, -);
+    ADD_PROCEDURE(abs, abs);
+    ADD_PROCEDURE(quotient, quotient);
+    ADD_PROCEDURE(modulo, modulo);
+    ADD_PROCEDURE(gcd, gcd);
+    ADD_PROCEDURE(lcm, lcm);
 
-    _max_symbol_ = mk_symbol("max?");
-    hash_table_set(_primitive_procedure_table_, 
-                   _max_symbol_, 
-                   mk_primitive_procedure(_max_procedure_));
-
-    _min_symbol_ = mk_symbol("min?");
-    hash_table_set(_primitive_procedure_table_, 
-                   _min_symbol_, 
-                   mk_primitive_procedure(_min_procedure_));
-
-    _plus_symbol_ = mk_symbol("+");
-    hash_table_set(_primitive_procedure_table_, 
-                   _plus_symbol_, 
-                   mk_primitive_procedure(_plus_procedure_));
-
-    _mul_symbol_ = mk_symbol("*");
-    hash_table_set(_primitive_procedure_table_, 
-                   _mul_symbol_, 
-                   mk_primitive_procedure(_mul_procedure_));
-
-    _minus_symbol_ = mk_symbol("-");
-    hash_table_set(_primitive_procedure_table_, 
-                   _minus_symbol_, 
-                   mk_primitive_procedure(_minus_procedure_));
-
-    _div_symbol_ = mk_symbol("/");
-    hash_table_set(_primitive_procedure_table_, 
-                   _div_symbol_, 
-                   mk_primitive_procedure(_div_procedure_));
-
-    _abs_symbol_ = mk_symbol("abs");
-    hash_table_set(_primitive_procedure_table_, 
-                   _abs_symbol_, 
-                   mk_primitive_procedure(_abs_procedure_));
-
-    _quotient_symbol_ = mk_symbol("quotient");
-    hash_table_set(_primitive_procedure_table_, 
-                   _quotient_symbol_, 
-                   mk_primitive_procedure(_quotient_procedure_));
-
-    ADD_PROCEDURE(remainder_number, remainder);
-
-    _modulo_symbol_ = mk_symbol("modulo");
-    hash_table_set(_primitive_procedure_table_, 
-                   _modulo_symbol_, 
-                   mk_primitive_procedure(_modulo_procedure_));
-
-    _gcd_symbol_ = mk_symbol("gcd");
-    hash_table_set(_primitive_procedure_table_, 
-                   _gcd_symbol_, 
-                   mk_primitive_procedure(_gcd_procedure_));
-
-    _lcm_symbol_ = mk_symbol("lcm");
-    hash_table_set(_primitive_procedure_table_, 
-                   _lcm_symbol_, 
-                   mk_primitive_procedure(_lcm_procedure_));
-
+    /* boolean */
     ADD_PROCEDURE(is_boolean, boolean?);
-    
-    _not_symbol_ = mk_symbol("not");
-    hash_table_set(_primitive_procedure_table_, 
-                   _not_symbol_, 
-                   mk_primitive_procedure(_not_procedure_));
+    ADD_PROCEDURE(not, not);
 
+    /* string */
     ADD_PROCEDURE(is_string, string?);
-
-    _make_string_symbol_ = mk_symbol("make-string");
-    hash_table_set(_primitive_procedure_table_, 
-                   _make_string_symbol_, 
-                   mk_primitive_procedure(_make_string_procedure_));
-    
+    ADD_PROCEDURE(make_string, make-string);
     ADD_PROCEDURE(string, string);
     ADD_PROCEDURE(string_length, string-length);
     ADD_PROCEDURE(string_ref, string-ref);
@@ -1201,6 +1051,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(substring, substring);
     ADD_PROCEDURE(string_append, string-append);
     ADD_PROCEDURE(string_to_list, string->list);
+    ADD_PROCEDURE(string_to_number, string->number);
     ADD_PROCEDURE(string_copy,string-copy);
     ADD_PROCEDURE(string_fill, string-fill!);
 

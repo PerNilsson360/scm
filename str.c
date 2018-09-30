@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
 
 #include <gc.h>
 
@@ -377,6 +378,25 @@ list_to_string(const TYPE* sexp)
 {
     assert(0);
     return 0;
+}
+
+TYPE*
+string_to_number(const TYPE* sexp, const TYPE* radix)
+{
+    /* @todo make this function standard complient */
+    char* tail = 0;
+    errno = 0;
+    
+    int i = strtol(sexp->d.s, &tail, radix->d.i);
+    
+    if (errno != 0)
+    {
+	perror("STRING_TO_NUMBER:");
+	throw_error(CONSTRAINT_ERROR,
+		    "STRING_TO_NUMBER:Failed to parse number");
+    }
+
+    return mk_number_from_int(i);
 }
 
 TYPE* 
