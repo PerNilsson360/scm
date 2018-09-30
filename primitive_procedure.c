@@ -75,6 +75,18 @@ _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
     return mk_boolean(c_name(car(arguments)));          \
 }                                                       \
 
+#define MAKE_VOID_WRAPPER_TWO_ARG(c_name)                                    \
+static                                                                  \
+TYPE*                                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+{                                                                       \
+    assert_throw(length(arguments) == 2,                                \
+                 APPLY_ERROR,                                           \
+                 "wrong # of arguments in " #c_name);                   \
+    c_name(car(arguments), car(cdr(arguments)));			\
+    return mk_none();                                                   \
+}                                                                       \
+
 
 #define MAKE_WRAPPER_TWO_ARGS(c_name)                   \
 static                                                  \
@@ -151,31 +163,8 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_pair);
 MAKE_WRAPPER_TWO_ARGS(cons);
 MAKE_WRAPPER_ONE_ARG(car);
 MAKE_WRAPPER_ONE_ARG(cdr);
-
-static 
-TYPE* 
-_set_car_procedure_(const TYPE* arguments, const TYPE* env)
-{
-    assert_throw(length(arguments) == 2,
-                 APPLY_ERROR,
-                 "wrong # of arguments in set-car!");
-        
-    set_car(car(arguments), car(cdr(arguments)));
-    return mk_none();
-}
-
-static 
-TYPE* 
-_set_cdr_procedure_(const TYPE* arguments, const TYPE* env)
-{
-    assert_throw(length(arguments) == 2,
-                 APPLY_ERROR,
-                 "wrong # of arguments in set-cdr!");
-    
-    set_cdr(car(arguments), car(cdr(arguments)));
-    return mk_none();
-}
-
+MAKE_VOID_WRAPPER_TWO_ARG(set_car);
+MAKE_VOID_WRAPPER_TWO_ARG(set_cdr);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_nil);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_symbol);
 MAKE_WRAPPER_ONE_ARG(symbol_to_string);
@@ -186,7 +175,6 @@ MAKE_WRAPPER_ONE_ARG(number_to_string);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eq);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eqv);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_number);
-
 
 static 
 TYPE* 
@@ -761,20 +749,8 @@ MAKE_WRAPPER_ONE_ARG(open_output_file);
 MAKE_VOID_WRAPPER_ONE_ARG(close_input_port);
 MAKE_VOID_WRAPPER_ONE_ARG(close_output_port);
 
-static 
-TYPE* 
-_nano_sleep_procedure_(const TYPE* arguments, const TYPE* env)
-{
-    assert_throw(
-        length(arguments) == 2,
-        APPLY_ERROR,
-        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in nano-sleep");
-
-    nano_sleep(car(arguments), car(cdr(arguments)));
-    
-    return  mk_none();
-}
-
+/* unix */
+MAKE_VOID_WRAPPER_TWO_ARG(nano_sleep);
 MAKE_WRAPPER_TWO_ARGS(mk_udp_socket);
 MAKE_WRAPPER_TWO_ARGS(udp_socket_recv);
 
