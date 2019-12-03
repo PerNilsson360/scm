@@ -1,4 +1,20 @@
-  (define accumulate 
+(define caar (lambda (sexp) (car(car sexp))))
+(define cadr (lambda (sexp) (car(cdr sexp))))
+(define caadr (lambda (sexp) (car(car(cdr sexp)))))
+(define caddr (lambda (sexp) (car(cdr(cdr sexp)))))
+(define cddr (lambda (sexp) (cdr (cdr sexp))))
+(define cdar (lambda (sexp) (cdr(car sexp))))
+(define cdadr (lambda (sexp) (cdr(car(cdr sexp)))))
+(define cdddr (lambda (sexp) (cdr(cdr(cdr sexp)))))
+(define cadddr (lambda (sexp) (car(cdr(cdr(cdr sexp))))))
+
+(define internal-list 
+  (lambda (a . args)
+    (if (null? args)
+	(cons a '())
+	(cons a (apply internal-list args)))))
+  
+(define accumulate 
   (lambda (f identity list)
     (if (null? list) 
 	identity
@@ -15,13 +31,35 @@
 		(cons (car left) (inner (cdr left) right))))))
     (accumulate inner '() (cons a args))))
 
+(define reverse 
+  (lambda (list)
+    (define inner 
+      (lambda (in out)
+	(if (null? in) 
+	    out
+	    (inner (cdr in) (cons (car in) out)))))
+    (inner list '())))
+
+(define unzip 
+  (lambda (a)
+    (define inner 
+      (lambda (li left right)
+	(if (null? li)
+	    (cons (reverse left) (reverse right))
+	    (inner (cdr li) 
+		   (cons (car (car li)) left)
+		   (cons (car(cdr (car li))) right)))))
+    (inner a '() '())))
+
+
 ;; translation of library syntax expressions to syntax expressions
-(define __internal-translate__
+(define --internal-translate-- 
   (lambda (exp)
     ((lambda (exp)
-       ;(display exp)(newline)
+       ;(display exp) 
+       ;(newline)
        exp)
-     (__internal-translate-impl__ exp))))
+     (--internal-translate-impl-- exp))))
 
 (define tagged-list? 
   (lambda (exp tag)
@@ -35,10 +73,10 @@
       (lambda (operands)
 	(if (null? operands)
 	    #f
-	    (list (list 'lambda (list '__internal-or-var__) 
-					  (list 'if '__internal-or-var__ '__internal-or-var__ 
+	    (internal-list (internal-list 'lambda (internal-list '--internal-or-var--) 
+					  (internal-list 'if '--internal-or-var-- '--internal-or-var-- 
 							 (inner (cdr operands))))
-			   (__internal-translate-impl__ (car operands))))))
+			   (car operands)))))
     (inner (cdr exp))))
 (define and? (lambda (exp) (tagged-list? exp 'and)))
 (define and->if 
@@ -48,44 +86,46 @@
 	(if (null? operands)
 	    #t
 	    (if (null? (cdr operands))
-		(list 'if (__internal-translate-impl__ (car operands)) (__internal-translate-impl__ (car operands)) #f)
-		(list 'if (__internal-translate-impl__ (car operands)) (inner (cdr operands)) #f)))))
+		(internal-list 'if (car operands) (car operands) #f)
+		(internal-list 'if (car operands) (inner (cdr operands)) #f)))))
     (inner (cdr exp))))
 ;; let expressions
 (define let? (lambda (exp) (tagged-list? exp 'let)))
 ;; translates let to lambda
 (define let->combination 
-  (lambda (sexp)
-    (if (null? (cadr sexp))
-	(caddr sexp)
-	((lambda (bindings body) 
-	   (cons (cons 'lambda (cons (car bindings) body)) 
-		 (__internal-translate-impl__ (cdr bindings))))
-	 (unzip (cadr sexp)) 
-	 (__internal-translate-impl__ (cddr sexp))))))
+  (lambda (sexp) 
+    ((lambda (bindings body) 
+       (cons (cons 'lambda (cons (car bindings) body)) 
+	     (cdr bindings)))
+     (unzip (cadr sexp)) 
+     (--internal-translate-impl-- (cddr sexp))))) ; need to translate the body
 ;; named let
 (define named-let? 
   (lambda (exp)
     (if (tagged-list? exp  'let)
-	(symbol? (cadr exp))
+	(if (symbol? (cadr exp))
+	    #t
+	    #f)
 	#f)))
 (define named-let->letrec 
   (lambda (sexp) 
-    (__internal-translate-impl__ 	; need to translate the letrec
+    (--internal-translate-impl-- 	; need to translate the letrec
      ((lambda (name bindings body) 
 	((lambda (vars vals) 
 	   (cons 'letrec 
-		 (cons (list 
+		 (cons (cons 
 			(cons name 
-			      (list (cons 'lambda 
+			      (cons (cons 'lambda 
 					  (cons vars 
-						body)))))
-		       (list (cons name vals)))))
+						body)) 
+				    '())) 
+			'()) 
+		       (cons (cons name vals) '()))))
 	 (car bindings) 
 	 (cdr bindings)))
       (cadr sexp) 
       (unzip (caddr sexp)) 
-      (__internal-translate-impl__ (cdddr sexp))))))
+      (--internal-translate-impl-- (cdddr sexp))))))
 ;; let*
 (define let*? (lambda (exp) (tagged-list? exp 'let*)))
 (define let*->nested-let 
@@ -94,13 +134,14 @@
       (lambda (bindings body)
 	(if (= (length bindings) 1)
 	    (cons 'let 
-		  (cons (list (car bindings))
+		  (cons (cons (car bindings) '())
 			body))
 	    (cons 'let 
-		  (cons (list (car bindings))
-			(list (inner (cdr bindings) body)))))))
-    (__internal-translate-impl__ 
-     (inner (cadr sexp) (__internal-translate-impl__ (cddr sexp))))))
+		  (cons (cons (car bindings) '())
+			(cons (inner (cdr bindings) body) 
+			      '()))))))
+    (--internal-translate-impl-- 
+     (inner (cadr sexp) (--internal-translate-impl-- (cddr sexp))))))
 ;; letrec
 (define letrec? (lambda (exp) (tagged-list? exp 'letrec)))
 (define make-unasigned-vars 
@@ -118,14 +159,14 @@
 	      (make-var-set-values (cdr vars) (cdr vals))))))
 (define letrec->let 
   (lambda (sexp) 
-    (__internal-translate-impl__ 	; need to translate the let
+    (--internal-translate-impl-- 	; need to translate the let
      ((lambda (bindings body) 
 	((lambda (vars vals) 
 	   (cons 'let (cons (make-unasigned-vars vars) 
 			    (internal-append (make-var-set-values vars vals) body)))) 
 	 (car bindings) (cdr bindings))) 
       (unzip (cadr sexp)) 
-      (__internal-translate-impl__ (cddr sexp))))))
+      (--internal-translate-impl-- (cddr sexp))))))
 ;; case
 (define case? (lambda (exp) (tagged-list? exp 'case)))
 (define case-key (lambda (exp) (cadr exp)))
@@ -149,7 +190,7 @@
 		    (cons 
 		     (cons 'memv 
 			   (cons 'key 
-				 (cons (list 'quote 
+				 (cons (internal-list 'quote 
 						      (case-clause-datum c))
 				       '())))
 		     (case-clause-exp c))
@@ -163,7 +204,7 @@
 	    (cons 'cond (inner clauses))))))
 (define case->cond 
   (lambda (exp)
-    (__internal-translate-impl__ 	; needed sinc translating to let
+    (--internal-translate-impl-- 	; needed sinc translating to let
      (cons 'let (cons (cons (cons 'key 
 				  (cons (case-key exp)'()))
 			    '())
@@ -176,38 +217,35 @@
 (define unquote-value (lambda (exp) (cadr exp)))
 (define quasiquote->list 
   (lambda (exp)
-    (if (null? exp)
-	'()
-	(if (unquote? exp)
-	    (unquote-value exp)
-	    (if (symbol? exp)
-		(cons 'quote (cons exp '()))
-		(if (pair? exp) 
-		    (if (unquote-splicing? (car exp))
-			(cons 'append 
-			      (cons (unquote-value (car exp))
-				    (cons (quasiquote->list (cdr exp))
-					  '())))
-			(cons 'cons 
-			      (cons (quasiquote->list (car exp))
-				    (cons (quasiquote->list (cdr exp)) 
-					  '()))))
-		    exp))))))
+    (cond ((null? exp) '())
+	  ((unquote? exp) (unquote-value exp))
+	  ((symbol? exp) (cons 'quote (cons exp '())))
+	  ((pair? exp) 
+	   (if (unquote-splicing? (car exp))
+	       (cons 'append 
+		     (cons (unquote-value (car exp))
+			   (cons (quasiquote->list (cdr exp))
+				 '())))
+	       (cons 'cons 
+		     (cons (quasiquote->list (car exp))
+			   (cons (quasiquote->list (cdr exp)) 
+				 '())))))
+	  (else exp))))
 ;; define
 (define define? 
-  (lambda (exp)
-    (if (tagged-list? exp 'define)
-	(if (not (symbol? (car (cdr exp))))
-	    #t
-	    #f)
-	#f)))
+  (lambda (exp) (if (tagged-list? exp 'define)
+		    (if (not (symbol? (car (cdr exp))))
+			#t
+			#f)
+		    #f)))
+
 (define define->lambda 
   (lambda (exp)
     (cons 'define 
 	  (cons (car (car (cdr exp)))
 		(cons (cons 'lambda
 			    (cons (cdr (car (cdr exp)))
-				  (__internal-translate-impl__ (cdr (cdr exp)))))
+				  (--internal-translate-impl-- (cdr (cdr exp)))))
 		      '())))))
 
 (define quote? (lambda (exp) (tagged-list? exp 'quote)))
@@ -225,7 +263,7 @@
 		 (if (< (length clause) 2)
 		     (error "to few elements in match clause" clause)
 		     (cons (car clause) 
-			   (__internal-translate-impl__ (cdr clause)))))
+			   (--internal-translate-impl-- (cdr clause)))))
 	       (car clauses))
 	      (translate-match-clauses (cdr clauses))))))
 (define translate-match 
@@ -235,75 +273,20 @@
 	  (cons 'match
 		(cons (match-key exp) 
 		      (translate-match-clauses (match-clauses exp)))))))
-
-;; translating cond expressions to if expressions
-(define cond? (lambda (exp) (tagged-list? exp 'cond)))
-(define cond->if
+					       
+(define --internal-translate-impl-- 
   (lambda (exp)
-    (define mk-if
-      (lambda (predicate consequent alternative)
-	(cons 'if
-	      (cons predicate
-		    (cons consequent
-			  (cons alternative '()))))))
-    (define mk-begin (lambda (exp) (cons 'begin exp)))
-    (define last-exp? (lambda (exp) (null? (cdr exp))))
-    (define first-exp (lambda (exp) (car exp)))
-    (define sequence->exp
-      (lambda (exp)
-	(if (null? exp)
-	    '()
-	    (if (last-exp? exp)
-		(__internal-translate-impl__ (first-exp exp))
-		(mk-begin (__internal-translate-impl__ exp))))))
-    (define cond-clauses (lambda (exp) (cdr exp)))
-    (define cond-predicate (lambda (clause) (car clause)))
-    (define cond-actions (lambda (clause) (cdr clause)))
-    (define cond-else-clause?
-      (lambda (clause)
-	(eq? (cond-predicate clause) 'else)))
-    (define expand-clauses
-      (lambda (exp)
-	(if (null? exp)
-	    #f
-	    (if (cond-else-clause? (car exp))
-		(if (null? (cdr exp))
-		    (sequence->exp (cond-actions (car exp)))
-		    (error "COND: else is not last in cond."))
-		(mk-if (__internal-translate-impl__ (cond-predicate (car exp)))
-		       (sequence->exp (cond-actions (car exp)))
-		       (__internal-translate-impl__ (expand-clauses (cdr exp))))))))
-    (expand-clauses (cond-clauses exp))))
-
-;; External interface procedure
-(define __internal-translate-impl__ 
-  (lambda (exp)
-    (if (quote? exp)
-	exp
-	(if (not (pair? exp))
-	    exp
-	    (if (or? exp)
-		(or->if exp)
-		(if (and? exp)
-		    (and->if exp)
-		    (if (define? exp)
-			(define->lambda exp)
-			(if (named-let? exp)
-			    (named-let->letrec exp)
-			    (if (let? exp)
-				(let->combination exp)
-				(if (let*? exp)
-				    (let*->nested-let exp)
-				    (if (letrec? exp)
-					(letrec->let exp)
-					(if (cond? exp)
-					    (cond->if exp)
-					    (if (case? exp)
-						(case->cond exp)
-						(if (quasiquote? exp)
-						    (quasiquote->list (cdr exp))
-						    (if (match? exp)
-							(translate-match exp)
-							(if (pair? exp)
-							    (cons (__internal-translate-impl__ (car exp))
-								  (__internal-translate-impl__ (cdr exp)))))))))))))))))))
+    (cond ((quote? exp) exp) 
+	  ((not (pair? exp)) exp)
+	  ((or? exp) (or->if exp))
+	  ((and? exp) (and->if exp))
+	  ((define? exp) (define->lambda exp))
+	  ((named-let? exp) (named-let->letrec exp))
+	  ((let? exp) (let->combination exp))
+	  ((let*? exp) (let*->nested-let exp))
+	  ((letrec? exp) (letrec->let exp))
+	  ((case? exp) (case->cond exp))
+	  ((quasiquote? exp) (quasiquote->list (cdr exp)))
+	  ((match? exp) (translate-match exp))
+	  ((pair? exp) (cons (--internal-translate-impl-- (car exp)) 
+			     (--internal-translate-impl-- (cdr exp)))))))

@@ -36,6 +36,7 @@ is_compound_procedure(const TYPE* procedure)
 TYPE* 
 procedure_parameters(TYPE* procedure)
 {
+    /* @todo clean upp error handling */
     if (!is_true(is_compound_procedure(procedure))) 
     {
         display_debug(procedure);

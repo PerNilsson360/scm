@@ -110,6 +110,15 @@ _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
     return mk_boolean(c_name(car(arguments), car(cdr(arguments)))); \
 }                                                       \
 
+#define MAKE_WRAPPER(c_name)						\
+static								\
+TYPE*                                                                   \
+_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+{                                                                       \
+    return c_name(arguments);						\
+}                                                                       \
+
+
 
 #define ADD_PROCEDURE(c_name, scheme_name)                              \
     hash_table_set(_primitive_procedure_table_,                         \
@@ -163,9 +172,24 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_pair);
 MAKE_WRAPPER_TWO_ARGS(cons);
 MAKE_WRAPPER_ONE_ARG(car);
 MAKE_WRAPPER_ONE_ARG(cdr);
+
+MAKE_WRAPPER_ONE_ARG(caar); 
+MAKE_WRAPPER_ONE_ARG(cadr);
+MAKE_WRAPPER_ONE_ARG(caadr);
+MAKE_WRAPPER_ONE_ARG(caddr);
+MAKE_WRAPPER_ONE_ARG(cddr);
+MAKE_WRAPPER_ONE_ARG(cdar);
+MAKE_WRAPPER_ONE_ARG(cdadr);
+MAKE_WRAPPER_ONE_ARG(cdddr);
+MAKE_WRAPPER_ONE_ARG(cadddr);
+
 MAKE_VOID_WRAPPER_TWO_ARG(set_car);
 MAKE_VOID_WRAPPER_TWO_ARG(set_cdr);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_nil);
+MAKE_WRAPPER(list);
+MAKE_WRAPPER_ONE_ARG(reverse);
+MAKE_WRAPPER_ONE_ARG(unzip);
+
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_symbol);
 MAKE_WRAPPER_ONE_ARG(symbol_to_string);
 MAKE_WRAPPER_ONE_ARG(string_to_symbol);
@@ -956,9 +980,21 @@ init_primitive_procedures()
     ADD_PROCEDURE(cons, cons);
     ADD_PROCEDURE(car, car);
     ADD_PROCEDURE(cdr, cdr);
+    ADD_PROCEDURE(caar, caar);
+    ADD_PROCEDURE(cadr, cadr);
+    ADD_PROCEDURE(caadr, caadr);
+    ADD_PROCEDURE(caddr, caddr);
+    ADD_PROCEDURE(cddr, cddr);
+    ADD_PROCEDURE(cdar, cdar);
+    ADD_PROCEDURE(cdadr, cdadr);
+    ADD_PROCEDURE(cdddr,cdddr);
+    ADD_PROCEDURE(cadddr, cadddr);
     ADD_PROCEDURE(set_car, set-car!);
     ADD_PROCEDURE(set_cdr, set-cdr!);
     ADD_PROCEDURE(is_nil, null?);
+    ADD_PROCEDURE(list, list);
+    ADD_PROCEDURE(reverse, reverse);
+    ADD_PROCEDURE(unzip, unzip);
 
     /* symbols */
     ADD_PROCEDURE(is_symbol, symbol?);

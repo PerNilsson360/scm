@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdarg.h>
 #include <assert.h>
 
 #include <gc.h>
@@ -128,6 +129,60 @@ cdr(const TYPE* list)
     return list->d.p->cdr;
 }
 
+TYPE*
+caar(const TYPE* list)
+{
+    return car(car(list));
+}
+
+TYPE*
+cadr(const TYPE* list)
+{
+    return car(cdr(list));
+}
+
+TYPE*
+caadr(const TYPE* list)
+{
+    return car(car(cdr(list)));
+}
+
+TYPE*
+caddr(const TYPE* list)
+{
+    return car(cdr(cdr(list)));
+}
+
+TYPE*
+cddr(const TYPE* list)
+{
+    return cdr(cdr(list));
+}
+
+TYPE*
+cdar(const TYPE* list)
+{
+    return cdr(car(list));
+}
+
+TYPE*
+cdadr(const TYPE* list)
+{
+    return cdr(car(cdr(list)));
+}
+
+TYPE*
+cdddr(const TYPE* list)
+{
+    return cdr(cdr(cdr(list)));
+}
+
+TYPE*
+cadddr(const TYPE* list)
+{
+    return car(cdr(cdr(cdr(list))));
+}
+
 void 
 set_car(TYPE* list, const TYPE* value)
 {
@@ -163,6 +218,31 @@ is_list(const TYPE* sexp)
     }
     
     return result;
+}
+
+TYPE*
+list(const TYPE* sexp)
+{
+    return (TYPE*) sexp;
+}
+
+TYPE*
+mk_list(int count, ...)
+{
+    va_list ap;
+    int i;
+    TYPE* result = nil();
+    
+    va_start(ap, count);
+
+    for (i = 0; i < count; i++)
+    {
+	cons(va_arg(ap, TYPE*), result);
+    }
+    
+    va_end(ap);
+
+    return reverse(result);
 }
 
 int 

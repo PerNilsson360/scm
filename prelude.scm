@@ -14,10 +14,10 @@
 	((= k 0) (car list))
 	(else (list-ref (cdr list) (- k 1)))))
 
-(define (list . args)
-  (if (null? args)
-      '()
-      (cons (car args) (apply list (cdr args)))))
+;; (define (list . args)
+;;   (if (null? args)
+;;       '()
+;;       (cons (car args) (apply list (cdr args)))))
 
 (define (accumulate f identity list)
   (if (null? list) 

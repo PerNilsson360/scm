@@ -141,7 +141,7 @@ mk_symbol(const char* symbol)
 int 
 is_symbol(const TYPE* symbol)
 {
-    return symbol->type == SYMBOL;
+    return symbol->type == SYMBOL && !is_nil(symbol);
 }
 
 int 

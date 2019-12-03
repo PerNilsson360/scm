@@ -613,5 +613,5 @@
 		 (expand-clauses (cdr exp))))))
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
 
-
+(define (lst . args) args)
   

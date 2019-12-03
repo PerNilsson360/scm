@@ -613,6 +613,12 @@ ev_apply:
     save(reg_cont);
     save(reg_env);
     reg_unev = apply_arguments(reg_exp);
+    if (!is_nil(reg_unev) && !is_pair(reg_unev))
+    {
+	display_debug(reg_unev);
+	throw_error(APPLY_ERROR,
+                    "APPLY: malformed arguments in application");
+    }
     save(reg_unev);
     reg_exp = apply_procedure(reg_exp);
     reg_exp_debug = reg_exp;	/* need to know when rands are wrong */
@@ -662,6 +668,13 @@ ev_application:
     save(reg_cont);
     save(reg_env);
     reg_unev = operands(reg_exp);
+    if (!is_nil(reg_unev) && !is_pair(reg_unev))
+    {
+	display_debug(reg_unev);
+	throw_error(APPLY_ERROR,
+                    "APPLICATION: malformed arguments in application");
+    }
+
     save(reg_unev);
     reg_exp = operator(reg_exp);
     reg_cont = &&ev_appl_did_operator;

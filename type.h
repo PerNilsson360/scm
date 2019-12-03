@@ -127,10 +127,23 @@ int is_none(const TYPE* sexp);
 TYPE* cons(const TYPE* car, const TYPE*  cdr);
 TYPE* car(const TYPE* list);
 TYPE* cdr(const TYPE* list);
+
+TYPE* caar(const TYPE* list);
+TYPE* cadr(const TYPE* list);
+TYPE* caadr(const TYPE* list);
+TYPE* caddr(const TYPE* list);
+TYPE* cddr(const TYPE* list);
+TYPE* cdar(const TYPE* list);
+TYPE* cdadr(const TYPE* list);
+TYPE* cdddr(const TYPE* list);
+TYPE* cadddr(const TYPE* list);
+
 void set_car(TYPE* list, const TYPE* value);
 void set_cdr(TYPE* list, const TYPE* value);
 
 TYPE* is_list(const TYPE* sexp);
+TYPE* list(const TYPE* sexp);
+TYPE* mk_list(int elems, ...);
 int is_pair(const TYPE* pair);
 int is_empty_pair(const TYPE* sexp);
 unsigned int length(const TYPE* pair);

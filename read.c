@@ -771,8 +771,8 @@ datum_plus(FILE* file)
         {
 	    parse_error(file, "DATUM_PLUS: datum null");
         }
+	
 	result = cons(d, datum_plus(file));
-
     }
     
     return result;
@@ -780,7 +780,7 @@ datum_plus(FILE* file)
 
 static
 TYPE*
-list(FILE* file)
+parse_list(FILE* file)
 {
     /* 
        list --> (datum*) | (datum+ . datum) | abbreviation 
@@ -793,7 +793,8 @@ list(FILE* file)
 	TYPE* d = datum(file);
 	if (d == NULL)
 	{
-	    result = cons(nil(), nil());
+	    result = nil();
+	    //result = cons(nil(), nil());
 	}
 	else
 	{
@@ -881,7 +882,7 @@ compound_datum(FILE* file)
        compound-datum --> list | vector | constructor  
     */
 
-    TYPE* result = list(file);
+    TYPE* result = parse_list(file);
     
     if (result == NULL)
     {
