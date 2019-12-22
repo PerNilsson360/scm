@@ -65,8 +65,6 @@ enum TOKEN_TYPE
     T_UNQUOTE_SPLICING
 };
 
-#define MAX_IDENTIFIER_LENGTH 1024
-
 struct TOKEN
 {
     int type;
@@ -293,7 +291,7 @@ character(FILE* file)
     int i = 0;
     int c = getc(file);
 
-    while (!delimiter(c) && c != EOF)
+    do
     {
         if (i == MAX_IDENTIFIER_LENGTH - 1)
         {
@@ -302,7 +300,7 @@ character(FILE* file)
 
         token.data[i++] = c;
 	c = getc(file);
-    }
+    } while (!delimiter(c) && c != EOF);
 
     ungetc(c, file);
 
@@ -985,6 +983,7 @@ read_from_port(const TYPE* port)
     return read_from_file(port->d.po->file);
 }
 
+static
 TYPE*
 _read_char_from_port(FILE* file, char* c)
 {
@@ -1005,21 +1004,45 @@ _read_char_from_port(FILE* file, char* c)
 }
 
 TYPE*
-read_char_from_port(const TYPE* port)
+read_char()
 {
     char c;
+    return _read_char_from_port(stdin, &c);
+}
+
+TYPE*
+read_char_from_port(const TYPE* port)
+{
+     assert_throw(is_true(is_input_port(port)),
+                 TYPE_ERROR,
+                 "READ_CHAR_FROM_PORT: port is not an input port");
+    char c;
     FILE* file = port->d.po->file;
-    
     return _read_char_from_port(file, &c);
+}
+
+static
+TYPE*
+peek_char_from_file(FILE* file)
+{
+    char c;
+    TYPE* result =  _read_char_from_port(file, &c);
+    ungetc(c, file);
+    return result;
+}
+
+TYPE*
+peek_char()
+{
+    return peek_char_from_file(stdin);
 }
 
 TYPE*
 peek_char_from_port(const TYPE* port)
 {
-    char c;
+    assert_throw(is_true(is_input_port(port)),
+                 TYPE_ERROR,
+                 "PEEK_FROM_PORT: port is not an input port");
     FILE* file = port->d.po->file;
-    TYPE* result =  _read_char_from_port(file, &c);
-    ungetc(c, file);
-    
-    return result;
+    return peek_char_from_file(file);
 }

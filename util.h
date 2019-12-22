@@ -3,6 +3,8 @@
 
 #include "type.h"
 
+#define MAX_IDENTIFIER_LENGTH 1024
+
 TYPE* it_bin_pred(const TYPE* list,
                   int (pred) (const TYPE* left, const TYPE* right));
 TYPE* fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right), 

@@ -554,13 +554,9 @@ _string_append_procedure_(const TYPE* arguments, const TYPE* env)
                       mk_string_with_length("", 0)); 
 }
 
-static 
-TYPE* 
-_string_to_list_procedure_(const TYPE* arguments, const TYPE* env)
-{
-    assert(FALSE);
-    return NULL;
-}
+
+MAKE_WRAPPER_ONE_ARG(string_to_list)
+MAKE_WRAPPER_ONE_ARG(list_to_string)
 
 static 
 TYPE* 
@@ -725,7 +721,7 @@ _read_char_procedure_(const TYPE* arguments, const TYPE* env)
     
     if (length(arguments) == 0)
     {
-        assert(FALSE);
+        return read_char();
     }
     else
     {
@@ -744,7 +740,7 @@ _peek_char_procedure_(const TYPE* arguments, const TYPE* env)
     
     if (length(arguments) == 0)
     {
-        assert(FALSE);
+        return peek_char();
     }
     else
     {
@@ -1063,6 +1059,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(substring, substring);
     ADD_PROCEDURE(string_append, string-append);
     ADD_PROCEDURE(string_to_list, string->list);
+    ADD_PROCEDURE(list_to_string, list->string);
     ADD_PROCEDURE(string_to_number, string->number);
     ADD_PROCEDURE(string_copy,string-copy);
     ADD_PROCEDURE(string_fill, string-fill!);

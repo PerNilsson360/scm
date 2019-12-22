@@ -1,4 +1,4 @@
-#!/home/per/prg/git/scm/scheme
+#!/home/per/git/scm/scheme
 
 (define (fib n)
   (cond ((= n 0) 0)

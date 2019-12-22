@@ -18,6 +18,7 @@
 #include "stack.h"
 #include "read.h"
 #include "char.h"
+#include "elab.h"
 
 static 
 void
@@ -25,40 +26,11 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
 {
     TYPE* sexp;
     TYPE* port;
-    const char* prelude = 
-        "/home/per/prg/git/scm/prelude_no_translation.scm";
 
-    TYPE* argv_val = nil();
-
-    for (int i = argc - 1; i >= 0; i--)
-    {
-	TYPE* val = mk_string_with_length(argv[i], strlen(argv[i]));
-	argv_val = cons(val, argv_val);
-    }
-
-    define_variable(mk_symbol("argv"), argv_val, env);
-    
-    port = open_input_file(mk_string_with_length(prelude, 
-						 strlen(prelude)));
-
-    do
-    {
-        sexp = read_from_port(port);
-        
-        if (!is_eof_object(sexp))
-        {
-            stack_init();
-            eval_no_translation(sexp, env);
-        }        
-    }
-    while (!is_eof_object(sexp));
-
-    close_input_port(port);
-    
-    prelude = "/home/per/prg/git/scm/prelude.scm";
+    const char* prelude = "/home/per/git/scm/prelude.scm";
     port = open_input_file(mk_string_with_length(prelude,
 						 strlen(prelude)));
-
+ 
     do
     {
         sexp = read_from_port(port);
@@ -66,6 +38,7 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
         if (!is_eof_object(sexp))
         {
             stack_init();
+	    sexp = xlat(sexp);
             eval(sexp, env);
         }
     }
@@ -91,7 +64,7 @@ interactive(TYPE* env)
         
         stack_init();
         sexp = scm_read();
-        /* display_debug(sexp); */
+	sexp = xlat(sexp);
         display(eval(sexp, env));
     }
 }
@@ -126,7 +99,7 @@ script_mode(int argc, char** argv, TYPE* env)
 	{
 	    break;
 	}
-        /* display_debug(sexp); */
+	sexp = xlat(sexp);
         eval(sexp, env);
     }
     while(TRUE);
@@ -146,10 +119,10 @@ main(int argc, char** argv)
     env = extend_environment(nil(), nil(), mk_env(nil()));
     environment_symbol = mk_symbol("environment");
     define_variable(environment_symbol, env, env);
-    
+
     /* @todo fix reading of prelude in a more robust way */
     populate_initial_environment(argc, argv, env);
-
+    
     int status = setjmp(__c_env__);
     
     switch(status)
@@ -169,7 +142,7 @@ main(int argc, char** argv)
     default:
         assert(FALSE && "CATCH_ERROR: not an implemented error");
     }
-
+    
     if (argc < 2)
     {
 	interactive(env);

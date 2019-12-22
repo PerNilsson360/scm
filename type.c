@@ -15,6 +15,7 @@
 #include "type.h"
 #include "eval.h"
 #include "util.h"
+#include "syntax.h"
 
 TYPE* 
 mk_bound_var(TYPE* symbol, 
@@ -232,12 +233,12 @@ mk_list(int count, ...)
     va_list ap;
     int i;
     TYPE* result = nil();
-    
+
     va_start(ap, count);
 
     for (i = 0; i < count; i++)
     {
-	cons(va_arg(ap, TYPE*), result);
+	result = cons(va_arg(ap, TYPE*), result);
     }
     
     va_end(ap);

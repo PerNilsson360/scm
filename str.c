@@ -369,15 +369,56 @@ string_append(const TYPE* left, const TYPE* right)
 TYPE* 
 string_to_list(const TYPE* sexp)
 {
-    assert(0);
-    return 0;
+    assert_throw(is_string(sexp),
+                 TYPE_ERROR,
+                 "STRING_TO_LIST: argument must be a string");
+    
+    TYPE* result = nil();
+    
+    for (int i = string_length(sexp)->d.i - 1; i >= 0; i--)
+    {
+	result = cons(mk_char(sexp->d.s[i]), result);
+    }
+    
+    return result;
 }
 
 TYPE* 
 list_to_string(const TYPE* sexp)
 {
-    assert(0);
-    return 0;
+    assert_throw(is_true(is_list(sexp)),
+		 TYPE_ERROR,
+		 "LIST_TO_STRING: argument is not a list");
+
+    TYPE* result;
+    
+    if (is_nil(sexp))
+    {
+	result = (TYPE*)sexp;
+    }
+    else
+    {
+	int i = 0;
+	char buffer[MAX_IDENTIFIER_LENGTH];
+	const TYPE* list = sexp;
+	do
+	{
+	    const TYPE* c = car(list);
+	    
+	    assert_throw(is_char(c),
+			 TYPE_ERROR,
+			 "LIST_TO_STRING: argument must be a char list");
+	    assert_throw(i == MAX_IDENTIFIER_LENGTH - 1,
+			 CONSTRAINT_ERROR,
+			 "LIST_TO_STRING: exceded max identifier length");
+
+	    buffer[i++] = c->d.i;
+	    list = cdr(list);
+	} while (!is_nil(list));
+	
+	buffer[i] = '\0';
+	result = mk_string_with_length(buffer, i);
+    }
 }
 
 TYPE*

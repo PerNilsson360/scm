@@ -16,6 +16,7 @@
 #include "io.h"
 #include "char.h"
 #include "vector.h"
+#include "syntax.h"
 
 extern int _debug_;             /* defined in primitive_procedure */
 
@@ -52,12 +53,6 @@ int
 is_variable(const TYPE* exp)
 {
     return is_symbol(exp) || is_bound_var(exp);
-}
-
-int
-is_tagged_list(const TYPE* exp, TYPE* symbol)
-{
-    return is_pair(exp) && is_eq(car(exp), symbol);
 }
 
 int
@@ -120,12 +115,6 @@ lambda_body(TYPE* exp)
     return cdr(cdr(exp));
 }
 
-TYPE*
-mk_lambda(TYPE* parameters, TYPE* body)
-{
-    return cons(_lambda_keyword_symbol_, cons(parameters, body));
-}
-
 int
 is_if(TYPE* exp)
 {
@@ -157,14 +146,6 @@ if_alternative(TYPE* exp)
     return result;
 }
 
-TYPE*
-mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
-{
-    return cons(_if_keyword_symbol_,
-                cons(predicate,
-                     cons(consequent, 
-                          cons(alternative, nil()))));
-}
 
 int
 is_begin(TYPE* exp)
@@ -178,49 +159,10 @@ begin_actions(TYPE* exp)
     return cdr(exp);
 }
 
-int
-is_last_exp(TYPE* exps)
-{
-    return is_nil(cdr(exps));
-}
-
-TYPE* 
-first_exp(TYPE* exps)
-{
-    return car(exps);
-}
-
 TYPE* 
 rest_exps(TYPE* exps)
 {
     return cdr(exps);
-}
-
-TYPE*
-mk_begin(TYPE* exp)
-{
-    return cons(_begin_keyword_symbol_, exp);
-}
-
-TYPE*
-sequence_to_exp(TYPE* seq)
-{
-    TYPE* result;
-
-    if (is_nil(seq))
-    {
-        result = nil();
-    }
-    else if (is_last_exp(seq))
-    {
-        result = first_exp(seq);
-    }
-    else
-    {
-        result = mk_begin(seq);
-    }
-
-    return result;
 }
 
 int 
@@ -1095,12 +1037,12 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 TYPE*
 eval(TYPE* exp, TYPE* env)
 {
-    reg_exp = cons(mk_symbol("__internal-translate__"),
-                   cons(mk_quoted(exp), nil()));
-    reg_env = env;
-    hairy_eval();
-    eval_no_translation(reg_val, env);
-    /* eval_no_translation(exp, env); */
+    /* reg_exp = cons(mk_symbol("__internal-translate__"), */
+    /*                cons(mk_quoted(exp), nil())); */
+    /* reg_env = env; */
+    /* hairy_eval(); */
+    /* eval_no_translation(reg_val, env); */
+    eval_no_translation(exp, env);
 
     return reg_val;
 }
