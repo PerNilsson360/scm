@@ -111,22 +111,20 @@ static
 TYPE*
 let_to_combination(TYPE* exp)
 {
-    TYPE* bindings;
-    TYPE* result;
-    
     assert_throw(length(exp) > 2,
 		 EVAL_ERROR,
 		 "LET_TO_COMBINATION: let must have at least 3 elements");
 
-    bindings = cadr(exp);
+    TYPE* bindings = cadr(exp);
+    TYPE* result;
+    TYPE* body = xlat(cddr(exp));
 
     if (is_nil(bindings))
     {
-	result = xlat(caddr(exp));
+	result = mk_list(1, mk_lambda(nil(), body)); 
     }
     else if (is_pair(bindings))
     {
-	TYPE* body = xlat(cddr(exp));
 	TYPE* unzip_bindings = unzip(bindings);
 	
 	result = cons(mk_lambda(car(unzip_bindings), body),
@@ -137,6 +135,7 @@ let_to_combination(TYPE* exp)
 	throw_error(EVAL_ERROR,
 		    "LET_TO_COMBINATION: bindings must be nil or a pair");
     }
+    
     return result;
 }
 
@@ -575,7 +574,6 @@ TYPE*
 xlat(TYPE* exp)
 {
     TYPE* result;
-
     if (is_quoted(exp) || !is_pair(exp))
     {
 	result = exp;

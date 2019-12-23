@@ -63,6 +63,9 @@
 (let loop ()
   (display 'running) (loop))
 
+(letrec ((loop (lambda '() (display (quote running)) (loop)))
+	 ((lambda '() (display (quote running)) (loop)))) (loop))
+
 ((lambda (loop)
    (set! loop (lambda () 
 		(display (quote running)) 
@@ -316,6 +319,10 @@
   ((2 3 5 7) 'prime)
   ((1 4 6 8 9) 'composite))
 
+(case 1
+  ((2) 'two)
+  ((1) 'one))
+
 (case (car '(c d))
   ((a) 'a)
   ((b) 'b))
@@ -420,6 +427,9 @@
 
 (let ((a 1))
   (let ((b a)) b))
+
+(let ()
+  1 2)
 
 (letrec ((a 1)) a)
 (let ((a 'foo)) a)

@@ -17,6 +17,7 @@
 #include "char.h"
 #include "vector.h"
 #include "syntax.h"
+#include "elab.h"
 
 extern int _debug_;             /* defined in primitive_procedure */
 
@@ -1045,6 +1046,12 @@ eval(TYPE* exp, TYPE* env)
     eval_no_translation(exp, env);
 
     return reg_val;
+}
+
+TYPE*
+data_eval(TYPE* exp, TYPE* env)
+{
+    return eval(xlat(exp), env);
 }
 
 TYPE*

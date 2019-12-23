@@ -167,7 +167,7 @@ _debug_procedure_(const TYPE* arguments, const TYPE* env)
     return mk_none();
 }
 
-MAKE_WRAPPER_TWO_ARGS(eval);
+MAKE_WRAPPER_TWO_ARGS(data_eval);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_pair);
 MAKE_WRAPPER_TWO_ARGS(cons);
 MAKE_WRAPPER_ONE_ARG(car);
@@ -971,7 +971,7 @@ init_primitive_procedures()
 
     ADD_PROCEDURE(debug, debug);
     
-    ADD_PROCEDURE(eval, eval);
+    ADD_PROCEDURE(data_eval, eval);
     ADD_PROCEDURE(is_pair, pair?);
     ADD_PROCEDURE(cons, cons);
     ADD_PROCEDURE(car, car);
