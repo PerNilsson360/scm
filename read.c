@@ -125,6 +125,11 @@ skip_until_paren_depth_zero(FILE* file)
 	    break;
 	}
 	
+	if (token->type == EOF)
+	{
+	    break;
+	}
+	
         if (token->type == '(')
         {
             paren_depth++;
@@ -418,8 +423,7 @@ static
 TOKEN*
 next_token(FILE* file)
 {
-    int c
-	;
+    int c;
     TOKEN* result = NULL;
 
     if (pushed_token_ptr != NULL)
@@ -437,7 +441,7 @@ next_token(FILE* file)
     skip_atmospheres(file);
 
     c = getc(file);
-
+    
     if (c == EOF)
     {
 	token.type = EOF;
@@ -737,12 +741,17 @@ datum_plus(FILE* file)
      */
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
-    
+
     if (token == NULL)
     {
         parse_error(file, "DATUM_PLUS: token null");
     }
 
+    if (token->type == EOF)
+    {
+	parse_error(file, "DATUM_PLUS: EOF");
+    }
+    
     if (token->type == ')')
     {
 	unget_token(token);

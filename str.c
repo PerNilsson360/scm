@@ -408,7 +408,7 @@ list_to_string(const TYPE* sexp)
 	    assert_throw(is_char(c),
 			 TYPE_ERROR,
 			 "LIST_TO_STRING: argument must be a char list");
-	    assert_throw(i == MAX_IDENTIFIER_LENGTH - 1,
+	    assert_throw(i < MAX_IDENTIFIER_LENGTH - 1,
 			 CONSTRAINT_ERROR,
 			 "LIST_TO_STRING: exceded max identifier length");
 
