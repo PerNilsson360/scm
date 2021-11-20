@@ -4,7 +4,7 @@
 #include "type.h"
 
 TYPE* mk_number_from_int(int n);
-TYPE* mk_number(const char* symbol, unsigned int length, int positive);
+TYPE* mk_number(const char* symbol, unsigned int length, int positive, int radix);
 TYPE* mk_hex_number(const char* symbol, unsigned int length);
 int is_number(const TYPE* number);
 int is_number_equal(const TYPE* left, const TYPE* right);

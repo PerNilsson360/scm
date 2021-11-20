@@ -38,7 +38,7 @@ mk_blob(const TYPE* k)
         exit(1);
     }
 
-    unsigned int length = k->d.bl->length;
+    unsigned int length = k->d.i;
 
     result->d.bl->data = mloc(sizeof(unsigned char) * length);
 

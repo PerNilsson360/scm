@@ -52,3 +52,18 @@ char_to_integer(const TYPE* sexp)
                  "CHAR_TO_INTEGER: argument must be a char");
     return mk_number_from_int(sexp->d.i);
 }
+
+TYPE* integer_to_char(const TYPE* sexp)
+{
+  assert_throw(is_number(sexp),	/* TODO numbers are integers now */
+	       TYPE_ERROR,
+	       "CHAR_TO_INTEGER: argument must be a integer");
+  assert_throw(is_number_gt_eq(sexp, mk_number_from_int(0)),
+	       TYPE_ERROR,
+	       "CHAR_TO_INTEGER: argument < 0");
+  assert_throw(is_number_lt_eq(sexp, mk_number_from_int(255)),
+	       TYPE_ERROR,
+	       "CHAR_TO_INTEGER: argument > 255");
+  
+  return mk_char((char) sexp->d.i);
+}

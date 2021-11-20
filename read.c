@@ -208,6 +208,50 @@ delimiter(char c)
     return result;
 }
 
+/* digit 2 -> 0 | 1 */
+int
+is_digit_2(char c) {
+  int result = FALSE;
+  switch (c)
+  {
+  case '0': case '1':
+    result = TRUE;
+  }
+  return result;
+}
+   
+/* digit 8 -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 */
+int
+is_digit_8(char c) {
+  int result = FALSE;
+  switch (c)
+  {
+  case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+    result = TRUE;
+  }
+  return result;
+}
+
+/* digit 16 -> digit 10 | a | b | c | d | e | f */
+int
+is_digit_16(char c) {
+  int result = FALSE;
+  if (isdigit(c))
+  {
+    result = TRUE;
+  }
+  else
+  {
+    switch (c)
+    {
+    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+      result = TRUE;
+    }
+  }
+  return result;
+}
+
+
 static
 int
 initial(char c)
@@ -341,7 +385,106 @@ character(FILE* file)
 
 static
 TOKEN*
-number(char c, FILE* file, int positive)
+binary(FILE* file)
+{
+  int i = 0;
+  token.type = T_NUMBER;
+  int c = getc(file);
+  if (!is_digit_2(c))
+  {
+    parse_error(file, "BINARY: need at least one digit");
+  }
+  do
+  {
+    if (i == MAX_IDENTIFIER_LENGTH - 1)
+    {
+      assert(0 && "Need to handle this in a better way");
+    }
+
+    token.data[i++] = c;
+    c = getc(file);
+  } 
+  while (is_digit_2(c));
+    
+  ungetc(c, file);
+
+  token.data[i] = '\0';
+  token.scm_type = mk_number(token.data, i, TRUE, 2);
+
+  return &token;
+}
+
+static
+TOKEN*
+octal(FILE* file)
+{
+  int i = 0;
+  token.type = T_NUMBER;
+  int c = getc(file);
+  
+  if (!is_digit_8(c))
+  {
+    parse_error(file, "OCTAL: need at least one digit");
+  }
+  
+  do
+  {
+    if (i == MAX_IDENTIFIER_LENGTH - 1)
+    {
+      assert(0 && "Need to handle this in a better way");
+    }
+
+    token.data[i++] = c;
+    c = getc(file);
+  } 
+  while (is_digit_8(c));
+    
+  ungetc(c, file);
+
+  token.data[i] = '\0';
+  token.scm_type = mk_number(token.data, i, TRUE, 8);
+
+  return &token;
+}
+
+
+static
+TOKEN*
+hex(FILE* file)
+{
+  int i = 0;
+  token.type = T_NUMBER;
+  int c = getc(file);
+  
+  if (!is_digit_16(c))
+    {
+    parse_error(file, "HEX: need at least one digit");
+  }
+  
+  do
+  {
+    if (i == MAX_IDENTIFIER_LENGTH - 1)
+    {
+      assert(0 && "Need to handle this in a better way");
+    }
+
+    token.data[i++] = c;
+    c = getc(file);
+  } 
+  while (is_digit_16(c));
+    
+  ungetc(c, file);
+
+  token.data[i] = '\0';
+  token.scm_type = mk_number(token.data, i, TRUE, 16);
+
+  return &token;
+}
+
+
+static
+TOKEN*
+decimal(char c, FILE* file, int positive)
 {
     int i = 0;
     token.type = T_NUMBER;
@@ -361,7 +504,7 @@ number(char c, FILE* file, int positive)
     ungetc(c, file);
 
     token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, positive);
+    token.scm_type = mk_number(token.data, i, positive, 10);
 
     return &token;
 }
@@ -483,6 +626,30 @@ next_token(FILE* file)
             token.type = T_INITIAL_VECTOR;
             result = &token;
         }
+	else if (cc == 'b')
+	{
+	  result = binary(file);
+	}
+	else if (cc == 'o')
+	{
+	  result = octal(file);
+	}
+	else if (cc == 'd')
+	{
+	  int cc = getc(file);
+	  if (isdigit(cc))
+	  {
+	    result = decimal(cc, file, TRUE);
+	  }
+	  else
+	  {
+	    parse_error(file, "NEXT_TOKEN: #d without digits");
+	  }
+	}
+	else if (cc == 'x')
+	{
+	  result = hex(file);
+	}
 	else
 	{
 	    parse_error(file, "NEXT_TOKEN: bad # sequence");
@@ -490,11 +657,10 @@ next_token(FILE* file)
     }
     /* 
        number --> num-2 | num-8 | num-10 | num-16 
-       but Right now it is is just integers [+-]?[1..9]+
      */
     else if (isdigit(c))
     {
-        result = number(c, file, TRUE);
+      result = decimal(c, file, TRUE);
     }
     /*
       peculiar-identier --> + | - | ...
@@ -505,7 +671,7 @@ next_token(FILE* file)
         int cc = getc(file);
         if (isdigit(cc))
         {
-            result = number(cc, file, TRUE);
+            result = decimal(cc, file, TRUE);
         }
         else
         {
@@ -526,7 +692,7 @@ next_token(FILE* file)
 
         if (isdigit(cc))
         {
-            result = number(cc, file, FALSE);
+            result = decimal(cc, file, FALSE);
         }
         else
         {
@@ -1054,4 +1220,25 @@ peek_char_from_port(const TYPE* port)
                  "PEEK_FROM_PORT: port is not an input port");
     FILE* file = port->d.po->file;
     return peek_char_from_file(file);
+}
+
+void write_char_to_port(const TYPE* port, const TYPE* c)
+{
+  assert_throw(is_true(is_output_port(port)),
+	       TYPE_ERROR,
+	       "WRITE_CHAR_TO_PORT: port is not an output port");
+  assert_throw(is_char(c),
+	       TYPE_ERROR,
+	       "WRITE_CHAR_TO_PORT: char is not a char");
+  
+  FILE* file = port->d.po->file;
+  int cc = c->d.i;
+  int result = fputc(cc, file);
+  
+  if (result == EOF)
+  {
+    assert_throw(FALSE,
+		 OS_ERROR,
+		 "WRITE_CHAR_TO_PORT: could not write to port");
+  }
 }

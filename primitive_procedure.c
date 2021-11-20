@@ -194,6 +194,7 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_symbol);
 MAKE_WRAPPER_ONE_ARG(symbol_to_string);
 MAKE_WRAPPER_ONE_ARG(string_to_symbol);
 MAKE_WRAPPER_ONE_ARG(char_to_integer);
+MAKE_WRAPPER_ONE_ARG(integer_to_char);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_char);
 MAKE_WRAPPER_ONE_ARG(number_to_string);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eq);
@@ -343,14 +344,14 @@ static
 TYPE* 
 _plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&add_number, arguments, mk_number("0", 1, TRUE)); 
+  return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
 }
 
 static 
 TYPE* 
 _mul_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE)); 
+  return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE, 10)); 
 }
 
 static 
@@ -748,6 +749,8 @@ _peek_char_procedure_(const TYPE* arguments, const TYPE* env)
     }
 }
 
+MAKE_VOID_WRAPPER_TWO_ARG(write_char_to_port);
+
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_eof_object);
 MAKE_VOID_WRAPPER_ONE_ARG(display);
 MAKE_VOID_WRAPPER_NO_ARG(newline);
@@ -999,6 +1002,7 @@ init_primitive_procedures()
 
     /* characters */
     ADD_PROCEDURE(char_to_integer, char->integer);
+    ADD_PROCEDURE(integer_to_char, integer->char);
     ADD_PROCEDURE(is_char, char?);
 
     /* equivalences */
@@ -1029,6 +1033,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(plus, +);
     ADD_PROCEDURE(mul, *);
     ADD_PROCEDURE(minus, -);
+    ADD_PROCEDURE(div, /);
     ADD_PROCEDURE(abs, abs);
     ADD_PROCEDURE(quotient, quotient);
     ADD_PROCEDURE(modulo, modulo);
@@ -1080,6 +1085,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(read, read);
     ADD_PROCEDURE(read_char, read-char);
     ADD_PROCEDURE(peek_char, peek-char);
+    ADD_PROCEDURE(write_char_to_port, write-char);
     ADD_PROCEDURE(is_eof_object, eof-object?);
     ADD_PROCEDURE(display, display);
     ADD_PROCEDURE(newline, newline);

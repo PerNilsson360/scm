@@ -39,21 +39,49 @@ TYPE* mk_number_from_int(int n)
     return result;
 }
 
+static
+int hex_to_number(char c) {
+  int result;
+  switch (c) {
+  case 'a':
+    result = 10;
+    break;
+  case 'b':
+    result = 11;
+    break;
+  case 'c':
+    result = 12;
+    break;
+  case 'd':
+    result = 13;
+    break;
+  case 'e':
+    result = 14;
+    break;
+  case 'f':
+    result = 15;
+    break;
+  default:
+    result = c -'0';
+  }
+  return result;
+}
+
 TYPE* 
-mk_number(const char* symbol, unsigned int length, int positive)
+mk_number(const char* symbol, unsigned int length, int positive, int radix)
 {
     TYPE* result = mk_unasigned_number();
     int number = 0;
     unsigned int i = 0;
         
-    for(i = 0; i < length; i++)
+    for (i = 0; i < length; i++)
     {
-        number += symbol[i] - '0';
-
-        if (i < length - 1)
-        {
-            number *= 10;
-        }
+      number += hex_to_number(symbol[i]);
+      
+      if (i < length - 1)
+      {
+	number *= radix;
+      }
     }
 
     result->d.i = (positive ? number : (- number));
@@ -333,7 +361,7 @@ sub_numbers(const TYPE* numbers)
 
     if (length(numbers) == 1)
     {
-        result = _sub_two_numbers(mk_number("0", 1, TRUE), car(numbers));
+      result = _sub_two_numbers(mk_number("0", 1, TRUE, 10), car(numbers));
     }
     else
     {
@@ -389,7 +417,7 @@ div_numbers(const TYPE* numbers)
 
     if (length(numbers) == 1)
     {
-        result = _div_two_numbers(mk_number("1", 1, TRUE), car(numbers));
+      result = _div_two_numbers(mk_number("1", 1, TRUE, 10), car(numbers));
     }
     else
     {
