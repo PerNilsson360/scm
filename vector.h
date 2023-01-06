@@ -9,5 +9,5 @@ TYPE* list_to_vector(const TYPE* list);
 TYPE* vector_length(const TYPE* sexp);
 TYPE* vector_ref(const TYPE* sexp, int k);
 void vector_set(TYPE* sexp, int k, const TYPE* obj);
-
+int vector_eq(const TYPE* left, const TYPE* right);
 #endif

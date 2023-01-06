@@ -38,7 +38,7 @@ mk_blob(const TYPE* k)
         exit(1);
     }
 
-    unsigned int length = k->d.i;
+    unsigned int length = as_integer(k);
 
     result->d.bl->data = mloc(sizeof(unsigned char) * length);
 
@@ -62,7 +62,7 @@ blob_length(const TYPE* blob)
 TYPE* 
 blob_u8_ref(const TYPE* blob, const TYPE* k)
 {
-    unsigned int index = k->d.i;
+    unsigned int index = as_integer(k);
 
     if (index >= blob->d.bl->length)
     {
@@ -77,7 +77,7 @@ blob_u8_ref(const TYPE* blob, const TYPE* k)
 void 
 blob_u8_set(const TYPE* blob, const TYPE* k, const TYPE* u8)
 {
-    unsigned int index = k->d.i;
+    unsigned int index = as_integer(k);
     
     if (index >= blob->d.bl->length)
     {

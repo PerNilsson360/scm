@@ -14,11 +14,6 @@
 	((= k 0) (car list))
 	(else (list-ref (cdr list) (- k 1)))))
 
-;; (define (list . args)
-;;   (if (null? args)
-;;       '()
-;;       (cons (car args) (apply list (cdr args)))))
-
 (define (accumulate f identity list)
   (if (null? list) 
       identity
@@ -89,14 +84,8 @@
 
 (define (member a li)
   (cond ((null? li) #f)
-	((equal? a (car li)) li)
-	(else (member a (cdr li)))))
-
-(define (equal? a b)
-  (cond ((and (pair? a) (pair? b))
-	 (and (equal? (car a) (car b)) (equal? (cdr a) (cdr b))))
-	((and (string? a) (string? a)) (string=? a b))
-	(else (eqv? a b))))
+		((equal? a (car li)) li)
+		(else (member a (cdr li)))))
 
 (define (load file-name)
   (define (inner port)
@@ -163,3 +152,53 @@
 	((= b 0) 1)
 	((= b 1) a)
 	(else (* a (expt a (dec b))))))
+
+;; algebraic data types
+
+(define (check-variant-args preds args)
+  (if (not (= (length preds) (length args)))
+	  (error "check-variant-args: wrong number of args" args preds)
+	  (let loop ((ps preds)
+				 (as args)
+				 (i 0))
+		(if (not (null? ps))
+			(if ((eval (car ps) environment) (car as))
+				(loop (cdr ps) (cdr as) (+ i 1))
+				(error "check-variant-args: wrong argument type" (car as) i))))))
+
+(define (define-datatype name . variants)
+  (define (make-pred-name name)
+	(string->symbol(string-append(symbol->string name) "?")))
+  (define (make-variant-predicate name variants)
+	(let ((variant-pred-names (map car variants))
+		  (pred-name (make-pred-name name)))
+	  (eval `(define (,pred-name arg)
+			   (if (pair? arg)
+				   (memv (car arg) (quote ,variant-pred-names))
+				   #f))
+			environment)))
+  (define (make-variant-constructor variant)
+	(match variant
+	  ((?name . ?preds)
+	   (eval `(define (,name . args)
+				(check-variant-args (quote ,preds) args) 
+				(cons (quote ,name) args))
+			 environment))
+	  (? (error "make-variant-constructor: variant should be a list"))))
+  ;; function body
+  (make-variant-predicate name variants)
+  (let loop ((vs variants))
+	(match vs
+	  ((?hd . ?tl)
+	   (make-variant-constructor hd)
+	   (loop tl)))))
+		
+(define (any? val) #t)
+
+(define-datatype 'option
+  '(option-none)
+  '(option-some any?))
+
+(define-datatype 'int
+  '(z)
+  '(s int?))

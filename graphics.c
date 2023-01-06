@@ -17,7 +17,7 @@
 #include "graphics.h"
 #include "char.h"
 
-static Display *display;
+static Display *display = 0;
 static Window win;
 static GC gc;
 static XFontStruct* font_struct;
@@ -62,7 +62,7 @@ _get_width(const TYPE* exp, int display_width)
     }
     
     return result;
-}
+} 
 
 char*
 _get_window_name(const TYPE* exp)
@@ -189,13 +189,14 @@ void
 gr_close()
 {
     XCloseDisplay(display);
+	display = 0;
 }
 
 void 
 gr_move_to(const TYPE* x, const TYPE* y)
 {
-    point_x = (unsigned int) x->d.i;
-    point_y = (unsigned int) y->d.i;
+    point_x = (unsigned int) as_integer(x);
+    point_y = (unsigned int) as_integer(y);
 }
 
 void
@@ -274,13 +275,63 @@ gr_text_size(const TYPE* exp)
 void 
 gr_set_foreground(const TYPE* exp)
 {
-    assert_throw(is_number(exp), 
+    assert_throw(is_integer(exp), 
                  TYPE_ERROR,
-                 "GR_SET_FOREGROUND: expects a number as argument");
+                 "GR_SET_FOREGROUND: expects a integer as argument");
 
     XSetForeground(display, 
                    gc, 
                    (unsigned long) exp->d.i ^ WhitePixel(display, screen_number));
+}
+
+void
+gr_draw_point()
+{
+	int rc = XDrawPoint(display, win, gc, point_x, point_y);
+
+	if (rc == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, rc, buff, 256);
+		fprintf(stderr, "GR_DRAW_point: error %s.\n", buff);
+	}
+}
+
+void
+gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2)
+{
+	assert_throw(is_number(x1), 
+                 TYPE_ERROR,
+                 "GR_SET_FOREGROUND: x1 is not an integer");
+	assert_throw(is_number(y1), 
+				 TYPE_ERROR,
+                 "GR_SET_FOREGROUND: x1 is not an integer");
+	assert_throw(is_number (x2), 
+                 TYPE_ERROR,
+                 "GR_SET_FOREGROUND: x1 is not an integer");
+	assert_throw(is_number(y2), 
+                 TYPE_ERROR,
+                 "GR_SET_FOREGROUND: x1 is not an integer");
+
+	if (display == 0) {
+		fprintf(stderr, "GR_DRAW_LINE: need to call gr-open.\n");
+		return;
+	}
+	
+	int rc = XDrawLine(display,
+					   win,
+					   gc,
+					   as_integer(x1),
+					   as_integer(y1),
+					   as_integer(x2),
+					   as_integer(y2));
+	
+	if (rc == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, rc, buff, 256);
+		fprintf(stderr, "GR_DRAW_LINE: error %s.\n", buff);
+	}
 }
 
 TYPE* 

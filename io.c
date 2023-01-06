@@ -46,7 +46,10 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case SYMBOL:
             display_symbol(sexp, file);
             break;
-        case NUMBER:
+        case INTEGER:
+		case RATIONAL:
+		case REAL:
+		case COMPLEX:
             display_number(sexp, file);
             break;
         case CHAR:
@@ -131,7 +134,13 @@ display_symbol(const TYPE* sexp, FILE* file)
 static void
 display_number(const TYPE* sexp, FILE* file)
 {
-    fprintf(file, "%d", sexp->d.i);
+	if (is_real(sexp)) {
+		fprintf(file, "%f", sexp->d.d);
+	}
+	else
+	{
+		fprintf(file, "%d", sexp->d.i);
+	}
 }
 
 static void 

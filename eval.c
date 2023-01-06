@@ -287,7 +287,7 @@ static int
 pattern_match(const TYPE* data, const TYPE* pattern, TYPE** vars, TYPE** vals)
 {
     int result = FALSE;
-
+	
     if (is_pattern_var(pattern))
     {
         if (is_wildcard_pattern(pattern))

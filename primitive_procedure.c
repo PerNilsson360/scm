@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <gc.h>
 
@@ -169,6 +170,7 @@ _debug_procedure_(const TYPE* arguments, const TYPE* env)
 
 MAKE_WRAPPER_TWO_ARGS(data_eval);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_pair);
+MAKE_PREDICATE_WRAPPER_ONE_ARG(is_procedure);
 MAKE_WRAPPER_TWO_ARGS(cons);
 MAKE_WRAPPER_ONE_ARG(car);
 MAKE_WRAPPER_ONE_ARG(cdr);
@@ -199,6 +201,7 @@ MAKE_PREDICATE_WRAPPER_ONE_ARG(is_char);
 MAKE_WRAPPER_ONE_ARG(number_to_string);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eq);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eqv);
+MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_equal);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_number);
 
 static 
@@ -416,6 +419,46 @@ _lcm_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert(FALSE);
     return NULL;
+}
+
+MAKE_WRAPPER_ONE_ARG(round_number);
+
+static 
+TYPE* 
+_sin_procedure_(const TYPE* arguments, const TYPE* env)
+{
+	assert_throw(length(arguments) == 1,
+                 APPLY_ERROR,
+                 "wrong # of arguments in sin");
+	
+	const TYPE* n = car(arguments);
+	assert_throw(is_number(n),
+                 TYPE_ERROR, 
+				 "SIN: n must be a string");
+
+	TYPE* result = mk_unasigned_number(REAL);
+	result->d.d = sin(n->d.d);
+	
+	return result;
+}
+
+static 
+TYPE* 
+_cos_procedure_(const TYPE* arguments, const TYPE* env)
+{
+	assert_throw(length(arguments) == 1,
+                 APPLY_ERROR,
+                 "wrong # of arguments in cos");
+	
+	const TYPE* n = car(arguments);
+	assert_throw(is_number(n),
+                 TYPE_ERROR, 
+				 "COS: n must be a string");
+
+	TYPE* result = mk_unasigned_number(REAL);	
+	result->d.d = cos(n->d.d);
+	
+	return result;
 }
 
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_boolean);
@@ -641,7 +684,7 @@ _vector_ref_procedure_(const TYPE* arguments, const TYPE* env)
                  "VECTOR_SET: second argument must be a number");
     
 
-    return vector_ref(car(arguments), k->d.i);
+    return vector_ref(car(arguments), as_integer(k));
 }
 
 static 
@@ -660,7 +703,7 @@ _vector_set_procedure_(const TYPE* arguments, const TYPE* env)
                  "VECTOR_SET: second argument must be a number");
 
     vector_set(car(arguments), 
-               k->d.i, 
+               as_integer(k), 
                car(cdr(cdr(arguments))));
     
     return mk_none();
@@ -896,6 +939,25 @@ MAKE_VOID_WRAPPER_ONE_ARG(gr_draw_string);
 MAKE_VOID_WRAPPER_ONE_ARG(gr_set_font);
 MAKE_VOID_WRAPPER_ONE_ARG(gr_set_text_size);
 MAKE_WRAPPER_ONE_ARG(gr_text_size);
+MAKE_VOID_WRAPPER_NO_ARG(gr_draw_point);
+
+static 
+TYPE* 
+_gr_draw_line_procedure_(const TYPE* arguments, const TYPE* env)
+{
+    assert_throw(
+        length(arguments) == 4,
+        APPLY_ERROR,
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in gr-move-to");
+
+    gr_draw_line(car(arguments),
+				 car(cdr(arguments)),
+				 car(cdr(cdr(arguments))),
+				 car(cdr(cdr(cdr(arguments)))));
+
+    return mk_none();
+} 
+
 MAKE_VOID_WRAPPER_ONE_ARG(gr_set_foreground);
 
 static 
@@ -976,6 +1038,7 @@ init_primitive_procedures()
     
     ADD_PROCEDURE(data_eval, eval);
     ADD_PROCEDURE(is_pair, pair?);
+	ADD_PROCEDURE(is_procedure, procedure?);
     ADD_PROCEDURE(cons, cons);
     ADD_PROCEDURE(car, car);
     ADD_PROCEDURE(cdr, cdr);
@@ -1007,7 +1070,8 @@ init_primitive_procedures()
 
     /* equivalences */
     ADD_PROCEDURE(is_eq, eq?);
-    ADD_PROCEDURE(is_eqv, eqv?);
+    ADD_PROCEDURE(is_eqv, eqv?);	
+    ADD_PROCEDURE(is_equal, equal?);
     
     /* number */
     ADD_PROCEDURE(number_to_string, number->string);
@@ -1039,6 +1103,9 @@ init_primitive_procedures()
     ADD_PROCEDURE(modulo, modulo);
     ADD_PROCEDURE(gcd, gcd);
     ADD_PROCEDURE(lcm, lcm);
+	ADD_PROCEDURE(round_number, round);
+	ADD_PROCEDURE(sin, sin);
+	ADD_PROCEDURE(cos, cos);
 
     /* boolean */
     ADD_PROCEDURE(is_boolean, boolean?);
@@ -1128,6 +1195,8 @@ init_primitive_procedures()
     ADD_PROCEDURE(gr_set_font, gr-set-font!);
     ADD_PROCEDURE(gr_set_text_size, gr-set-text!);
     ADD_PROCEDURE(gr_text_size, gr-text-size);
+	ADD_PROCEDURE(gr_draw_point, gr-draw-point);
+	ADD_PROCEDURE(gr_draw_line, gr-draw-line);
     ADD_PROCEDURE(gr_set_foreground, gr-set-foreground);
     ADD_PROCEDURE(gr_root_win, gr-root-win);
     ADD_PROCEDURE(x_events_queued, x-events-queued);

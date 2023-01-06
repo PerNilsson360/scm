@@ -6,24 +6,27 @@
 #define NONE                 0
 #define PAIR                 1
 #define SYMBOL               2
-#define NUMBER               3
-#define CHAR                 4
-#define BOOLEAN              5
-#define VECTOR               6
-#define HASH_TABLE           7
-#define STRING               8
-#define IMMUTABLE_STRING     9
-#define BLOB                10
-#define PROCEDURE           11
-#define PORT                12
-#define ENDOFFILE           13
-#define PRIMITIVE_PROCEDURE 14 
-#define ENVIRONMENT         15
-#define UDP_SOCKET          16
-#define TCP_SOCKET          17
-#define SERVER_SOCKET       18
-#define BOUND_VAR           19
-#define ALGEBRAIC           20
+#define INTEGER              3
+#define RATIONAL             4
+#define REAL                 5
+#define COMPLEX              6
+#define CHAR                 7
+#define BOOLEAN              8
+#define VECTOR               9
+#define HASH_TABLE          10
+#define STRING              11
+#define IMMUTABLE_STRING    12
+#define BLOB                13
+#define PROCEDURE           14
+#define PORT                15
+#define ENDOFFILE           16
+#define PRIMITIVE_PROCEDURE 17 
+#define ENVIRONMENT         18
+#define UDP_SOCKET          19
+#define TCP_SOCKET          20
+#define SERVER_SOCKET       21
+#define BOUND_VAR           22
+#define ALGEBRAIC           23
 
 struct PAIR_DATA;
 struct vector;
@@ -38,16 +41,17 @@ struct TYPE
     int type;
     union
     {
-	int i;
-	char* s;
-	struct TYPE* t;
-	struct PAIR_DATA* p;
-	struct vector* v;
-	struct BOUND_VAR_DATA* b;
-	struct PORT_DATA* po;
-	struct FUNCTION* f;
-	struct HASH_TABLE_DATA* h;
-	struct BLOB_DATA* bl;
+	  int i;
+	  double d;
+	  char* s;
+	  struct TYPE* t;
+	  struct PAIR_DATA* p;
+	  struct vector* v;
+	  struct BOUND_VAR_DATA* b;
+	  struct PORT_DATA* po;
+	  struct FUNCTION* f;
+	  struct HASH_TABLE_DATA* h;
+	  struct BLOB_DATA* bl;
     } d;
 };
 typedef struct TYPE  TYPE;
@@ -148,8 +152,11 @@ int is_pair(const TYPE* pair);
 int is_empty_pair(const TYPE* sexp);
 unsigned int length(const TYPE* pair);
 
+int is_procedure(const TYPE* pair);
+
 int is_eq(const TYPE* left, const TYPE* right);
 int is_eqv(const TYPE* left, const TYPE* right);
+int is_equal(const TYPE* left, const TYPE* right);
 
 /* quoted */
 TYPE* mk_quoted(const TYPE* sexp);

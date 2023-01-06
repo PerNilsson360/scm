@@ -8,6 +8,8 @@
 #include "number.h"
 #include "vector.h"
 #include "util.h"
+#include "common.h"
+
 int
 is_vector(const TYPE* sexp)
 {
@@ -92,7 +94,7 @@ vector_length(const TYPE* sexp)
                  TYPE_ERROR,
                  "VECTOR_LENGTH: wrong type in argument");
 
-    return sexp->d.v->length;
+    return sexp->d.v->length; 
 }
 
 
@@ -124,3 +126,24 @@ vector_set(TYPE* sexp, int k, const TYPE* obj)
     sexp->d.v->slots[k] = (TYPE*) obj;
 }
 
+
+int
+vector_eq(const TYPE* left, const TYPE* right)
+{
+	int result = TRUE;
+	const TYPE* len = vector_length(left);
+	
+	if (is_eqv(len, vector_length(right)))
+	{
+		for (int i = 0; i < len->d.i; i++)
+		{
+			if (!is_equal(vector_ref(left, i), vector_ref(right, i)))
+			{
+				result = FALSE;
+				break;
+			}
+		}
+	}
+	
+	return result;
+}

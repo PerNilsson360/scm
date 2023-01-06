@@ -266,8 +266,8 @@ initial(char c)
     }
     else
     {
-        /* special-initial -> ! | $ | % | & | * | / | : | <  */
-        /*                      | = | > | ? | ^ | _ | ~      */
+        /* special-initial --> ! | $ | % | & | * | / | : | <  */
+        /*                       | = | > | ? | ^ | _ | ~      */
         switch (c)
         {
         case '!': case '$': case '%': case '&': case '*': case '/': case ':': 
@@ -358,7 +358,7 @@ character(FILE* file)
 
     if (strncmp(token.data, "space", strlen("space")) == 0)
     {
-        token.scm_type = mk_char(0x10);
+        token.scm_type = mk_char(0x20);
     }
     else if (strncmp(token.data, "ht", strlen("ht")) == 0)
     {
@@ -447,7 +447,6 @@ octal(FILE* file)
   return &token;
 }
 
-
 static
 TOKEN*
 hex(FILE* file)
@@ -481,6 +480,29 @@ hex(FILE* file)
   return &token;
 }
 
+static
+TOKEN*
+decimal_sufix(char c, FILE* file, int i, int positive) {
+	do
+    {
+        if (i == MAX_IDENTIFIER_LENGTH - 1)
+        {
+            assert(0 && "Need to handle this in a better way");
+        }
+
+        token.data[i++] = c;
+        c = getc(file);
+    } 
+    while (isdigit(c));
+
+	ungetc(c, file);
+
+    token.data[i] = '\0';
+    token.scm_type = mk_real(token.data, positive);
+
+    return &token;
+}
+
 
 static
 TOKEN*
@@ -498,6 +520,9 @@ decimal(char c, FILE* file, int positive)
 
         token.data[i++] = c;
         c = getc(file);
+		if (c == '.') {
+			return decimal_sufix(c, file, i, positive);
+		}
     } 
     while (isdigit(c));
     
@@ -592,7 +617,7 @@ next_token(FILE* file)
 	result = &token;
     }
     /* 
-       identifier --> initial | subsequent* | peculiar-identifier 
+       identifier --> initial subsequent* | peculiar-identifier 
     */
     else if (initial(c))
     {
@@ -731,6 +756,12 @@ next_token(FILE* file)
                 assert(0 && "Need to handle this in a better way");
             }
         }
+		if (isdigit(cc))
+		{
+			token.type = T_NUMBER;
+			token.data[0] = c;
+			result = decimal_sufix(cc, file, 1, TRUE); 
+		}
         else 
         {
             ungetc(cc, file);
@@ -744,7 +775,7 @@ next_token(FILE* file)
     /* string-element -> any character other than " or \ | \" | \\ */
     else if (c == '"')
     {
-	result = string(file);
+		result = string(file);
     }
     /* 
        | ( | ) | [ | ] | #( |  ' | ` | , | ,@ | . 

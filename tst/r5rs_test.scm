@@ -6,14 +6,13 @@
 
 (define (test-quote)
   (expect '(symbol? (quote a)))
-					;(expect (equal? (quote #(a b c)) '#(a b c))) fix equal for arrays
+  (expect '(equal? (quote #(a b c)) '#(a b c)))
   (expect '(equal? (quote (+ 1 2)) '(+ 1 2)))
-					;(expect (equal? '#(a b c) #(a b c)))
+  (expect '(equal? '#(a b c) #(a b c)))
   (expect '(equal? ''a '(quote a)))
   (expect '(not (symbol? '())))
   (expect '(null? '()))
   )
-
 
 (define (test-quasiquote)
   (expect '(equal? `(list ,(+ 1 2) 4) '(list 3 4)))
@@ -159,6 +158,13 @@
 	     (else 'consonant)) 'consonant)
   )
 
+(define (test-control)
+  (expect '(procedure? car))
+  (expect '(not (procedure? 'car)))
+  (expect '(procedure? (lambda (x) (* x x))))
+  (expect '(not (procedure? '(lambda (x) (* x x)))))
+  )
+
 (define (test)
   (test-quote)
   (test-quasiquote)
@@ -173,6 +179,7 @@
   (test-let-extra)
   (test-cond)
   (test-case)
+  (test-control)
   (display "tests ok")
   (newline)
   )

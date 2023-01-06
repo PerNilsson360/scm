@@ -4,7 +4,7 @@
 
 (define int
   ([O]
-    [succ int])
+    [succ int]))
 
 (: plus (lambda (int int) int))
 (define plus

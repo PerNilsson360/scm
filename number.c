@@ -14,8 +14,8 @@
 #include "number.h"
 #include "util.h"
 
-static TYPE* 
-mk_unasigned_number()
+TYPE* 
+mk_unasigned_number(int type)
 {
     TYPE* result = mloc(sizeof(TYPE));
     
@@ -25,14 +25,14 @@ mk_unasigned_number()
         exit(1);
     }
     
-    result->type = NUMBER;
+    result->type = type;
 
     return result;
 }
 
 TYPE* mk_number_from_int(int n)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number(INTEGER);
 
     result->d.i = n;
 
@@ -70,7 +70,7 @@ int hex_to_number(char c) {
 TYPE* 
 mk_number(const char* symbol, unsigned int length, int positive, int radix)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number(INTEGER);
     int number = 0;
     unsigned int i = 0;
         
@@ -80,7 +80,7 @@ mk_number(const char* symbol, unsigned int length, int positive, int radix)
       
       if (i < length - 1)
       {
-	number *= radix;
+		  number *= radix;
       }
     }
 
@@ -89,10 +89,20 @@ mk_number(const char* symbol, unsigned int length, int positive, int radix)
     return result;
 }
 
+TYPE*
+mk_real(const char* symbol, int positive)
+{
+	TYPE* result = mk_unasigned_number(REAL);
+	double d = strtod(symbol, NULL);
+	result->d.d = positive ? d : -d;
+	
+	return result;
+}
+
 TYPE* 
 mk_hex_number(const char* symbol, unsigned int length)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number(INTEGER);
     int number = 0;
     unsigned int i = 0;
         
@@ -142,7 +152,43 @@ mk_hex_number(const char* symbol, unsigned int length)
 int
 is_number(const TYPE* number)
 {
-    return number->type == NUMBER;
+    int t = number->type; 
+    return  t == INTEGER || t == RATIONAL || t == REAL || t == COMPLEX;
+}
+
+int
+is_integer(const TYPE* number)
+{
+	return number->type == INTEGER;
+}
+
+int
+is_real(const TYPE* number)
+{
+	return number->type == REAL;
+}
+
+static
+double
+as_real(const TYPE* number)
+{
+	if (is_integer(number))
+	{
+		return  number->d.i;
+	} else if (is_real(number)) {
+		return  number->d.d;
+	}
+	else {
+		assert_throw(FALSE,
+					 TYPE_ERROR,
+					 "AS_REAL: not a supported number type");
+	}
+}
+
+static
+int
+is_atleast_one(int type, const TYPE* t1, const TYPE* t2) {
+	return t1->type == type || t2->type == type;
 }
 
 int
@@ -154,8 +200,15 @@ is_number_equal(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
 		 TYPE_ERROR,
 		 "IS_NUMBER_EQUAL: right must be a number");
-
-    return left->d.i == right->d.i;
+	
+	if (is_atleast_one(REAL, left, right))
+	{
+		return as_real(left) == as_real(right);
+	}
+	else
+	{
+		return left->d.i == right->d.i;
+	}
 }
 
 int
@@ -168,7 +221,14 @@ is_number_lt(const TYPE* left, const TYPE* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_LT: right must be a number");
 
-    return left->d.i < right->d.i;
+	if (is_atleast_one(REAL, left, right))
+	{
+		return as_real(left) < as_real(right);
+	}
+	else
+	{
+		return left->d.i < right->d.i;
+	}
 }
 
 int
@@ -181,7 +241,14 @@ is_number_gt(const TYPE* left, const TYPE* right)
 		 TYPE_ERROR,
 		 "IS_NUMBER_GT: right must be a number");
 
-    return left->d.i > right->d.i;
+	if (is_atleast_one(REAL, left, right))
+	{
+		return as_real(left) > as_real(right);
+	}
+	else
+	{
+		return left->d.i > right->d.i;
+	}
 }
 
 int
@@ -193,8 +260,14 @@ is_number_lt_eq(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
 		 TYPE_ERROR,
 		 "IS_NUMBER_LT_EQUAL: right must be a number");
-
-    return left->d.i <= right->d.i;
+	if (is_atleast_one(REAL, left, right))
+	{
+		return as_real(left) <= as_real(right);
+	}
+	else
+	{
+		return left->d.i <= right->d.i;
+	}
 }
 
 int
@@ -206,8 +279,15 @@ is_number_gt_eq(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
 		 TYPE_ERROR,
 		 "IS_NUMBER_GT_EQUAL: right must be a number");
-
-    return left->d.i >= (int) right->d.i;
+	
+	if (is_atleast_one(REAL, left, right))
+	{
+		return as_real(left) >= as_real(right);
+	}
+	else
+	{
+		return left->d.i >= (int) right->d.i;
+	}
 }
 
 TYPE* 
@@ -216,7 +296,14 @@ is_number_zero(const TYPE* n)
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_ZERO: n must be a number");
-    return mk_boolean((n->d.i) == 0);
+	if (is_real(n))
+	{
+		return mk_boolean(n->d.d == 0);
+	}
+	else
+	{
+		return mk_boolean(n->d.i == 0);
+	}
 }
 
 TYPE* 
@@ -226,16 +313,31 @@ is_number_positive(const TYPE* n)
 		 TYPE_ERROR,
 		 "IS_NUMBER_POSITIVE: n must be a number");
 
-    return mk_boolean(n->d.i > 0);
+	if (is_real(n))
+	{
+		return mk_boolean(n->d.d > 0);
+	}
+	else
+	{
+		return mk_boolean(n->d.i > 0);
+	}
 }
 
-TYPE* is_number_negative(const TYPE* n)
+TYPE*
+is_number_negative(const TYPE* n)
 {
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_NEGATIVE: n must be a number");
 
-    return mk_boolean(n->d.i > 0);
+	if (is_real(n))
+	{
+		return mk_boolean(n->d.d < 0);
+	}
+	else
+	{
+		return mk_boolean(n->d.i < 0);
+	}
 }
 
 TYPE* 
@@ -244,8 +346,15 @@ is_number_odd(const TYPE* n)
     assert_throw(is_number(n),
 		 TYPE_ERROR,
 		 "IS_NUMBER_ODD: n must be a number");
-
-    return mk_boolean((n->d.i % 2) == 1);
+	
+	if (is_real(n))
+	{
+		return mk_boolean(FALSE); /* todo maybe this can be improved */
+	}
+	else
+	{
+		return mk_boolean((n->d.i % 2) == 1);
+	}
 }
 
 TYPE* 
@@ -255,7 +364,14 @@ is_number_even(const TYPE* n)
 		TYPE_ERROR,
 		"IS_NUMBER_EVEN: n must be a number");
 
-   return mk_boolean(((n->d.i) % 2) == 0);
+   if (is_real(n))
+   {
+	   return mk_boolean(FALSE); /* todo maybe this can be improved */
+   }
+   else
+   {
+	   return mk_boolean(((n->d.i) % 2) == 0);
+   }
 }
 
 TYPE* 
@@ -279,14 +395,21 @@ TYPE* min_number(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
 		 TYPE_ERROR,
 		 "MIN_NUMBER: right must be a number");
-
-    return  (TYPE*) (left->d.i < right->d.i ? left : right);
+	
+	if (is_atleast_one(REAL, left, right))
+	{
+		return  (TYPE*) (as_real(left) < as_real(right) ? left : right);
+	}
+	else
+	{
+		return  (TYPE*) (left->d.i < right->d.i ? left : right);
+	}
 }
 
 TYPE* 
 add_number(const TYPE* left, const TYPE* right)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result;
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -295,7 +418,16 @@ add_number(const TYPE* left, const TYPE* right)
 		 TYPE_ERROR,
 		 "ADD_NUMBER: right must be a number");
 
-    result->d.i = left->d.i + right->d.i;
+	if (is_atleast_one(REAL, left, right))
+	{
+		result = mk_unasigned_number(REAL);
+		result->d.d = as_real(left) + as_real(right);
+	}
+	else
+	{
+		result = mk_unasigned_number(INTEGER);
+		result->d.i = left->d.i + right->d.i;
+	}
     
     return result;
 }
@@ -303,7 +435,7 @@ add_number(const TYPE* left, const TYPE* right)
 TYPE* 
 mul_number(const TYPE* left, const TYPE* right)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result;
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -312,15 +444,24 @@ mul_number(const TYPE* left, const TYPE* right)
 	   TYPE_ERROR,
 	   "MUL_NUMBER: right must be a number");
 
-    result->d.i = left->d.i * right->d.i;
-    
+	if (is_atleast_one(REAL, left, right))
+	{
+		result = mk_unasigned_number(REAL);
+		result->d.d = as_real(left) * as_real(right);
+	}
+	else
+	{
+		result = mk_unasigned_number(INTEGER);
+		result->d.i = left->d.i * right->d.i;
+	}
+
     return result;
 }
 
 static TYPE* 
 _sub_two_numbers(const TYPE* left, const TYPE* right)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result;
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -329,7 +470,16 @@ _sub_two_numbers(const TYPE* left, const TYPE* right)
 		 TYPE_ERROR,
 		 "SUB_NUMBER: right must be a number");
 
-    result->d.i = left->d.i - right->d.i;
+	if (is_atleast_one(REAL, left, right))
+	{
+		result = mk_unasigned_number(REAL);
+		result->d.d = as_real(left) - as_real(right);
+	}
+	else
+	{
+		result = mk_unasigned_number(INTEGER);
+		result->d.i = left->d.i - right->d.i;
+	}
     
     return result;
 }
@@ -376,7 +526,7 @@ sub_numbers(const TYPE* numbers)
 static TYPE* 
 _div_two_numbers(const TYPE* left, const TYPE* right)
 {
-    TYPE* result = mk_unasigned_number();
+    TYPE* result = mk_unasigned_number(REAL);
 
     assert_throw(is_number(left),
 		 TYPE_ERROR,
@@ -385,7 +535,7 @@ _div_two_numbers(const TYPE* left, const TYPE* right)
 		 TYPE_ERROR,
 		 "DIV_NUMBER: right must be a number");
 
-    result->d.i = left->d.i / right->d.i;
+    result->d.d = as_real(left) / as_real(right);
     
     return result;
 }
@@ -417,7 +567,7 @@ div_numbers(const TYPE* numbers)
 
     if (length(numbers) == 1)
     {
-      result = _div_two_numbers(mk_number("1", 1, TRUE, 10), car(numbers));
+		result = _div_two_numbers(mk_number("1", 1, TRUE, 10), car(numbers));
     }
     else
     {
@@ -439,10 +589,34 @@ remainder_number(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
                  TYPE_ERROR, 
                  "REMAINDER: right must be a number");
-
-    return mk_number_from_int((int) fmodf(left->d.i, right->d.i));
+	if (is_atleast_one(REAL, left, right))
+	{
+		TYPE* result = mk_unasigned_number(REAL);
+		result->d.d = fmodf(left->d.d, right->d.d);
+		return result;
+	}
+	else
+	{
+		return mk_number_from_int((int) fmodf(left->d.i, right->d.i));
+	}
 }
 
+TYPE*
+round_number(const TYPE* number)
+{
+	assert_throw(is_number(number),
+                 TYPE_ERROR, 
+                 "ROUND: argument must be a number");
+  
+	if (is_real(number))
+	{
+		mk_number_from_int((int) (number->d.d + 0.5));
+	}
+	else
+	{
+		return (TYPE*)number;
+	}
+}
 
 TYPE* 
 number_to_string(const TYPE* n)
@@ -491,5 +665,16 @@ unsigned int
 number_hash(const TYPE* number)
 {
     /* @todo fix better algorithm */
-    return (unsigned int) number->d.i;
+	return as_integer(number);
+}
+
+int as_integer(const TYPE* number)
+{
+	if (is_real(number)) {
+		return (unsigned int) number->d.d;
+	}
+	else
+	{
+		return (unsigned int) number->d.i;
+	}
 }

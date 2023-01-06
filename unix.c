@@ -20,8 +20,8 @@ nano_sleep(TYPE* seconds, TYPE* micro_seconds)
     
     struct timespec sleep_time = 
     { 
-	seconds->d.i, 
-	micro_seconds->d.i
+		seconds->d.i, 
+		micro_seconds->d.i
     };
     
     if (nanosleep(&sleep_time, NULL) == -1)

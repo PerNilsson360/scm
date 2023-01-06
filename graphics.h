@@ -14,7 +14,9 @@ void gr_draw_char(const TYPE* exp);
 void gr_draw_string(const TYPE* exp);
 void gr_set_font(const TYPE* exp);      /* string */
 void gr_set_text_size(const TYPE* exp); /* int */
-TYPE* gr_text_size();                   /* (pair int int) */ 
+TYPE* gr_text_size();                   /* (pair int int) */
+void gr_draw_point();
+void gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2);
 void gr_set_foreground(const TYPE* exp); /* int */
 TYPE* x_events_queued();
 TYPE* x_next_event();

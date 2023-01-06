@@ -10,6 +10,8 @@
 #include "io.h"
 #include "symbol.h"
 #include "number.h"
+#include "str.h"
+#include "vector.h"
 #include "common.h"
 #include "error.h"
 #include "type.h"
@@ -111,7 +113,7 @@ car(const TYPE* list)
         display_debug(list);
         printf("not a pair\n");
         /*assert_throw(FALSE, TYPE_ERROR, "CAR: not a pair");*/
-	assert(0);  
+		assert(0);  
     }
 
     return list->d.p->car;
@@ -274,6 +276,12 @@ length(const TYPE* pair)
 }
 
 int
+is_procedure(const TYPE* proc)
+{
+	return proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE;
+}
+
+int
 is_eq(const TYPE* left, const TYPE* right)
 {
     return left->d.s == right->d.s;
@@ -294,6 +302,31 @@ is_eqv(const TYPE* left, const TYPE* right)
     
     return result;
 }
+
+int
+is_equal(const TYPE* left, const TYPE* right)
+{
+    int result = FALSE;
+    if (is_pair(left) && is_pair(right))
+    {
+        result = is_equal(car(left), car(right)) && is_equal(cdr(left), cdr(right));
+    }
+	else if (is_string(left) && is_string(right))
+	{
+		result = is_true(string_eq(left, right));
+	}
+	else if (is_vector(left) && is_vector(right))
+	{
+		result = vector_eq(left, right);
+	}
+    else
+    {
+        result = is_eqv(left, right);
+    }
+    
+    return result;
+}
+
 
 TYPE* 
 mk_quoted(const TYPE* sexp)
