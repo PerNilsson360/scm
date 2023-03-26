@@ -10,4 +10,7 @@ TYPE* read_char_from_port(const TYPE* port);
 TYPE* peek_char();
 TYPE* peek_char_from_port(const TYPE* port);
 void write_char_to_port(const TYPE* port, const TYPE* c);
+TYPE* read_sml();
+TYPE* read_sml_from_port(const TYPE* port);
+
 #endif

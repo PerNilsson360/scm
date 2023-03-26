@@ -102,7 +102,3 @@
 (define m '(match x
 		  ((define . ?b) (display b))
 		  (?a (display 'darn))))
-
-(match 'defi
-       (define #t)
-       (? 'darn))

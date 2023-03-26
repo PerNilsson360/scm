@@ -405,3 +405,38 @@ mk_eof()
 
     return result;
 }
+
+int
+is_escape_proc(const TYPE* sexp)
+{
+	return !is_nil(sexp) && sexp->type == ESCAPE_PROC;
+}
+
+TYPE*
+mk_escape_proc(const STACK* stack, const REGS* regs)
+{
+	TYPE* result = mloc(sizeof(TYPE));
+	   
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_ESCAPE_PROC: could not allocate memory for type");
+        exit(1);
+    }
+
+	result->type = ESCAPE_PROC;
+	result->d.e = mloc(sizeof(ESCAPE_PROC_DATA));
+	
+	if (result->d.e == NULL)
+    {
+        fprintf(stderr, "MK_ESCAPE_PROC: could not allocate memory for escape proc data");
+        exit(1);
+    }
+
+	copy_stack(&(result->d.e->stack), stack);
+	memcpy(&(result->d.e->regs), regs, sizeof(REGS));
+	return result;
+}
+
+void copy_regs(REGS* dest, const REGS* src) {
+	memcpy(dest, src, sizeof(REGS));
+}

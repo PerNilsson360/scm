@@ -27,17 +27,17 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     return result;
 }
 
-TYPE*
+int
 is_compound_procedure(const TYPE* procedure)
 {
-    return mk_boolean(!is_nil(procedure) && procedure->type == PROCEDURE);
+    return !is_nil(procedure) && procedure->type == PROCEDURE;
 }
 
 TYPE* 
 procedure_parameters(TYPE* procedure)
 {
     /* @todo clean upp error handling */
-    if (!is_true(is_compound_procedure(procedure))) 
+    if (!is_compound_procedure(procedure)) 
     {
         display_debug(procedure);
         throw_error(TYPE_ERROR,
@@ -50,7 +50,7 @@ procedure_parameters(TYPE* procedure)
 TYPE* 
 procedure_body(TYPE* procedure)
 {
-    assert_throw(is_true(is_compound_procedure(procedure)),
+    assert_throw(is_compound_procedure(procedure),
                  TYPE_ERROR,
                  "PROCEDURE_BODY: procedure must be a procedure");
 
@@ -60,7 +60,7 @@ procedure_body(TYPE* procedure)
 TYPE* 
 procedure_environment(TYPE* procedure)
 {
-    assert_throw(is_true(is_compound_procedure(procedure)),
+    assert_throw(is_compound_procedure(procedure),
                  TYPE_ERROR,
                  "PROCEDURE_ENVIRONMENT: procedure must be a procedure");
 

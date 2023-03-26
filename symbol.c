@@ -84,6 +84,7 @@ init_symbol_table()
     _delay_keyword_symbol_ = mk_symbol("delay");
     _stream_cons_keyword_symbol_ = mk_symbol("stream-cons");
     _quasiquote_keyword_symbol_ = mk_symbol("quasiquote");
+	_call_cc_keyword_symbol_ = mk_symbol("call-with-current-continuation");
 }
 
 TYPE* 
@@ -196,7 +197,8 @@ is_reserved_symbol(const TYPE* symbol)
         is_eq(_letrec_keyword_symbol_, symbol) ||
         is_eq(_delay_keyword_symbol_, symbol) ||
         is_eq(_stream_cons_keyword_symbol_, symbol) ||
-        is_eq(_quasiquote_keyword_symbol_, symbol))
+        is_eq(_quasiquote_keyword_symbol_, symbol) ||
+		is_eq(_call_cc_keyword_symbol_, symbol))
     {
         result = TRUE;
     }

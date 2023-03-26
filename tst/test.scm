@@ -625,3 +625,19 @@
 
 (define (lst . args) args)
   
+(define id (lambda (x) x))
+
+(define fac
+  (lambda (x)
+	(if (equal? x 1) 1
+		(* x (fac (- x 1))))))
+
+(define (foo v) v)
+  
+
+(define (parse value)
+  (call-with-current-continuation
+   (lambda (throw)
+	 (if value
+		 (throw 'true)
+		 'false))))

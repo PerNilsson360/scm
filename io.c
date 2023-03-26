@@ -93,9 +93,12 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case BOUND_VAR:
             display_bound_var(sexp, file);
             break;
+		case ESCAPE_PROC:
+			fprintf(file, "escape-proc");
+			break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);
-            assert(FALSE && 
+			assert(FALSE && 
                    "DISPLAY_INSIDE_LIST: not a valid type");
         }
     }

@@ -2,6 +2,7 @@
 #define _TYPE_H_
 
 #include <stdio.h>
+#include "stack.h"
 
 #define NONE                 0
 #define PAIR                 1
@@ -27,6 +28,7 @@
 #define SERVER_SOCKET       21
 #define BOUND_VAR           22
 #define ALGEBRAIC           23
+#define ESCAPE_PROC         24
 
 struct PAIR_DATA;
 struct vector;
@@ -41,17 +43,18 @@ struct TYPE
     int type;
     union
     {
-	  int i;
-	  double d;
-	  char* s;
-	  struct TYPE* t;
-	  struct PAIR_DATA* p;
-	  struct vector* v;
-	  struct BOUND_VAR_DATA* b;
-	  struct PORT_DATA* po;
-	  struct FUNCTION* f;
-	  struct HASH_TABLE_DATA* h;
-	  struct BLOB_DATA* bl;
+		int                      i;
+		double                   d;
+		char*                    s;
+		struct TYPE*             t;
+		struct PAIR_DATA*        p;
+		struct vector*           v;
+		struct BOUND_VAR_DATA*   b;
+		struct PORT_DATA*        po;
+		struct FUNCTION*         f;
+		struct HASH_TABLE_DATA*  h;
+		struct BLOB_DATA*        bl;
+		struct ESCAPE_PROC_DATA* e;
     } d;
 };
 typedef struct TYPE  TYPE;
@@ -114,9 +117,30 @@ struct BLOB_DATA
     unsigned int length;
     unsigned char* data;
 };
-typedef struct BLOB_DATA BLOB_DATA;
+typedef struct BLOB_DATA  BLOB_DATA;
 
+/* registers for scheme VM */
 
+struct REGS {
+	TYPE* exp_debug;
+	void* exp;
+	void* env;
+	void* val;
+	void* cont;
+	void* proc;
+	void* arg1;
+	void* unev;
+};
+typedef struct REGS  REGS;
+
+struct ESCAPE_PROC_DATA {
+	STACK stack;
+	REGS regs;
+};
+typedef struct ESCAPE_PROC_DATA  ESCAPE_PROC_DATA;
+	
+TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);
+	
 TYPE* mk_bound_var(TYPE* symbol, 
                    unsigned int frame_index, 
                    unsigned int var_index,
@@ -172,5 +196,9 @@ int is_true(const TYPE* sexp);
 /* EOF */
 int is_eof_object(const TYPE* sexp);
 TYPE* mk_eof();
+
+int is_escape_proc(const TYPE* sexp);
+TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);
+void copy_regs(REGS* dest, const REGS* src);
 
 #endif

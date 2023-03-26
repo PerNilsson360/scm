@@ -1,3 +1,4 @@
+#include "io.h"
 #include "type.h"
 #include "symbol.h"
 
@@ -13,7 +14,8 @@ is_tagged_list(const TYPE* exp, TYPE* symbol)
 TYPE*
 mk_lambda(TYPE* parameters, TYPE* body)
 {
-    return cons(_lambda_keyword_symbol_, cons(parameters, body));
+	TYPE* result = cons(_lambda_keyword_symbol_, cons(parameters, body));
+    return result;
 }
 
 TYPE*

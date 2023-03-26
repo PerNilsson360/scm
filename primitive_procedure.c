@@ -756,6 +756,25 @@ _read_procedure_(const TYPE* arguments, const TYPE* env)
 
 static 
 TYPE* 
+_read_sml_procedure_(const TYPE* arguments, const TYPE* env)
+{
+    assert_throw(
+        length(arguments) == 0 || length(arguments) == 1,
+        APPLY_ERROR,
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in read-sml");
+    
+    if (length(arguments) == 0)
+    {
+        return read_sml();
+    }
+    else
+    {
+        return read_sml_from_port(car(arguments));
+    }
+}
+
+static 
+TYPE* 
 _read_char_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
@@ -1150,6 +1169,7 @@ init_primitive_procedures()
     /* io */
     ADD_PROCEDURE(quit, quit);
     ADD_PROCEDURE(read, read);
+	ADD_PROCEDURE(read_sml, read-sml);
     ADD_PROCEDURE(read_char, read-char);
     ADD_PROCEDURE(peek_char, peek-char);
     ADD_PROCEDURE(write_char_to_port, write-char);

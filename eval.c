@@ -20,16 +20,7 @@
 #include "elab.h"
 
 extern int _debug_;             /* defined in primitive_procedure */
-
-/* registers for scheme VM */
-
-static void* reg_exp;
-static void* reg_env;
-static void* reg_val;
-static void* reg_cont;
-static void* reg_proc;
-static void* reg_arg1;
-static void* reg_unev;
+static REGS reg;
 
 /* Syntax procedures */
 
@@ -45,7 +36,8 @@ is_self_evaluating(const TYPE* sexp)
         is_string(sexp) ||
         is_vector(sexp) ||
         is_none(sexp) ||
-        is_nil(sexp);
+        is_nil(sexp) ||
+		is_escape_proc(sexp);
 }
 
 static
@@ -429,316 +421,351 @@ min_procedure_parameters(const TYPE* exp)
     }
 }
 
+static int
+is_call_cc(const TYPE* exp)
+{
+	return is_tagged_list(exp, _call_cc_keyword_symbol_);
+}
+
 void
 hairy_eval()
 {
     TYPE* vars;                 /* used in match */
     TYPE* vals;                 /* used in match */
-
-    TYPE* reg_exp_debug = nil();
-    reg_val = nil();
-    reg_cont = &&done;
-    reg_proc = nil();
-    reg_arg1 = nil();
-    reg_unev = nil();
+	TYPE* tmp; 					/* used call/cc  */
+	
+    reg.exp_debug = nil();
+    reg.val = nil();
+    reg.cont = &&done;
+    reg.proc = nil();
+    reg.arg1 = nil();
+    reg.unev = nil();
 
 eval_dispatch:
     if (_debug_)
     {
         fprintf(stderr, "eval_dispatch\n");
-        display_debug(reg_exp);
+        display_debug(reg.exp);
         fflush(NULL);
     }
     
-    if (is_self_evaluating(reg_exp)){goto ev_self_eval;}
-    else if (is_variable(reg_exp)){goto ev_variable;}
-    else if (is_quoted(reg_exp)){goto ev_quoted;}
-    else if (is_assignment(reg_exp)){goto ev_assignment;}
-    else if (is_definition(reg_exp)){goto ev_definition;}
-    else if (is_if(reg_exp)){goto ev_if;}
-    else if (is_lambda(reg_exp)){goto ev_lambda;}
-    else if (is_begin(reg_exp)){goto ev_begin;}
-    else if (is_match(reg_exp)){goto ev_match;}
-    else if (is_delay(reg_exp)){goto ev_delay;}
-    else if (is_stream_cons(reg_exp)){goto ev_stream_cons;}
-    else if (is_apply(reg_exp)){goto ev_apply;}
-    else if (is_application(reg_exp)){goto ev_application;}
+    if (is_self_evaluating(reg.exp)){goto ev_self_eval;}
+    else if (is_variable(reg.exp)){goto ev_variable;}
+    else if (is_quoted(reg.exp)){goto ev_quoted;}
+    else if (is_assignment(reg.exp)){goto ev_assignment;}
+    else if (is_definition(reg.exp)){goto ev_definition;}
+    else if (is_if(reg.exp)){goto ev_if;}
+    else if (is_lambda(reg.exp)){goto ev_lambda;}
+    else if (is_begin(reg.exp)){goto ev_begin;}
+    else if (is_match(reg.exp)){goto ev_match;}
+    else if (is_delay(reg.exp)){goto ev_delay;}
+    else if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
+	else if (is_call_cc(reg.exp)){goto ev_call_cc;}
+    else if (is_apply(reg.exp)){goto ev_apply;}
+    else if (is_application(reg.exp)){goto ev_application;}
     else
     {
-        display_debug(reg_exp);
+        display_debug(reg.exp);
         throw_error(APPLY_ERROR, "EVAL: not a valid expression");
     }
 ev_self_eval:
-    reg_val = reg_exp;
-    goto *reg_cont;
+    reg.val = reg.exp;
+    goto *reg.cont;
 ev_variable:
-    reg_val = lookup_variable_value(reg_exp, reg_env);
-    goto *reg_cont;
+    reg.val = lookup_variable_value(reg.exp, reg.env);
+    goto *reg.cont;
 ev_quoted:
-    reg_val = quotation_value(reg_exp);
-    goto *reg_cont;
+    reg.val = quotation_value(reg.exp);
+    goto *reg.cont;
 ev_lambda:
-    reg_val = mk_procedure(lambda_parameters(reg_exp),
-                           lambda_body(reg_exp),
-                           reg_env);
-    goto *reg_cont;
+    reg.val = mk_procedure(lambda_parameters(reg.exp),
+                           lambda_body(reg.exp),
+                           reg.env);
+    goto *reg.cont;
 ev_begin:
-    reg_unev = begin_actions(reg_exp);
-    save(reg_cont);
+    reg.unev = begin_actions(reg.exp);
+    save(reg.cont);
     goto ev_sequence;
 ev_match:
-    save(reg_exp);
-    save(reg_cont);
-    if (length(reg_exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
-    reg_unev = match_clauses(reg_exp);
-    save(reg_unev);
-    reg_exp = match_key(reg_exp);
-    reg_cont = &&ev_match_key_evaluated;
+    save(reg.exp);
+    save(reg.cont);
+    if (length(reg.exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
+    reg.unev = match_clauses(reg.exp);
+    save(reg.unev);
+    reg.exp = match_key(reg.exp);
+    reg.cont = &&ev_match_key_evaluated;
     goto eval_dispatch;
 ev_match_key_evaluated:
-    restore(&reg_unev);
-    save(reg_env);
-    /* sets reg_exp to the expresion to evaluate if match is found */
-    /* reg_val contains the match key and reg_unev contains the clauses */
+    restore(&reg.unev);
+    save(reg.env);
+    /* sets reg.exp to the expresion to evaluate if match is found */
+    /* reg.val contains the match key and reg.unev contains the clauses */
     /* vars and vals contains the variable bindings from the match */
-    if (find_matching_match_clause(reg_val, 
-                                   reg_unev, 
+    if (find_matching_match_clause(reg.val, 
+                                   reg.unev, 
                                    &vars, 
                                    &vals, 
-                                   (TYPE**)&reg_exp))
+                                   (TYPE**)&reg.exp))
     {
         if (length(vars) > 0)
         {
-            reg_env = extend_environment(reverse(vars), reverse(vals), reg_env);
+            reg.env = extend_environment(reverse(vars), reverse(vals), reg.env);
         }
-        reg_cont = &&ev_match_done;
+        reg.cont = &&ev_match_done;
         goto eval_dispatch;
     }
     /* no match, return value none */
-    reg_val = mk_none();
+    reg.val = mk_none();
 ev_match_done:
-    restore(&reg_env);
-    restore(&reg_cont);
-    restore(&reg_exp);
-    goto *reg_cont;
+    restore(&reg.env);
+    restore(&reg.cont);
+    restore(&reg.exp);
+    goto *reg.cont;
 ev_delay:
-    save(reg_cont);
-    if (length(reg_exp) != 2)
+    save(reg.cont);
+    if (length(reg.exp) != 2)
     {
         throw_error(EVAL_ERROR, "DELAY: must have exactly one operand");
     }
-    reg_exp = mk_lambda(nil(), operands(reg_exp));
-    reg_cont = &&ev_delay_done;
+    reg.exp = mk_lambda(nil(), operands(reg.exp));
+    reg.cont = &&ev_delay_done;
     goto eval_dispatch;
 ev_delay_done:
-    restore(&reg_cont);
-    goto *reg_cont;
+    restore(&reg.cont);
+    goto *reg.cont;
 ev_stream_cons:
-    save(reg_unev);
-    reg_unev = operands(reg_exp);
-    if (length(reg_unev) != 2)
+    save(reg.unev);
+    reg.unev = operands(reg.exp);
+    if (length(reg.unev) != 2)
     {
         throw_error(EVAL_ERROR, 
                     "STREAM_CONS: must have 2 operands");
     }
-    reg_exp = cons(mk_symbol("delay"), cdr(reg_unev));
-    save(reg_cont);
-    reg_cont = &&ev_stream_cons_done; 
+    reg.exp = cons(mk_symbol("delay"), cdr(reg.unev));
+    save(reg.cont);
+    reg.cont = &&ev_stream_cons_done; 
     goto eval_dispatch;
 ev_stream_cons_done:
-    reg_val = cons(car(reg_unev), reg_val);
-    restore(&reg_cont);
-    restore(&reg_unev);
-    goto *reg_cont;
+    reg.val = cons(car(reg.unev), reg.val);
+    restore(&reg.cont);
+    restore(&reg.unev);
+    goto *reg.cont;
+ev_call_cc:
+	save(reg.cont);
+    if (length(reg.exp) != 2)
+    {
+        throw_error(EVAL_ERROR, "CALL_CC: must have exactly one operand");
+    }
+    reg.exp = mk_list(2, car(operands(reg.exp)), mk_escape_proc(get_stack(), &reg));
+    reg.cont = &&ev_call_cc_done;
+    goto eval_dispatch;
+ev_call_cc_done:
+	restore(&reg.cont);
+    goto *reg.cont;
     /* special form apply */
 ev_apply:
     /* @todo the aggregation of operands are not according to r5rs */
-    save(reg_cont);
-    save(reg_env);
-    reg_unev = apply_arguments(reg_exp);
-    if (!is_nil(reg_unev) && !is_pair(reg_unev))
+    save(reg.cont);
+    save(reg.env);
+    reg.unev = apply_arguments(reg.exp);
+    if (!is_nil(reg.unev) && !is_pair(reg.unev))
     {
-	display_debug(reg_unev);
-	throw_error(APPLY_ERROR,
+		display_debug(reg.unev);
+		throw_error(APPLY_ERROR,
                     "APPLY: malformed arguments in application");
     }
-    save(reg_unev);
-    reg_exp = apply_procedure(reg_exp);
-    reg_exp_debug = reg_exp;	/* need to know when rands are wrong */
-    reg_cont = &&ev_apply_did_operator;
+    save(reg.unev);
+    reg.exp = apply_procedure(reg.exp);
+    reg.exp_debug = reg.exp;	/* need to know when rands are wrong */
+    reg.cont = &&ev_apply_did_operator;
     goto eval_dispatch;
 ev_apply_did_operator:
-    restore(&reg_unev);
-    restore(&reg_env);
-    reg_arg1 = nil();
-    reg_proc = reg_val;    
-    if (no_operands(reg_unev)) 
+    restore(&reg.unev);
+    restore(&reg.env);
+    reg.arg1 = nil();
+    reg.proc = reg.val;    
+    if (no_operands(reg.unev)) 
     {
         throw_error(APPLY_ERROR,
                     "APPLY: wrong number of arguments");
     }
-    save (reg_proc);
+    save (reg.proc);
 ev_apply_operand_loop:
-    save(reg_arg1);
-    reg_exp = first_operand(reg_unev);
-    if (last_operand(reg_unev)) goto ev_apply_last_arg;
-    save(reg_env);
-    save(reg_unev);
-    reg_cont = &&ev_apply_accumulate_arg;
+    save(reg.arg1);
+    reg.exp = first_operand(reg.unev);
+    if (last_operand(reg.unev)) goto ev_apply_last_arg;
+    save(reg.env);
+    save(reg.unev);
+    reg.cont = &&ev_apply_accumulate_arg;
     goto eval_dispatch;
 ev_apply_accumulate_arg:
-    restore(&reg_unev);
-    restore(&reg_env);
-    restore(&reg_arg1);
-    reg_arg1 = cons(reg_val, reg_arg1);
-    reg_unev = rest_operands(reg_unev);
+    restore(&reg.unev);
+    restore(&reg.env);
+    restore(&reg.arg1);
+    reg.arg1 = cons(reg.val, reg.arg1);
+    reg.unev = rest_operands(reg.unev);
     goto ev_apply_operand_loop;
 ev_apply_last_arg:
-    reg_cont = &&ev_apply_accum_last_arg;
+    reg.cont = &&ev_apply_accum_last_arg;
     goto eval_dispatch;
 ev_apply_accum_last_arg:
-    restore(&reg_arg1);
-    if (!is_list(reg_val))
+    restore(&reg.arg1);
+    if (!is_list(reg.val))
     {
         throw_error(APPLY_ERROR,
                     "APPLY: last argument must be a list");
     }
-    reg_arg1 = append(reverse(reg_arg1), reg_val);
-    restore(&reg_proc);
+    reg.arg1 = append(reverse(reg.arg1), reg.val);
+    restore(&reg.proc);
     goto apply_dispatch;
     /* application of operator to operands */
 ev_application:
-    save(reg_cont);
-    save(reg_env);
-    reg_unev = operands(reg_exp);
-    if (!is_nil(reg_unev) && !is_pair(reg_unev))
+    save(reg.cont);
+    save(reg.env);
+    reg.unev = operands(reg.exp);
+    if (!is_nil(reg.unev) && !is_pair(reg.unev))
     {
-	display_debug(reg_unev);
-	throw_error(APPLY_ERROR,
+		display_debug(reg.unev);
+		throw_error(APPLY_ERROR,
                     "APPLICATION: malformed arguments in application");
     }
-
-    save(reg_unev);
-    reg_exp = operator(reg_exp);
-    reg_cont = &&ev_appl_did_operator;
+    save(reg.unev);
+    reg.exp = operator(reg.exp);
+    reg.cont = &&ev_appl_did_operator;
     goto eval_dispatch;
 ev_appl_did_operator:
-    restore(&reg_unev);
-    restore(&reg_env);
-    reg_arg1 = nil();
-    reg_proc = reg_val;    
-    if (no_operands(reg_unev)) goto apply_dispatch;
-    save (reg_proc);
+    restore(&reg.unev);
+    restore(&reg.env);
+    reg.arg1 = nil();
+    reg.proc = reg.val;    
+    if (no_operands(reg.unev)) goto apply_dispatch;
+    save (reg.proc);
 ev_appl_operand_loop:
-    save(reg_arg1);
-    reg_exp = first_operand(reg_unev);
-    if (last_operand(reg_unev)) goto ev_appl_last_arg;
-    save(reg_env);
-    save(reg_unev);
-    reg_cont = &&ev_appl_accumulate_arg;
+    save(reg.arg1);
+    reg.exp = first_operand(reg.unev);
+    if (last_operand(reg.unev)) goto ev_appl_last_arg;
+    save(reg.env);
+    save(reg.unev);
+    reg.cont = &&ev_appl_accumulate_arg;
     goto eval_dispatch;
 ev_appl_accumulate_arg:
-    restore(&reg_unev);
-    restore(&reg_env);
-    restore(&reg_arg1);
-    reg_arg1 = cons(reg_val, reg_arg1);
-    reg_unev = rest_operands(reg_unev);
+    restore(&reg.unev);
+    restore(&reg.env);
+    restore(&reg.arg1);
+    reg.arg1 = cons(reg.val, reg.arg1);
+    reg.unev = rest_operands(reg.unev);
     goto ev_appl_operand_loop;
 ev_appl_last_arg:
-    reg_cont = &&ev_appl_accum_last_arg;
+    reg.cont = &&ev_appl_accum_last_arg;
     goto eval_dispatch;
 ev_appl_accum_last_arg:
-    restore(&reg_arg1);
-    reg_arg1 = reverse(cons(reg_val, reg_arg1));
-    restore(&reg_proc);
+    restore(&reg.arg1);
+    reg.arg1 = reverse(cons(reg.val, reg.arg1));
+    restore(&reg.proc);
     goto apply_dispatch;
 ev_sequence:
-    reg_exp = first_exp(reg_unev);
-    if (is_last_exp(reg_unev)) goto ev_sequence_last_exp;
-    save(reg_unev);
-    save(reg_env);
-    reg_cont = &&ev_sequence_continue;
+    reg.exp = first_exp(reg.unev);
+    if (is_last_exp(reg.unev)) goto ev_sequence_last_exp;
+    save(reg.unev);
+    save(reg.env);
+    reg.cont = &&ev_sequence_continue;
     goto eval_dispatch;
 ev_sequence_continue:
-    restore(&reg_env);
-    restore(&reg_unev);
-    reg_unev = rest_exps(reg_unev);
+    restore(&reg.env);
+    restore(&reg.unev);
+    reg.unev = rest_exps(reg.unev);
     goto ev_sequence;
 ev_sequence_last_exp:
-    restore(&reg_cont);
+    restore(&reg.cont);
     goto eval_dispatch;
 ev_if:
-    save(reg_exp);
-    save(reg_env);
-    save(reg_cont);
-    reg_cont = &&ev_if_decide;
-    reg_exp = if_predicate(reg_exp);
+    save(reg.exp);
+    save(reg.env);
+    save(reg.cont);
+    reg.cont = &&ev_if_decide;
+    reg.exp = if_predicate(reg.exp);
     goto eval_dispatch;
 ev_if_decide:
-    restore(&reg_cont);
-    restore(&reg_env);
-    restore(&reg_exp);
-    if (is_true(reg_val)) goto ev_if_consequent;
+    restore(&reg.cont);
+    restore(&reg.env);
+    restore(&reg.exp);
+    if (is_true(reg.val)) goto ev_if_consequent;
 ev_if_alternative:
-    reg_exp = if_alternative(reg_exp);
+    reg.exp = if_alternative(reg.exp);
     goto eval_dispatch;
 ev_if_consequent:
-    reg_exp = if_consequent(reg_exp);
+    reg.exp = if_consequent(reg.exp);
     goto eval_dispatch;
 ev_assignment:
-    reg_unev = assignment_variable(reg_exp);
-    save(reg_unev);
-    reg_exp = assignment_value(reg_exp);
-    save(reg_env);
-    save(reg_cont);
-    reg_cont = &&ev_assignment_1;
+    reg.unev = assignment_variable(reg.exp);
+    save(reg.unev);
+    reg.exp = assignment_value(reg.exp);
+    save(reg.env);
+    save(reg.cont);
+    reg.cont = &&ev_assignment_1;
     goto eval_dispatch;
 ev_assignment_1:
-    restore(&reg_cont);
-    restore(&reg_env);
-    restore(&reg_unev);
-    set_variable_value(reg_unev, reg_val, reg_env);
-    reg_val = mk_none();
-    goto *reg_cont;
+    restore(&reg.cont);
+    restore(&reg.env);
+    restore(&reg.unev);
+    set_variable_value(reg.unev, reg.val, reg.env);
+    reg.val = mk_none();
+    goto *reg.cont;
 ev_definition:
-    reg_unev = definition_variable(reg_exp);
-    save(reg_unev);
-    reg_exp = definition_value(reg_exp);
-    save(reg_env);
-    save(reg_cont);
-    reg_cont = &&ev_definition_1;
+    reg.unev = definition_variable(reg.exp);
+    save(reg.unev);
+    reg.exp = definition_value(reg.exp);
+    save(reg.env);
+    save(reg.cont);
+    reg.cont = &&ev_definition_1;
     goto eval_dispatch;
 ev_definition_1:
-    restore(&reg_cont);
-    restore(&reg_env);
-    restore(&reg_unev);
-    define_variable(reg_unev, reg_val, reg_env);
-    goto *reg_cont;
+    restore(&reg.cont);
+    restore(&reg.env);
+    restore(&reg.unev);
+    define_variable(reg.unev, reg.val, reg.env);
+    goto *reg.cont;
     /* Apply */
 apply_dispatch:
-    if (is_primitive_procedure(reg_proc)) goto primitive_apply;
-    else if (is_compound_procedure(reg_proc)) goto compound_apply;
+    if (is_primitive_procedure(reg.proc)) goto primitive_apply;
+    else if (is_compound_procedure(reg.proc)) goto compound_apply;
+	else if (is_escape_proc(reg.proc)) goto escape_proc_apply;
     else throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
 primitive_apply:
-    reg_val = apply_primitive_procedure(reg_proc, reg_arg1, reg_env);
-    restore(&reg_cont);
-    goto *reg_cont;
+    reg.val = apply_primitive_procedure(reg.proc, reg.arg1, reg.env);
+    restore(&reg.cont);
+    goto *reg.cont;
 compound_apply:
-    if (length(reg_arg1) < 
-        min_procedure_parameters(procedure_parameters(reg_proc)))
+    if (length(reg.arg1) < 
+        min_procedure_parameters(procedure_parameters(reg.proc)))
     {
-        display_debug(reg_exp_debug);
+        display_debug(reg.exp_debug);
         fprintf(stderr, "got %d args expected at least %d args\n",
-                length(reg_arg1),
-                min_procedure_parameters(procedure_parameters(reg_proc)));
+                length(reg.arg1),
+                min_procedure_parameters(procedure_parameters(reg.proc)));
         throw_error(APPLY_ERROR, 
                     "Apply: wrong number of arguments in application");
     }
-    reg_env = extend_environment(procedure_parameters(reg_proc),
-                                 reg_arg1,
-                                 procedure_environment(reg_proc));
-    reg_unev = procedure_body(reg_proc);
+    reg.env = extend_environment(procedure_parameters(reg.proc),
+                                 reg.arg1,
+                                 procedure_environment(reg.proc));
+    reg.unev = procedure_body(reg.proc);
     goto ev_sequence;
+escape_proc_apply:
+	if (length(reg.arg1) != 1)
+    {
+        display_debug(reg.exp_debug);
+        fprintf(stderr, "escape procedure got %d args expected one argument\n",
+                length(reg.arg1));
+        throw_error(APPLY_ERROR, 
+                    "Apply: wrong number of arguments in escape procedure application");
+    }
+	tmp = car(reg.arg1);
+	assign_stack(&(((TYPE*)reg.proc)->d.e->stack));
+	copy_regs(&reg, &(((TYPE*)reg.proc)->d.e->regs));
+	reg.val = tmp;
+	restore(&reg.cont);
+    goto *reg.cont;
 done:
     ;
 }
@@ -994,18 +1021,18 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     else if (is_lambda(exp))
     {
         TYPE* vars = lambda_parameters(exp);
-	TYPE* ctx = extend_context(vars, context);
-	TYPE* body = lambda_body(exp);
-	TYPE* defs = scan_internal_defs(body);
-	add_defs_to_context(defs, ctx);
+		TYPE* ctx = extend_context(vars, context);
+		TYPE* body = lambda_body(exp);
+		TYPE* defs = scan_internal_defs(body);
+		add_defs_to_context(defs, ctx);
         result = mk_lambda(vars, 
                            exp_to_name_free_exp(body,
-						ctx));
+												ctx));
     } 
     else if (is_definition(exp))
     {
         TYPE* var = definition_variable(exp);
-	TYPE* val = definition_value(exp);
+		TYPE* val = definition_value(exp);
         result = mk_definition(var,
                                exp_to_name_free_exp(val, context));
     }
@@ -1038,14 +1065,14 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 TYPE*
 eval(TYPE* exp, TYPE* env)
 {
-    /* reg_exp = cons(mk_symbol("__internal-translate__"), */
+    /* reg.exp = cons(mk_symbol("__internal-translate__"), */
     /*                cons(mk_quoted(exp), nil())); */
-    /* reg_env = env; */
+    /* reg.env = env; */
     /* hairy_eval(); */
-    /* eval_no_translation(reg_val, env); */
+    /* eval_no_translation(reg.val, env); */
     eval_no_translation(exp, env);
 
-    return reg_val;
+    return reg.val;
 }
 
 TYPE*
@@ -1057,9 +1084,9 @@ data_eval(TYPE* exp, TYPE* env)
 TYPE*
 eval_no_translation(TYPE* exp, TYPE* env)
 {
-    reg_exp = exp_to_name_free_exp(exp, nil());
-    reg_env = env;
+    reg.exp = exp_to_name_free_exp(exp, nil());
+    reg.env = env;
     hairy_eval();
 
-    return reg_val;
+    return reg.val;
 }

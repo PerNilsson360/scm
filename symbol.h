@@ -35,5 +35,6 @@ TYPE* _letrec_keyword_symbol_;
 TYPE* _delay_keyword_symbol_;
 TYPE* _stream_cons_keyword_symbol_;
 TYPE* _quasiquote_keyword_symbol_;
+TYPE* _call_cc_keyword_symbol_;
 
 #endif

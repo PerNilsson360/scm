@@ -147,15 +147,17 @@
 
 (define (test-case)
   (expect '(equal? (case (* 2 3)
-		     ((2 3 5 7) 'prime)
-		     ((1 4 6 8 9) 'composite)) 'composite))
+					 ((2 3 5 7) 'prime)
+					 ((1 4 6 8 9) 'composite))
+				   'composite))
   ;; (expect (case (car '(c d)) how to test unspecified
   ;; 	   ((a) 'a)
   ;; 	   ((b) 'b)) unspecifed)
   (expect '(case (car '(c d))
-	     ((a e i o u) 'vowel)
-	     ((w y) 'semivowel)
-	     (else 'consonant)) 'consonant)
+			 ((a e i o u) 'vowel)
+			 ((w y) 'semivowel)
+			 (else 'consonant))
+		  'consonant)
   )
 
 (define (test-control)
@@ -163,6 +165,31 @@
   (expect '(not (procedure? 'car)))
   (expect '(procedure? (lambda (x) (* x x))))
   (expect '(not (procedure? '(lambda (x) (* x x)))))
+  )
+
+(define list-length
+  (lambda (obj)
+	(call-with-current-continuation
+	 (lambda (return)
+	   (letrec ((r (lambda (obj)
+					 (cond ((null? obj) 0)
+						   ((pair? obj)
+							(+ (r (cdr obj)) 1))
+						   (else (return #f))))))
+		 (r obj))))))
+
+(define (test-call/cc)
+  (expect '(call-with-current-continuation
+			(lambda (exit)
+			  (for-each (lambda (x)
+						  (if (negative? x)
+							  (exit x)))
+						'(54 0 37 -3 245 19))))
+		  -3)
+  (expect '(equal? (list-length '(1 2 3 4))
+				   4))
+  (expect '(equal? (list-length '(a b . c))
+				   #f))
   )
 
 (define (test)
@@ -180,6 +207,7 @@
   (test-cond)
   (test-case)
   (test-control)
+  (test-call/cc)
   (display "tests ok")
   (newline)
   )

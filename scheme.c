@@ -38,7 +38,7 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
         if (!is_eof_object(sexp))
         {
             stack_init();
-	    sexp = xlat(sexp);
+			sexp = xlat(sexp);
             eval(sexp, env);
         }
     }
@@ -64,7 +64,7 @@ interactive(TYPE* env)
         
         stack_init();
         sexp = scm_read();
-	sexp = xlat(sexp);
+		sexp = xlat(sexp);
         display(eval(sexp, env));
     }
 }
@@ -84,22 +84,22 @@ script_mode(int argc, char** argv, TYPE* env)
     /* if the first line has # we assume it is a "#!/..." line */
     if (is_char_equal(c, hash))
     {
-	do
-	{
-	    c = read_char_from_port(port);
-	}
-	while (!is_eof_object(c) && !is_char_equal(c, newline));
+		do
+		{
+			c = read_char_from_port(port);
+		}
+		while (!is_eof_object(c) && !is_char_equal(c, newline));
     }
     
     do
     {
         stack_init();
         sexp = read_from_port(port);
-	if (is_eof_object(sexp))
-	{
-	    break;
-	}
-	sexp = xlat(sexp);
+		if (is_eof_object(sexp))
+		{
+			break;
+		}
+		sexp = xlat(sexp);
         eval(sexp, env);
     }
     while(TRUE);
