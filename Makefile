@@ -30,6 +30,11 @@ test : test.c
 clean :
 	rm *.o
 	rm scheme
+	rm ut
+	rm lex.yy.c
+	rm y.output
+	rm y.tab.c
+	rm y.tab.h
 	rm TAGS
 	rm tst/*~
 	rm *~
