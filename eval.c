@@ -170,56 +170,56 @@ operator(TYPE* exp)
     return car(exp);
 }
 
-TYPE*
+static TYPE*
 operands(TYPE* exp)
 {
     return cdr(exp);
 }
 
-TYPE*
+static TYPE*
 first_operand(TYPE* operands)
 {
     return car(operands);
 }
 
-int
+static int
 last_operand(TYPE* operands)
 {
     return is_nil(cdr(operands));
 }
 
-int 
+static int 
 no_operands(TYPE* operands)
 {
     return is_nil(operands);
 }
 
-TYPE*
+static TYPE*
 rest_operands(TYPE* operands)
 {
     return cdr(operands);
 }
 
-int
+static int
 is_match(const TYPE* exp)
 {
     return is_tagged_list(exp, _match_keyword_symbol_);
 }
 
-TYPE*
+static TYPE*
 mk_match(TYPE* key, TYPE* clauses)
 {
     return cons(_match_keyword_symbol_, cons(key, clauses));
 }
 
 
-TYPE*
+static TYPE*
 match_key(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-TYPE*
+static TYPE*
 match_clauses(TYPE* exp)
 {
     return cdr(cdr(exp));
@@ -346,39 +346,39 @@ find_matching_match_clause(const TYPE* key,
     return result;
 }
 
-int 
+static int 
 is_apply(const TYPE* exp)
 {
     const char* apply = "apply";   
     return is_tagged_list(exp, mk_symbol(apply));
 }
 
-TYPE*
+static TYPE*
 apply_arguments(const TYPE* exp)
 {
     return cdr(cdr(exp));
 }
 
-TYPE*
+static TYPE*
 apply_procedure(const TYPE* exp)
 {
     return car(cdr(exp));
 }
 
-int 
+static int 
 is_delay(const TYPE* exp)
 {
     return is_tagged_list(exp, _delay_keyword_symbol_);
 }
 
-int 
+static int 
 is_stream_cons(const TYPE* exp)
 {
     return is_tagged_list(exp, _stream_cons_keyword_symbol_);
 }
 
 
-int
+static int
 is_improper_list(const TYPE* exp)
 {
     if (is_nil(exp))
@@ -395,7 +395,7 @@ is_improper_list(const TYPE* exp)
     } 
 }
 
-int
+static int
 improper_list_length(const TYPE* exp)
 {
     if (is_pair(exp)) 
@@ -408,16 +408,32 @@ improper_list_length(const TYPE* exp)
     }
 }
 
-int 
-min_procedure_parameters(const TYPE* exp)
+static void
+check_procedure_arg_len(int arg_len, const TYPE* params)
 {
-    if (is_improper_list(exp))
+    if (is_improper_list(params))
     {
-        return improper_list_length(exp);
+		int min_len = improper_list_length(params);
+		if (arg_len < min_len) {
+			display_debug(reg.exp_debug);
+			fprintf(stderr, "CHEKC_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
+					arg_len,
+					min_len);
+			throw_error(APPLY_ERROR, 
+						"Apply: wrong number of arguments in application");
+		}
     }
     else
     {
-        return length(exp);
+        int len = length(params);
+		if (arg_len != len) {
+			display_debug(params);
+			fprintf(stderr, "CHEKC_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
+					arg_len,
+					len);
+			throw_error(APPLY_ERROR, 
+						"Apply: wrong number of arguments in application");
+		}
     }
 }
 
@@ -736,16 +752,7 @@ primitive_apply:
     restore(&reg.cont);
     goto *reg.cont;
 compound_apply:
-    if (length(reg.arg1) < 
-        min_procedure_parameters(procedure_parameters(reg.proc)))
-    {
-        display_debug(reg.exp_debug);
-        fprintf(stderr, "got %d args expected at least %d args\n",
-                length(reg.arg1),
-                min_procedure_parameters(procedure_parameters(reg.proc)));
-        throw_error(APPLY_ERROR, 
-                    "Apply: wrong number of arguments in application");
-    }
+	check_procedure_arg_len(length(reg.arg1), procedure_parameters(reg.proc));
     reg.env = extend_environment(procedure_parameters(reg.proc),
                                  reg.arg1,
                                  procedure_environment(reg.proc));
