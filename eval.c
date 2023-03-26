@@ -448,7 +448,7 @@ hairy_eval()
 {
     TYPE* vars;                 /* used in match */
     TYPE* vals;                 /* used in match */
-	TYPE* tmp; 					/* used call/cc  */
+	TYPE* tmp;
 	
     reg.exp_debug = nil();
     reg.val = nil();
@@ -752,8 +752,9 @@ primitive_apply:
     restore(&reg.cont);
     goto *reg.cont;
 compound_apply:
-	check_procedure_arg_len(length(reg.arg1), procedure_parameters(reg.proc));
-    reg.env = extend_environment(procedure_parameters(reg.proc),
+	tmp = procedure_parameters(reg.proc);
+	check_procedure_arg_len(length(reg.arg1), tmp);
+    reg.env = extend_environment(tmp,
                                  reg.arg1,
                                  procedure_environment(reg.proc));
     reg.unev = procedure_body(reg.proc);
