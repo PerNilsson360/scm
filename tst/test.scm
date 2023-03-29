@@ -178,7 +178,7 @@
 (define (print arg . args)
   (display arg)
   (newline)
-  (display args)))
+  (display args))
 
 (define (p . args)
   (display args))
@@ -633,6 +633,7 @@
 		(* x (fac (- x 1))))))
 
 (define (foo v) v)
+((lambda (x) x) 1)
   
 
 (define (parse value)
@@ -641,3 +642,12 @@
 	 (if value
 		 (throw 'true)
 		 'false))))
+
+(call-with-current-continuation
+ (lambda (exit)
+   (for-each (lambda (x)
+			   (if (negative? x)
+				   (exit x)))
+			 '(54 0 37 -3 245 19))))
+
+(for-each (lambda (x) (display x)) '(1 2))

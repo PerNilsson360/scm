@@ -178,15 +178,31 @@
   (expect '(null? '()))
   )
 
-(define (test-eq?)
-  (expect '(eq? 'a 'a))
-  (expect '(not (eq? (list 'a) (list 'a))))
-  (expect '(eq? '() '()))
-  (expect '(eq? car car))
-  (expect '(let ((x '(a))) (eq? x x)))
-  (expect '(let (( x '#())) (eq? x x)))
-  (expect '(let ((p (lambda (x) x))) (eq? p p)))
+;; 5.2.2
+(define (test-internal-defintions)
+  (expect '(equal? (let ((x 5))
+					 (define foo (lambda (y) (bar x y)))
+					 (define bar (lambda (a b) (+ (* a b) a)))(test-iteration)
+					 (foo (+ x 3)))
+				   45))
+  (expect '(equal? (let ((x 5))
+					 (letrec ((foo (lambda (y) (bar x y)))
+							  (bar (lambda (a b) (+ (* a b) a))))
+					   (foo (+ x 3))))
+				   45))
   )
+
+;; 6.1
+
+(define gen-counter
+  (lambda ()
+	(let ((n 0))
+	  (lambda () (set! n (+ n 1)) n))))
+
+(define gen-loser
+  (lambda ()
+	(let ((n 0))
+	  (lambda () (set! n (+ n 1)) 27))))
 
 (define (test-eqv?)
   (expect '(not (eqv? 1 "")))
@@ -199,6 +215,23 @@
   (expect '(not (eqv? (lambda () 1) (lambda () 2))))
   (expect '(not (eqv? #f '())))
   (expect '(let ((p (lambda (x) x))) (eqv? p p)))
+  (expect '(let ((g (gen-counter))) (eqv? g g)))
+  (expect '(not (eqv? (gen-counter) (gen-counter))))
+  (expect '(let ((g (gen-loser))) (eqv? g g)))
+  ;(expect '(letrec ((f (lambda () (if (eqv? f g ) 'f 'both)))
+  ;                  (g (lambda () (if (eqv? f g ) 'g 'both))))
+  ;			 (eqv? f g)))
+  (expect '(let ((x '(a))) (eqv? x x )))
+  )
+
+(define (test-eq?)
+  (expect '(eq? 'a 'a))
+  (expect '(not (eq? (list 'a) (list 'a))))
+  (expect '(eq? '() '()))
+  (expect '(eq? car car))
+  (expect '(let ((x '(a))) (eq? x x)))
+  (expect '(let (( x '#())) (eq? x x)))
+  (expect '(let ((p (lambda (x) x))) (eq? p p)))
   )
 
 (define (test-equal?)
@@ -206,6 +239,16 @@
   (expect '(equal? '(a) '(a)))
   (expect '(equal? '(a (b) c) '(a (b) c)))
   (expect '(equal? "abc" "abc"))
+  (expect '(equal? 2 2))
+  (expect '(equal? (make-vector 5 'a) (make-vector 5 'a)))
+  )
+
+;; 6.2.4 
+;; todo
+
+;; 6.3.1
+(define (test-booleans)
+  (expect '(equal? (not #t)))
   )
 
 (define (test-memq?)
@@ -228,8 +271,6 @@
 (define (test-let-extra)
   (expect '(= (let () 1 2) 2))
   )
-
-
 
 (define (test-control)
   (expect '(procedure? car))
@@ -267,19 +308,21 @@
   (test-simple-examples)
   (test-conditionals)
   (test-assignemnt)
-  (test-quote)
-  (test-quasiquote)
-  (test-or)
+  (test-cond)
+  (test-case)
   (test-and)
-  (test-eq?)
+  (test-or)
+  (test-let)
+  (test-let-extra)
+  (test-iteration)
+  (test-quasiquote)
+  (test-quote)
+  (test-internal-defintions)
   (test-eqv?)
+  (test-eq?)
   (test-equal?)
   (test-memq?)
   (test-assq)
-  (test-let)
-  (test-let-extra)
-  (test-cond)
-  (test-case)
   (test-control)
   (test-call/cc)
   (display "tests ok")

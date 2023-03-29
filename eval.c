@@ -409,14 +409,14 @@ improper_list_length(const TYPE* exp)
 }
 
 static void
-check_procedure_arg_len(int arg_len, const TYPE* params)
+check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* params)
 {
     if (is_improper_list(params))
     {
 		int min_len = improper_list_length(params);
 		if (arg_len < min_len) {
-			display_debug(reg.exp_debug);
-			fprintf(stderr, "CHEKC_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
+			display_debug(proc_name);
+			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
 					arg_len,
 					min_len);
 			throw_error(APPLY_ERROR, 
@@ -427,8 +427,8 @@ check_procedure_arg_len(int arg_len, const TYPE* params)
     {
         int len = length(params);
 		if (arg_len != len) {
-			display_debug(params);
-			fprintf(stderr, "CHEKC_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
+			display_debug(proc_name);
+			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
 					arg_len,
 					len);
 			throw_error(APPLY_ERROR, 
@@ -581,8 +581,6 @@ ev_call_cc_done:
     /* special form apply */
 ev_apply:
     /* @todo the aggregation of operands are not according to r5rs */
-    save(reg.cont);
-    save(reg.env);
     reg.unev = apply_arguments(reg.exp);
     if (!is_nil(reg.unev) && !is_pair(reg.unev))
     {
@@ -590,9 +588,11 @@ ev_apply:
 		throw_error(APPLY_ERROR,
                     "APPLY: malformed arguments in application");
     }
+	reg.exp = apply_procedure(reg.exp);
+	save(reg.cont);
+	save(reg.exp);
+	save(reg.env);
     save(reg.unev);
-    reg.exp = apply_procedure(reg.exp);
-    reg.exp_debug = reg.exp;	/* need to know when rands are wrong */
     reg.cont = &&ev_apply_did_operator;
     goto eval_dispatch;
 ev_apply_did_operator:
@@ -636,17 +636,18 @@ ev_apply_accum_last_arg:
     goto apply_dispatch;
     /* application of operator to operands */
 ev_application:
-    save(reg.cont);
-    save(reg.env);
-    reg.unev = operands(reg.exp);
+	reg.unev = operands(reg.exp);
     if (!is_nil(reg.unev) && !is_pair(reg.unev))
     {
 		display_debug(reg.unev);
 		throw_error(APPLY_ERROR,
                     "APPLICATION: malformed arguments in application");
     }
+	reg.exp = operator(reg.exp);
+	save(reg.cont);
+	save(reg.exp);
+	save(reg.env);
     save(reg.unev);
-    reg.exp = operator(reg.exp);
     reg.cont = &&ev_appl_did_operator;
     goto eval_dispatch;
 ev_appl_did_operator:
@@ -743,6 +744,7 @@ ev_definition_1:
     goto *reg.cont;
     /* Apply */
 apply_dispatch:
+	restore(&reg.exp); // the name of the procedure for error reporting
     if (is_primitive_procedure(reg.proc)) goto primitive_apply;
     else if (is_compound_procedure(reg.proc)) goto compound_apply;
 	else if (is_escape_proc(reg.proc)) goto escape_proc_apply;
@@ -753,7 +755,7 @@ primitive_apply:
     goto *reg.cont;
 compound_apply:
 	tmp = procedure_parameters(reg.proc);
-	check_procedure_arg_len(length(reg.arg1), tmp);
+	check_procedure_arg_len(reg.exp, length(reg.arg1), tmp);
     reg.env = extend_environment(tmp,
                                  reg.arg1,
                                  procedure_environment(reg.proc));
@@ -762,7 +764,7 @@ compound_apply:
 escape_proc_apply:
 	if (length(reg.arg1) != 1)
     {
-        display_debug(reg.exp_debug);
+        display_debug(reg.exp);
         fprintf(stderr, "escape procedure got %d args expected one argument\n",
                 length(reg.arg1));
         throw_error(APPLY_ERROR, 

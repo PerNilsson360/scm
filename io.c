@@ -98,8 +98,8 @@ display_inside_list(const TYPE* sexp, FILE* file)
 			break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);
-			assert(FALSE && 
-                   "DISPLAY_INSIDE_LIST: not a valid type");
+			/*assert(FALSE && 
+			  "DISPLAY_INSIDE_LIST: not a valid type");*/
         }
     }
 }
