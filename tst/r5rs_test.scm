@@ -248,7 +248,57 @@
 
 ;; 6.3.1
 (define (test-booleans)
-  (expect '(equal? (not #t)))
+  (expect '(equal? (not #t) #f))
+  (expect '(equal? (not 3) #f))
+  (expect '(equal? (not (list 3)) #f))
+  (expect '(equal? (not #f) #t))
+  (expect '(equal? (not '()) #f))
+  (expect '(equal? (not (list)) #f))
+  (expect '(equal? (not 'nil) #f))
+  (expect '(equal? (boolean? #f) #t))
+  (expect '(equal? (boolean? 0) #f))
+  (expect '(equal? (boolean? '()) #f))
+  )
+
+;; 6.3.2
+(define x-6-3-2 (list 'a 'b 'c))
+(define y x-6-3-2)
+(define (test-pairs-and-lists)
+  (expect '(equal? y '(a b c)))
+  (expect '(equal? (begin (set-cdr! x-6-3-2 4) x-6-3-2) '(a . 4)))
+  (expect '(equal? (list? y) #f))
+  ; todo loopin (expect '(equal? (begin (set-cdr! x-6-3-2 x-6-3-2)) (list? x-6-3-2)))
+  )
+
+;; 6.4
+
+(define compose
+  (lambda (f g)
+	(lambda (args)
+	  (f (apply g args)))))
+
+(define a-stream (letrec ((next (lambda (n) (cons n (delay (next (+ n 1)))))))
+						  (next 0)))
+(define head car)
+(define tail (lambda (stream) (force (cdr stream))))
+
+(define (test-control-features)
+  (expect '(procedure? car))
+  (expect '(not(procedure? 'car)))
+  (expect '(procedure? (lambda (x) (* x x))))
+  (expect '(not(procedure? '(lambda (x) (* x x)))))
+  (expect '(equal? (apply + (list 3 4)) 7))
+  ; todo implement sqrt (expect '(equal? ((compose sqrt *) 12 75) 30))
+  (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))
+  (expect '(equal? (map (lambda (n) (expt n n)) '(1 2 3 4 5)) '(1 4 27 256 3125)))
+  (expect '(equal? (map + '(1 2 3) '(4 5 6)) '(5 7 9)))
+  (expect '(equal? (let ((v (make-vector 5)))
+					 (for-each (lambda (i) (vector-set! v i (* i i)))
+							   '(0 1 2 3 4))
+					 v)
+				   #(0 1 4 9 16)))
+  (expect '(equal? (force (delay (+ 1 2))) 3))
+  ; todo core dump (expect '(equal? (head (tail (tail a-stream)))))
   )
 
 (define (test-memq?)
@@ -270,13 +320,6 @@
 
 (define (test-let-extra)
   (expect '(= (let () 1 2) 2))
-  )
-
-(define (test-control)
-  (expect '(procedure? car))
-  (expect '(not (procedure? 'car)))
-  (expect '(procedure? (lambda (x) (* x x))))
-  (expect '(not (procedure? '(lambda (x) (* x x)))))
   )
 
 (define list-length
@@ -321,9 +364,11 @@
   (test-eqv?)
   (test-eq?)
   (test-equal?)
+  (test-booleans)
+  (test-pairs-and-lists)
+  (test-control-features)
   (test-memq?)
   (test-assq)
-  (test-control)
   (test-call/cc)
   (display "tests ok")
   (newline)
