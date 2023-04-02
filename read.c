@@ -1,41 +1,41 @@
 /*
-lexems
+  lexems
 
-Intertoken space may occur on either side of any token,
-but not within a token.
+  Intertoken space may occur on either side of any token,
+  but not within a token.
 
-Tokens which require implicit termination (identifiers,
-numbers, characters, and dot) may be terminated by any
-delimiter, but not necessarily by anything else.
+  Tokens which require implicit termination (identifiers,
+  numbers, characters, and dot) may be terminated by any
+  delimiter, but not necessarily by anything else.
 
-token --> identifier | boolean | number | character | string 
-          | ( | ) | [ | ] | #( |  ' | ` | , | ,@ | . 
+  token --> identifier | boolean | number | character | string 
+  | ( | ) | [ | ] | #( |  ' | ` | , | ,@ | . 
 
-delimiter --> whitespace | ( | ) | " | ;
-whitespace --> space | newline
-comment --> all subsequent characters up to a line break
-atmosphere --> whitespace | comment
-intertoken-space --> atmosphere*
-identifier --> initial | subsequent* | peculiar-identifier
-initial --> letter | special-initial
-letter --> a | b | c | ... | z
-special-initial -> ! | $ | % | & | * | / | : | < | = | > | ? | ^ | _ | ~
-subsequent --> initial | digit | special-subsequent
-digit --> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-special-subsequent --> + | - | . | @
-peculiar-identier --> + | - | ...
-syntactic-keyword --> expression-keyword |else | => | define
-                      | unquote | unquote-splicing
-expression-keyword --> quote | lambda | if
-                      | set! | begin | cond | and | or | case
-                      | let | let* | letrec | do | delay | quasiquote
-variable --> any identifier that isn't also a syntactic-keyword
-boolean --> #t | #f
-character --> #\ any-character | #\ character-name
-character-name -> space | newline
-string --> " string-element* "
-string-element -> any character other than " or \ | \" | \\
-number --> num-2 | num-8 | num-10 | num-16
+  delimiter --> whitespace | ( | ) | " | ;
+  whitespace --> space | newline
+  comment --> all subsequent characters up to a line break
+  atmosphere --> whitespace | comment
+  intertoken-space --> atmosphere*
+  identifier --> initial | subsequent* | peculiar-identifier
+  initial --> letter | special-initial
+  letter --> a | b | c | ... | z
+  special-initial -> ! | $ | % | & | * | / | : | < | = | > | ? | ^ | _ | ~
+  subsequent --> initial | digit | special-subsequent
+  digit --> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  special-subsequent --> + | - | . | @
+  peculiar-identier --> + | - | ...
+  syntactic-keyword --> expression-keyword |else | => | define
+  | unquote | unquote-splicing
+  expression-keyword --> quote | lambda | if
+  | set! | begin | cond | and | or | case
+  | let | let* | letrec | do | delay | quasiquote
+  variable --> any identifier that isn't also a syntactic-keyword
+  boolean --> #t | #f
+  character --> #\ any-character | #\ character-name
+  character-name -> space | newline
+  string --> " string-element* "
+  string-element -> any character other than " or \ | \" | \\
+  number --> num-2 | num-8 | num-10 | num-16
 */
 
 #include <stdio.h>
@@ -43,6 +43,7 @@ number --> num-2 | num-8 | num-10 | num-16
 #include <assert.h>
 #include <ctype.h>
 
+#include "io.h"
 #include "error.h"
 #include "type.h"
 #include "common.h"
@@ -82,31 +83,31 @@ print_token(TOKEN* token)
 {
     if (token == NULL)
     {
-	return;
+		return;
     }
     switch (token->type)
     {
     case T_IDENTIFIER:
-	fprintf(stderr, "id: %s\n", token->data);
-	break;
+		fprintf(stderr, "id: %s\n", token->data);
+		break;
     case T_BOOLEAN:
-	fprintf(stderr, "bool: %s\n", token->data);
-	break;
+		fprintf(stderr, "bool: %s\n", token->data);
+		break;
     case T_NUMBER:
-	fprintf(stderr, "num: %s\n", token->data);
-	break;
+		fprintf(stderr, "num: %s\n", token->data);
+		break;
     case T_CHARACTER:
-	fprintf(stderr, "char: %s\n", token->data);
-	break;
+		fprintf(stderr, "char: %s\n", token->data);
+		break;
     case T_STRING:
-	fprintf(stderr, "str: %s\n", token->data);
-	break;
+		fprintf(stderr, "str: %s\n", token->data);
+		break;
     case T_INITIAL_VECTOR:
-	fprintf(stderr, "initial vector\n");
-	break;
+		fprintf(stderr, "initial vector\n");
+		break;
     case T_UNQUOTE_SPLICING:
-	fprintf(stderr, "unquote splicing\n");
-	break;
+		fprintf(stderr, "unquote splicing\n");
+		break;
     };
 }
 
@@ -119,16 +120,16 @@ skip_until_paren_depth_zero(FILE* file)
 {
     while (paren_depth > 0)
     {
-	TOKEN* token = next_token(file);
-	if (token == NULL)
-	{
-	    break;
-	}
+		TOKEN* token = next_token(file);
+		if (token == NULL)
+		{
+			break;
+		}
 	
-	if (token->type == EOF)
-	{
-	    break;
-	}
+		if (token->type == EOF)
+		{
+			break;
+		}
 	
         if (token->type == '(')
         {
@@ -165,21 +166,21 @@ skip_atmospheres(FILE* file)
         /* comment --> all subsequent characters up to a line break */
         do 
         {
-	    c = getc(file);
-	    if (c == '\n')
-	    {
-		break;
-	    }
-	    else if (c == EOF)
-	    {
-		ungetc(c, file); /* need generate a EOF token */
-		break;
-	    }
+			c = getc(file);
+			if (c == '\n')
+			{
+				break;
+			}
+			else if (c == EOF)
+			{
+				ungetc(c, file); /* need generate a EOF token */
+				break;
+			}
         } while (TRUE);
         
         skip_atmospheres(file);
     } else {
-	ungetc(c, file);
+		ungetc(c, file);
     }
 }
 
@@ -211,44 +212,44 @@ delimiter(char c)
 /* digit 2 -> 0 | 1 */
 int
 is_digit_2(char c) {
-  int result = FALSE;
-  switch (c)
-  {
-  case '0': case '1':
-    result = TRUE;
-  }
-  return result;
+	int result = FALSE;
+	switch (c)
+	{
+	case '0': case '1':
+		result = TRUE;
+	}
+	return result;
 }
    
 /* digit 8 -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 */
 int
 is_digit_8(char c) {
-  int result = FALSE;
-  switch (c)
-  {
-  case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-    result = TRUE;
-  }
-  return result;
+	int result = FALSE;
+	switch (c)
+	{
+	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+		result = TRUE;
+	}
+	return result;
 }
 
 /* digit 16 -> digit 10 | a | b | c | d | e | f */
 int
 is_digit_16(char c) {
-  int result = FALSE;
-  if (isdigit(c))
-  {
-    result = TRUE;
-  }
-  else
-  {
-    switch (c)
-    {
-    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-      result = TRUE;
-    }
-  }
-  return result;
+	int result = FALSE;
+	if (isdigit(c))
+	{
+		result = TRUE;
+	}
+	else
+	{
+		switch (c)
+		{
+		case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+			result = TRUE;
+		}
+	}
+	return result;
 }
 
 
@@ -318,7 +319,7 @@ identifier(int c, FILE* file)
         }
 
         token.data[i++] = c;
-	c = getc(file);
+		c = getc(file);
     }
 
     ungetc(c, file);
@@ -348,7 +349,7 @@ character(FILE* file)
         }
 
         token.data[i++] = c;
-	c = getc(file);
+		c = getc(file);
     } while (!delimiter(c) && c != EOF);
 
     ungetc(c, file);
@@ -387,97 +388,97 @@ static
 TOKEN*
 binary(FILE* file)
 {
-  int i = 0;
-  token.type = T_NUMBER;
-  int c = getc(file);
-  if (!is_digit_2(c))
-  {
-    parse_error(file, "BINARY: need at least one digit");
-  }
-  do
-  {
-    if (i == MAX_IDENTIFIER_LENGTH - 1)
-    {
-      assert(0 && "Need to handle this in a better way");
-    }
+	int i = 0;
+	token.type = T_NUMBER;
+	int c = getc(file);
+	if (!is_digit_2(c))
+	{
+		parse_error(file, "BINARY: need at least one digit");
+	}
+	do
+	{
+		if (i == MAX_IDENTIFIER_LENGTH - 1)
+		{
+			assert(0 && "Need to handle this in a better way");
+		}
 
-    token.data[i++] = c;
-    c = getc(file);
-  } 
-  while (is_digit_2(c));
+		token.data[i++] = c;
+		c = getc(file);
+	} 
+	while (is_digit_2(c));
     
-  ungetc(c, file);
+	ungetc(c, file);
 
-  token.data[i] = '\0';
-  token.scm_type = mk_number(token.data, i, TRUE, 2);
+	token.data[i] = '\0';
+	token.scm_type = mk_number(token.data, i, TRUE, 2);
 
-  return &token;
+	return &token;
 }
 
 static
 TOKEN*
 octal(FILE* file)
 {
-  int i = 0;
-  token.type = T_NUMBER;
-  int c = getc(file);
+	int i = 0;
+	token.type = T_NUMBER;
+	int c = getc(file);
   
-  if (!is_digit_8(c))
-  {
-    parse_error(file, "OCTAL: need at least one digit");
-  }
+	if (!is_digit_8(c))
+	{
+		parse_error(file, "OCTAL: need at least one digit");
+	}
   
-  do
-  {
-    if (i == MAX_IDENTIFIER_LENGTH - 1)
-    {
-      assert(0 && "Need to handle this in a better way");
-    }
+	do
+	{
+		if (i == MAX_IDENTIFIER_LENGTH - 1)
+		{
+			assert(0 && "Need to handle this in a better way");
+		}
 
-    token.data[i++] = c;
-    c = getc(file);
-  } 
-  while (is_digit_8(c));
+		token.data[i++] = c;
+		c = getc(file);
+	} 
+	while (is_digit_8(c));
     
-  ungetc(c, file);
+	ungetc(c, file);
 
-  token.data[i] = '\0';
-  token.scm_type = mk_number(token.data, i, TRUE, 8);
+	token.data[i] = '\0';
+	token.scm_type = mk_number(token.data, i, TRUE, 8);
 
-  return &token;
+	return &token;
 }
 
 static
 TOKEN*
 hex(FILE* file)
 {
-  int i = 0;
-  token.type = T_NUMBER;
-  int c = getc(file);
+	int i = 0;
+	token.type = T_NUMBER;
+	int c = getc(file);
   
-  if (!is_digit_16(c))
+	if (!is_digit_16(c))
     {
-    parse_error(file, "HEX: need at least one digit");
-  }
+		parse_error(file, "HEX: need at least one digit");
+	}
   
-  do
-  {
-    if (i == MAX_IDENTIFIER_LENGTH - 1)
-    {
-      assert(0 && "Need to handle this in a better way");
-    }
+	do
+	{
+		if (i == MAX_IDENTIFIER_LENGTH - 1)
+		{
+			assert(0 && "Need to handle this in a better way");
+		}
 
-    token.data[i++] = c;
-    c = getc(file);
-  } 
-  while (is_digit_16(c));
+		token.data[i++] = c;
+		c = getc(file);
+	} 
+	while (is_digit_16(c));
     
-  ungetc(c, file);
+	ungetc(c, file);
 
-  token.data[i] = '\0';
-  token.scm_type = mk_number(token.data, i, TRUE, 16);
+	token.data[i] = '\0';
+	token.scm_type = mk_number(token.data, i, TRUE, 16);
 
-  return &token;
+	return &token;
 }
 
 static
@@ -546,32 +547,32 @@ string(FILE* file)
     token.type = T_STRING;
     do
     {
-	if (i == MAX_IDENTIFIER_LENGTH - 1)
+		if (i == MAX_IDENTIFIER_LENGTH - 1)
         {
             assert(0 && "Need to handle this in a better way");
         }
-	c = getc(file);
-	if (c == '"')
-	{
-	    break;
-	}
-	if (c == '\\')
-	{
-	    token.data[i++] = c;
-	    c = getc(file);
-	    if (c == '"' || c == '\\')
-	    {
-		token.data[i++] = c;
-	    }
-	    else 
-	    {
-		parse_error(file, "STRING: wrong escapes.");
-	    }
-	}
-	else
-	{
-	    token.data[i++] = c;
-	}
+		c = getc(file);
+		if (c == '"')
+		{
+			break;
+		}
+		if (c == '\\')
+		{
+			token.data[i++] = c;
+			c = getc(file);
+			if (c == '"' || c == '\\')
+			{
+				token.data[i++] = c;
+			}
+			else 
+			{
+				parse_error(file, "STRING: wrong escapes.");
+			}
+		}
+		else
+		{
+			token.data[i++] = c;
+		}
     } while(TRUE);
 
     token.data[i++] = '\0';
@@ -612,9 +613,9 @@ next_token(FILE* file)
     
     if (c == EOF)
     {
-	token.type = EOF;
-	token.data[0] = '\0';
-	result = &token;
+		token.type = EOF;
+		token.data[0] = '\0';
+		result = &token;
     }
     /* 
        identifier --> initial subsequent* | peculiar-identifier 
@@ -629,7 +630,7 @@ next_token(FILE* file)
 
         /* 
            boolean --> #t | #f 
-         */
+		*/
         if (cc == 't' || cc == 'f')
         {
             token.type = T_BOOLEAN;
@@ -645,52 +646,52 @@ next_token(FILE* file)
         {
             result = character(file);
         }
-	else if (cc == '(')
+		else if (cc == '(')
         {
-	    paren_depth++;
+			paren_depth++;
             token.type = T_INITIAL_VECTOR;
             result = &token;
         }
-	else if (cc == 'b')
-	{
-	  result = binary(file);
-	}
-	else if (cc == 'o')
-	{
-	  result = octal(file);
-	}
-	else if (cc == 'd')
-	{
-	  int cc = getc(file);
-	  if (isdigit(cc))
-	  {
-	    result = decimal(cc, file, TRUE);
-	  }
-	  else
-	  {
-	    parse_error(file, "NEXT_TOKEN: #d without digits");
-	  }
-	}
-	else if (cc == 'x')
-	{
-	  result = hex(file);
-	}
-	else
-	{
-	    parse_error(file, "NEXT_TOKEN: bad # sequence");
-	}
+		else if (cc == 'b')
+		{
+			result = binary(file);
+		}
+		else if (cc == 'o')
+		{
+			result = octal(file);
+		}
+		else if (cc == 'd')
+		{
+			int cc = getc(file);
+			if (isdigit(cc))
+			{
+				result = decimal(cc, file, TRUE);
+			}
+			else
+			{
+				parse_error(file, "NEXT_TOKEN: #d without digits");
+			}
+		}
+		else if (cc == 'x')
+		{
+			result = hex(file);
+		}
+		else
+		{
+			parse_error(file, "NEXT_TOKEN: bad # sequence");
+		}
     }
     /* 
        number --> num-2 | num-8 | num-10 | num-16 
-     */
+	*/
     else if (isdigit(c))
     {
-      result = decimal(c, file, TRUE);
+		result = decimal(c, file, TRUE);
     }
     /*
       peculiar-identier --> + | - | ...
       But also numbers for the + and - case
-     */
+	*/
     else if (c == '+')
     {
         int cc = getc(file);
@@ -786,18 +787,18 @@ next_token(FILE* file)
         switch (c)
         {
         case '(' :
-	    paren_depth++;
-	    token.type = c;
+			paren_depth++;
+			token.type = c;
             token.data[0] = '\0';
             result = &token;
             break;
-	case ')' :
-	    paren_depth--;
-	    token.type = c;
+		case ')' :
+			paren_depth--;
+			token.type = c;
             token.data[0] = '\0';
             result = &token;
             break;
-	case '[' : case  ']' :  case '\'' : case '`' :
+		case '[' : case  ']' :  case '\'' : case '`' :
             token.type = c;
             token.data[0] = '\0';
             result = &token;
@@ -821,15 +822,15 @@ next_token(FILE* file)
             break;
         }
         default:
-	{
-	    char buff[1024];
-	    snprintf(buff,
-		     1024,
-		     "NEXT_TOKEN: unknown char: %c",
-		     c);
-	    parse_error(file, buff);
+		{
+			char buff[1024];
+			snprintf(buff,
+					 1024,
+					 "NEXT_TOKEN: unknown char: %c",
+					 c);
+			parse_error(file, buff);
             break;
-	}
+		}
         }
     }
 
@@ -837,17 +838,17 @@ next_token(FILE* file)
 }
 
 /*
-read grammar
+  read grammar
 
-datum --> simple-datum  | compound-datum
-simple-datum --> boolean | number | character | string | symbol
-symbol --> identifier
-compound-datum --> list | vector | constructor 
-list --> (datum*) | (datum+ . datum) | abbreviation
-abbreviation --> abbrev-prefix datum
-abbrev-prefix --> ' | ` | , | ,@
-vector --> #(datum*)
-constructor --> [ symbol datum* ]
+  datum --> simple-datum  | compound-datum
+  simple-datum --> boolean | number | character | string | symbol
+  symbol --> identifier
+  compound-datum --> list | vector | constructor 
+  list --> (datum*) | (datum+ . datum) | abbreviation
+  abbreviation --> abbrev-prefix datum
+  abbrev-prefix --> ' | ` | , | ,@
+  vector --> #(datum*)
+  constructor --> [ symbol datum* ]
 
 */
 
@@ -866,42 +867,41 @@ abbreviation(FILE* file)
 
     if (token == NULL)
     {
-	return NULL;
+		return NULL;
     }
     
     if (token->type == '\'')
     {
-	TYPE* d = datum(file);
-	
-	if (d == NULL)
-	{
-	    parse_error(file, "ABBREVIATION: quoted datum is NULL.");
-	}
-	else if (is_empty_pair(d))
-	{
-	    result = nil();
-	}
-	else
-	{
-	    result = mk_quoted(d);
-	}
+		TYPE* d = datum(file);
+		if (d == NULL)
+		{
+			parse_error(file, "ABBREVIATION: quoted datum is NULL.");
+		}
+		else if (is_nil(d))
+		{
+			result = d;
+		}
+		else
+		{
+			result = mk_quoted(d);
+		}
     }
     else if (token->type == '`')
     {
-	TYPE* d = datum(file);
-	
-	if (d == NULL)
-	{
-	    parse_error(file, "ABBREVIATION: quasiquoted datum is NULL.");
-	}
-
-	result = cons(mk_symbol("quasiquote"), d);
+		TYPE* d = datum(file);
+		
+		if (d == NULL)
+		{
+			parse_error(file, "ABBREVIATION: quasiquoted datum is NULL.");
+		}
+		
+		result = cons(mk_symbol("quasiquote"), d);
     }
     else if (token->type == ',')
     {
-	token = next_token(file);
+		token = next_token(file);
 	
-	const char* unquote;
+		const char* unquote;
         if (token->type == '@')
         {
             unquote = "unquote-splicing";
@@ -909,21 +909,21 @@ abbreviation(FILE* file)
         else
         {
             unquote = "unquote";
-	    unget_token(token);
+			unget_token(token);
         }
 	
-	TYPE* d = datum(file);
+		TYPE* d = datum(file);
 
-	if (d == NULL)
-	{
-	    parse_error(file, "ABBREVIATION: unquote datum is NULL.");
-	}
+		if (d == NULL)
+		{
+			parse_error(file, "ABBREVIATION: unquote datum is NULL.");
+		}
 	
-	result = cons(mk_symbol(unquote), cons(d, nil()));
+		result = cons(mk_symbol(unquote), cons(d, nil()));
     }
     else
     {
-	unget_token(token);
+		unget_token(token);
     }
     
     return result;
@@ -935,7 +935,7 @@ datum_plus(FILE* file)
 {
     /* 
        (datum+ . datum)
-     */
+	*/
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
@@ -946,25 +946,25 @@ datum_plus(FILE* file)
 
     if (token->type == EOF)
     {
-	parse_error(file, "DATUM_PLUS: EOF");
+		parse_error(file, "DATUM_PLUS: EOF");
     }
     
     if (token->type == ')')
     {
-	unget_token(token);
-	result = nil();
+		unget_token(token);
+		result = nil();
     }
     else if (token->type == '.')
     {
         result = datum(file);
-	if (result == NULL)
-	{
-	    parse_error(file, "DATUM_PLUS: . follows by NULL");
-	}
-	else if (is_nil(result))
-	{
-	    parse_error(file, "DATUM_PLUS: . follows by '()");
-	}
+		if (result == NULL)
+		{
+			parse_error(file, "DATUM_PLUS: . follows by NULL");
+		}
+		else if (is_nil(result))
+		{
+			parse_error(file, "DATUM_PLUS: . follows by '()");
+		}
     }
     else
     {
@@ -973,10 +973,10 @@ datum_plus(FILE* file)
 
         if (d == NULL)
         {
-	    parse_error(file, "DATUM_PLUS: datum null");
+			parse_error(file, "DATUM_PLUS: datum null");
         }
 	
-	result = cons(d, datum_plus(file));
+		result = cons(d, datum_plus(file));
     }
     
     return result;
@@ -988,33 +988,32 @@ parse_list(FILE* file)
 {
     /* 
        list --> (datum*) | (datum+ . datum) | abbreviation 
-     */
+	*/
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
     if (token->type == '(')
     {
-	TYPE* d = datum(file);
-	if (d == NULL)
-	{
-	    result = nil();
-	    //result = cons(nil(), nil());
-	}
-	else
-	{
-	    result = cons(d, datum_plus(file));
-	}
-        
-	token = next_token(file);
-	if (token->type != ')')
-	{
-	    parse_error(file, "LIST: can not find )");
-	}
+		TYPE* d = datum(file);
+		if (d == NULL)
+		{
+			result = nil();
+		}
+		else
+		{
+			result = cons(d, datum_plus(file));
+		}
+		
+		token = next_token(file);
+		if (token->type != ')')
+		{
+			parse_error(file, "LIST: can not find )");
+		}
     }
     else
     {
-	unget_token(token);
-	result = abbreviation(file);
+		unget_token(token);
+		result = abbreviation(file);
     }
     
     return result;
@@ -1026,14 +1025,14 @@ datum_star(FILE* file)
 {
     /* 
        datum*
-     */
+	*/
     TYPE* result = nil();
     TYPE* d = datum(file);
     
     while (d != NULL)
     {
-	result = cons(d, result);
-	d = datum(file);
+		result = cons(d, result);
+		d = datum(file);
     }
 
     return result;
@@ -1044,25 +1043,25 @@ TYPE*
 parse_vector(FILE* file)
 {
     /*
-       vector --> #(datum*)
+	  vector --> #(datum*)
     */
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
     
     if (token->type == T_INITIAL_VECTOR)
     {
-	TYPE* l = reverse(datum_star(file));
-	result = list_to_vector(l);
+		TYPE* l = reverse(datum_star(file));
+		result = list_to_vector(l);
 	
-	token = next_token(file);
-	if (token->type != ')')
-	{
-	    parse_error(file, "VECTOR: missing )");
-	}
+		token = next_token(file);
+		if (token->type != ')')
+		{
+			parse_error(file, "VECTOR: missing )");
+		}
     }
     else
     {
-	unget_token(token);
+		unget_token(token);
     }
     
     return result;
@@ -1073,7 +1072,7 @@ TYPE*
 constructor(FILE* file)
 {
     /*   
-       constructor --> [ symbol datum* ]
+		 constructor --> [ symbol datum* ]
     */
     return NULL;
 }
@@ -1107,7 +1106,7 @@ simple_datum(FILE* file)
     /* 
        simple-datum --> boolean | number | character | string | symbol
        symbol --> identifier
-     */
+	*/
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
 
@@ -1122,9 +1121,9 @@ simple_datum(FILE* file)
         case T_IDENTIFIER:
             result = token->scm_type;
             break;
-	case EOF:
-	    result = mk_eof();
-	    break;
+		case EOF:
+			result = mk_eof();
+			break;
         default:
             unget_token(token);
         }
@@ -1146,7 +1145,7 @@ datum(FILE* file)
 	
     if (result == NULL)
     {
-	result = compound_datum(file);
+		result = compound_datum(file);
     }
 
     return result;
@@ -1160,16 +1159,15 @@ read_from_file(FILE* file)
     TYPE* result;
     do
     {
-	result = datum(file);
-
-	if (result == NULL)
-	{
-	    /* failed to read a datum clean up */
-	    pushed_token_ptr = NULL;
-	}
-	
+		result = datum(file);
+		
+		if (result == NULL)
+		{
+			/* failed to read a datum clean up */
+			pushed_token_ptr = NULL;
+		}
+		
     } while (result == NULL);
-    
     return result;
 }
 
@@ -1199,11 +1197,11 @@ _read_char_from_port(FILE* file, char* c)
     
     if (*c == EOF)
     {
-	result = mk_eof();
+		result = mk_eof();
     }
     else
     {
-	result = mk_char(*c);
+		result = mk_char(*c);
     }
 
     return result;
@@ -1219,7 +1217,7 @@ read_char()
 TYPE*
 read_char_from_port(const TYPE* port)
 {
-     assert_throw(is_true(is_input_port(port)),
+	assert_throw(is_true(is_input_port(port)),
                  TYPE_ERROR,
                  "READ_CHAR_FROM_PORT: port is not an input port");
     char c;
@@ -1255,21 +1253,21 @@ peek_char_from_port(const TYPE* port)
 
 void write_char_to_port(const TYPE* port, const TYPE* c)
 {
-  assert_throw(is_true(is_output_port(port)),
-	       TYPE_ERROR,
-	       "WRITE_CHAR_TO_PORT: port is not an output port");
-  assert_throw(is_char(c),
-	       TYPE_ERROR,
-	       "WRITE_CHAR_TO_PORT: char is not a char");
+	assert_throw(is_true(is_output_port(port)),
+				 TYPE_ERROR,
+				 "WRITE_CHAR_TO_PORT: port is not an output port");
+	assert_throw(is_char(c),
+				 TYPE_ERROR,
+				 "WRITE_CHAR_TO_PORT: char is not a char");
   
-  FILE* file = port->d.po->file;
-  int cc = c->d.i;
-  int result = fputc(cc, file);
+	FILE* file = port->d.po->file;
+	int cc = c->d.i;
+	int result = fputc(cc, file);
   
-  if (result == EOF)
-  {
-    assert_throw(FALSE,
-		 OS_ERROR,
-		 "WRITE_CHAR_TO_PORT: could not write to port");
-  }
+	if (result == EOF)
+	{
+		assert_throw(FALSE,
+					 OS_ERROR,
+					 "WRITE_CHAR_TO_PORT: could not write to port");
+	}
 }

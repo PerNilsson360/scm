@@ -122,7 +122,6 @@ typedef struct BLOB_DATA  BLOB_DATA;
 /* registers for scheme VM */
 
 struct REGS {
-	TYPE* exp_debug;
 	void* exp;
 	void* env;
 	void* val;

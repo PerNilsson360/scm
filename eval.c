@@ -356,7 +356,7 @@ is_apply(const TYPE* exp)
 static TYPE*
 apply_arguments(const TYPE* exp)
 {
-    return cdr(cdr(exp));
+	return cdr(cdr(exp));
 }
 
 static TYPE*
@@ -450,7 +450,6 @@ hairy_eval()
     TYPE* vals;                 /* used in match */
 	TYPE* tmp;
 	
-    reg.exp_debug = nil();
     reg.val = nil();
     reg.cont = &&done;
     reg.proc = nil();
@@ -599,12 +598,8 @@ ev_apply_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
     reg.arg1 = nil();
-    reg.proc = reg.val;    
-    if (no_operands(reg.unev)) 
-    {
-        throw_error(APPLY_ERROR,
-                    "APPLY: wrong number of arguments");
-    }
+    reg.proc = reg.val;
+	if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_apply_operand_loop:
     save(reg.arg1);
