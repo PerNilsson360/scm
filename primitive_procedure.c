@@ -911,7 +911,7 @@ _gr_open_procedure_(const TYPE* arguments, const TYPE* env)
     if (len == 1)
     {
         assert_throw(
-            is_true(is_list(car(arguments))),
+            is_list(car(arguments)),
             APPLY_ERROR,
             "APPLY_PRIMITIVE_PROCEDURE: argument to gr-open must be a association list");
         

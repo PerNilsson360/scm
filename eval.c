@@ -579,9 +579,12 @@ ev_call_cc_done:
     goto *reg.cont;
     /* special form apply */
 ev_apply:
-    /* @todo the aggregation of operands are not according to r5rs */
     reg.unev = apply_arguments(reg.exp);
-    if (!is_nil(reg.unev) && !is_pair(reg.unev))
+	if (is_nil(reg.unev)) {
+		throw_error(APPLY_ERROR,
+                    "APPLY: needs at least one argument");
+	}
+    if (!is_pair(reg.unev))
     {
 		display_debug(reg.unev);
 		throw_error(APPLY_ERROR,
@@ -1092,6 +1095,8 @@ eval_no_translation(TYPE* exp, TYPE* env)
     reg.exp = exp_to_name_free_exp(exp, nil());
     reg.env = env;
     hairy_eval();
-
+	if (_debug_) {
+		stack_print_statistics();
+	}
     return reg.val;
 }

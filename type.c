@@ -202,24 +202,24 @@ set_cdr(TYPE* list, const TYPE* value)
     list->d.p->cdr = (TYPE*)value;
 }
 
-TYPE* 
+int
 is_list(const TYPE* sexp)
 {
-    TYPE* result = nil();
+    int result;
 
     if (is_nil(sexp))
     {
-        result = mk_boolean(TRUE);
+        result = 1;
     }
     else if (!is_pair(sexp))
     {
-        result = mk_boolean(FALSE);
+        result = 0;
     }
     else
     {
         result = is_list(cdr(sexp));
     }
-    
+
     return result;
 }
 

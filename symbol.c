@@ -85,6 +85,7 @@ init_symbol_table()
     _stream_cons_keyword_symbol_ = mk_symbol("stream-cons");
     _quasiquote_keyword_symbol_ = mk_symbol("quasiquote");
 	_call_cc_keyword_symbol_ = mk_symbol("call-with-current-continuation");
+	_apply_keyword_symbol_ = mk_symbol("apply");
 }
 
 TYPE* 

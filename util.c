@@ -138,7 +138,7 @@ assq(const TYPE* obj, const TYPE* list)
 {
     TYPE* result = nil();
 
-    if (!is_true(is_list(list)))
+    if (!is_list(list))
     {
         throw_error(CONSTRAINT_ERROR, "INTERNAL ASSQ: list is not a list");
     }
@@ -147,7 +147,7 @@ assq(const TYPE* obj, const TYPE* list)
     {
         TYPE* a = car(list);
         
-        if (!is_true(is_list(a)))
+        if (!is_list(a))
         {
             throw_error(CONSTRAINT_ERROR, "INTERNAL ASSQ: elements are not pairs");
         }

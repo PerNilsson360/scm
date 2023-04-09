@@ -7,6 +7,8 @@
 #include "type.h"
 #include "stack.h"
 
+static int max_size = 0;
+static int n_pushes = 0;
 static STACK stack;
 
 void
@@ -29,6 +31,11 @@ save(void* data)
 		stack.data = GC_REALLOC(stack.data, sizeof(void*) * stack.size);
     }
     stack.data[stack.top++] = data;
+	/* Statisticks */
+	++n_pushes;
+	if (stack.top > max_size) {
+		max_size = stack.top;
+	}
 }
 
 void 
@@ -71,3 +78,9 @@ is_empty()
     return stack.top == 0;
 }
 
+void
+stack_print_statistics() {
+	fprintf(stderr, "STACK: size: %d pushes: %d max %d\n", stack.top, n_pushes, max_size);
+	n_pushes =0;				/* reset statistics */
+	max_size = 0;
+}

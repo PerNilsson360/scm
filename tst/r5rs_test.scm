@@ -288,6 +288,7 @@
   (expect '(procedure? (lambda (x) (* x x))))
   (expect '(not(procedure? '(lambda (x) (* x x)))))
   (expect '(equal? (apply + (list 3 4)) 7))
+  (expect '(equal? (apply + 1 (list 1 1)) 3))	 ; not in r5rs 
   (expect '(equal? (apply (lambda () 1) '()) 1)) ; 0 arguments
   ; todo implement sqrt (expect '(equal? ((compose sqrt *) 12 75) 30))
   (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))

@@ -100,7 +100,7 @@ mk_string_from_chars(const TYPE* char_list)
 {
     TYPE* result = nil();
 
-    assert_throw(is_true(is_list(char_list)),
+    assert_throw(is_list(char_list),
                  TYPE_ERROR,
                  "MK_STRING_FROM_CHARS: char_list must be a list");
 
@@ -386,7 +386,7 @@ string_to_list(const TYPE* sexp)
 TYPE* 
 list_to_string(const TYPE* sexp)
 {
-    assert_throw(is_true(is_list(sexp)),
+    assert_throw(is_list(sexp),
 		 TYPE_ERROR,
 		 "LIST_TO_STRING: argument is not a list");
 

@@ -168,7 +168,7 @@ TYPE* cadddr(const TYPE* list);
 void set_car(TYPE* list, const TYPE* value);
 void set_cdr(TYPE* list, const TYPE* value);
 
-TYPE* is_list(const TYPE* sexp);
+int is_list(const TYPE* sexp);
 TYPE* list(const TYPE* sexp);
 TYPE* mk_list(int elems, ...);
 int is_pair(const TYPE* pair);

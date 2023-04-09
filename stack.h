@@ -15,5 +15,5 @@ const STACK* get_stack();
 void copy_stack(STACK* dest, const STACK* src);
 void assign_stack(const STACK* s);
 int is_empty();
-
+void stack_print_statistics();
 #endif
