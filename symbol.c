@@ -17,7 +17,7 @@
 #define NIL "'()"
 
 static TYPE* symbol_table;
-static TYPE* _nil_;
+TYPE* _nil_;
 
 static int
 _equal_(const TYPE* left, const TYPE* right)
@@ -109,7 +109,7 @@ mk_symbol(const char* symbol)
     symbol_in_table = hash_table_ref(symbol_table, &lookup_symbol);
 
 
-    if (is_nil(symbol_in_table))
+    if (IS_NIL(symbol_in_table))
     {
         result = mloc(sizeof(TYPE));
         
@@ -141,12 +141,6 @@ mk_symbol(const char* symbol)
 }
 
 int 
-is_symbol(const TYPE* symbol)
-{
-    return symbol->type == SYMBOL && !is_nil(symbol);
-}
-
-int 
 is_symbol_eq(const TYPE* left, const TYPE* right)
 {
     return left == right;
@@ -168,11 +162,13 @@ nil()
     return _nil_;
 }
 
+/*
 int
 is_nil(const TYPE* pair)
 {
     return pair == _nil_; 
 }
+*/
 
 int 
 is_reserved_symbol(const TYPE* symbol)

@@ -25,14 +25,14 @@ inner_or_to_if(TYPE*exp)
 {
     TYPE* result;
     
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
 		result = mk_boolean(FALSE);
     }
     else
     {
 		TYPE*  xlat_car = xlat(car(exp));
-		if (is_nil(cdr(exp)))
+		if (IS_NIL(cdr(exp)))
 		{
 			result = mk_if(xlat_car,
 						   xlat_car,
@@ -69,14 +69,14 @@ inner_and_to_if(TYPE* exp)
 {
     TYPE* result;
 
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
 		result = mk_boolean(TRUE);
     }
     else
     {
 		TYPE*  xlat_car = xlat(car(exp));
-		if (is_nil(cdr(exp)))
+		if (IS_NIL(cdr(exp)))
 		{
 			result = mk_if(xlat_car,
 						   xlat_car,
@@ -119,7 +119,7 @@ let_to_combination(TYPE* exp)
     TYPE* result;
     TYPE* body = xlat(cddr(exp));
 
-    if (is_nil(bindings))
+    if (IS_NIL(bindings))
     {
 		result = mk_list(1, mk_lambda(nil(), body)); 
     }
@@ -164,7 +164,7 @@ named_let_to_letrec(TYPE* exp)
     
     bindings = caddr(exp);
     
-    assert_throw(is_pair(bindings) || is_nil(bindings),
+    assert_throw(is_pair(bindings) || IS_NIL(bindings),
 				 EVAL_ERROR,
 				 "NAMED_LET_TO_LETREC: 3'd element must be nil or a pair");
 
@@ -242,7 +242,7 @@ mk_unassigned_vars(const TYPE* vars)
 {
     TYPE* result;
     
-    if (is_nil(vars))
+    if (IS_NIL(vars))
     {
 		result = (TYPE*) vars;
     }
@@ -262,7 +262,7 @@ mk_set_var_values(const TYPE* vars, const TYPE* vals)
 {
     TYPE* result;
     
-    if (is_nil(vars))
+    if (IS_NIL(vars))
     {
 		result = nil();
     }
@@ -298,7 +298,7 @@ is_define(const TYPE*  exp)
     if (is_tagged_list(exp, mk_symbol("define")))
     {
 		TYPE* arg = cdr(exp);
-		if (!is_nil(arg))
+		if (!IS_NIL(arg))
 		{
 			result = !is_symbol(car(arg));
 		}
@@ -328,7 +328,7 @@ sequence_to_exp(TYPE* seq)
 {
     TYPE* result;
 
-    if (is_nil(seq))
+    if (IS_NIL(seq))
     {
         result = nil();
     }
@@ -349,13 +349,13 @@ TYPE*
 expand_cond_clauses(const TYPE* exp)
 {
     TYPE* result;
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
 		result = mk_boolean(FALSE);
     }
     else if (is_cond_else_clause(car(exp)))
     {
-		if (!is_nil(cdr(exp))) {
+		if (!IS_NIL(cdr(exp))) {
 			throw_error(EVAL_ERROR,
 						"EXPAND_COND_CLAUSES: else is not last in cond");
 		}
@@ -417,7 +417,7 @@ static
 int
 is_last_clause(const TYPE* clause)
 {
-    return is_nil(cdr(clause));
+    return IS_NIL(cdr(clause));
 }
 
 static
@@ -433,7 +433,7 @@ inner_construct_case_clauses(const TYPE* clauses)
 {
     TYPE* result;
     
-    if (is_nil(clauses))
+    if (IS_NIL(clauses))
     {
 		result = nil();
     }
@@ -462,7 +462,7 @@ static
 TYPE*
 construct_case_clauses(const TYPE* clauses)
 {
-    assert_throw(!is_nil(clauses) && length(clauses) > 0,
+    assert_throw(!IS_NIL(clauses) && length(clauses) > 0,
 				 CONSTRAINT_ERROR,
 				 "CONSTRUCT_CASE_CLAUSES: must contain at least one clause");
     return cons(_cond_keyword_symbol_, inner_construct_case_clauses(clauses));
@@ -514,7 +514,7 @@ quasiquote_to_list(const TYPE* exp)
 {
     TYPE*  result;
     
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
 		result = (TYPE*) exp;
     }
@@ -558,7 +558,7 @@ xlat_sequence(const TYPE* exp)
 {
     TYPE* result;
     
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
 		result = (TYPE*)exp;
     }
@@ -578,10 +578,16 @@ TYPE*
 xlat(TYPE* exp)
 {
     TYPE* result;
-    if (is_quoted(exp) || !is_pair(exp))
+    if (is_quoted(exp))
     {
+		assert_throw(length(exp) == 2,
+					 EVAL_ERROR,
+					 "XLAT: quote must have 1 operand");
 		result = exp;
     }
+	else if (!is_pair(exp)) {
+		result = exp;
+	}
     /* all the following are compound expressions */
     else if (is_or(exp))
     {

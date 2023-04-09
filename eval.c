@@ -36,7 +36,7 @@ is_self_evaluating(const TYPE* sexp)
         is_string(sexp) ||
         is_vector(sexp) ||
         is_none(sexp) ||
-        is_nil(sexp) ||
+        IS_NIL(sexp) ||
 		is_escape_proc(sexp);
 }
 
@@ -131,7 +131,7 @@ if_alternative(TYPE* exp)
 {
     TYPE* result = mk_none();
     
-    if (!is_nil(cdr(cdr(cdr(exp)))))
+    if (!IS_NIL(cdr(cdr(cdr(exp)))))
     {
         result = car(cdr(cdr(cdr(exp))));
     }
@@ -185,13 +185,13 @@ first_operand(TYPE* operands)
 static int
 last_operand(TYPE* operands)
 {
-    return is_nil(cdr(operands));
+    return IS_NIL(cdr(operands));
 }
 
 static int 
 no_operands(TYPE* operands)
 {
-    return is_nil(operands);
+    return IS_NIL(operands);
 }
 
 static TYPE*
@@ -228,7 +228,7 @@ match_clauses(TYPE* exp)
 static TYPE*
 find(const TYPE* var, TYPE* vars, TYPE* vals)
 {
-    if (is_nil(vars)) return nil();
+    if (IS_NIL(vars)) return nil();
     else if (is_eq(var, car(vars))) return car(vals);
     else return find(var, cdr(vars), cdr(vals)); 
 }
@@ -241,7 +241,7 @@ add_var_if_consistent(const TYPE* var,
     int result = FALSE;
     TYPE* old_val = find(var, *vars, *vals);
 
-    if (is_nil(old_val))
+    if (IS_NIL(old_val))
     {
         result = TRUE;
         *vars = cons(var, *vars);
@@ -323,7 +323,7 @@ find_matching_match_clause(const TYPE* key,
     TYPE* tmp_vars = nil();
     TYPE* tmp_vals = nil();
 
-    if (!is_nil(clauses))
+    if (!IS_NIL(clauses))
     {
         first_clause = car(clauses);
         if (pattern_match(key, car(first_clause), &tmp_vars, &tmp_vals))
@@ -349,8 +349,7 @@ find_matching_match_clause(const TYPE* key,
 static int 
 is_apply(const TYPE* exp)
 {
-    const char* apply = "apply";   
-    return is_tagged_list(exp, mk_symbol(apply));
+    return is_tagged_list(exp, _apply_keyword_symbol_);
 }
 
 static TYPE*
@@ -381,7 +380,7 @@ is_stream_cons(const TYPE* exp)
 static int
 is_improper_list(const TYPE* exp)
 {
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
         return FALSE;
     } 
@@ -580,7 +579,7 @@ ev_call_cc_done:
     /* special form apply */
 ev_apply:
     reg.unev = apply_arguments(reg.exp);
-	if (is_nil(reg.unev)) {
+	if (IS_NIL(reg.unev)) {
 		throw_error(APPLY_ERROR,
                     "APPLY: needs at least one argument");
 	}
@@ -635,7 +634,7 @@ ev_apply_accum_last_arg:
     /* application of operator to operands */
 ev_application:
 	reg.unev = operands(reg.exp);
-    if (!is_nil(reg.unev) && !is_pair(reg.unev))
+    if (!IS_NIL(reg.unev) && !is_pair(reg.unev))
     {
 		display_debug(reg.unev);
 		throw_error(APPLY_ERROR,
@@ -791,7 +790,7 @@ symbol_exist_in_improper_list(const TYPE* symbol, const TYPE* list)
 {
     int result;
 
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = FALSE;
     }
@@ -822,7 +821,7 @@ static
 void
 add_definition_to_context(const TYPE* var, TYPE* context)
 {
-    if (!is_nil(context) && !symbol_exist_in_improper_list(var, context)) 
+    if (!IS_NIL(context) && !symbol_exist_in_improper_list(var, context)) 
     {
         set_car(context, cons(var, car(context)));
     }
@@ -837,7 +836,7 @@ get_var_index(const TYPE* var,
 {
     int result;
 
-    if (is_nil(vars))
+    if (IS_NIL(vars))
     {
         result= -1;
     } 
@@ -872,7 +871,7 @@ symbol_to_bound_var(TYPE* var, TYPE* context, unsigned int frame_index)
 {
     TYPE* result;
 
-    if (is_nil(context)) 
+    if (IS_NIL(context)) 
     {
         result = var;
     } 
@@ -923,7 +922,7 @@ get_vars_from_match(TYPE* pattern)
         {
             TYPE* vars = get_vars_from_match(first);
 
-            if (is_nil(vars)) 
+            if (IS_NIL(vars)) 
             {
                 result = get_vars_from_match(cdr(pattern));
             } 
@@ -950,7 +949,7 @@ match_clauses_to_name_free(TYPE* clauses,
 {
     TYPE* result;
 
-    if (is_nil(clauses))
+    if (IS_NIL(clauses))
     {
         result = clauses;
     } 
@@ -962,7 +961,7 @@ match_clauses_to_name_free(TYPE* clauses,
         TYPE* vars = get_vars_from_match(pattern);
         TYPE* match_body_context;
 
-        if (is_nil(vars))
+        if (IS_NIL(vars))
         {
             match_body_context = context;
         }
@@ -987,7 +986,7 @@ scan_internal_defs(TYPE* exps)
 {
   TYPE* result = nil();
         
-  while (!is_nil(exps))
+  while (!IS_NIL(exps))
   {
       TYPE* exp = car(exps);
       if (is_definition(exp))
@@ -1005,7 +1004,7 @@ static
 void
 add_defs_to_context(TYPE* defs, TYPE* ctx)
 {
-  while (!is_nil(defs))
+  while (!IS_NIL(defs))
   {
       add_definition_to_context(car(defs), ctx);
       defs = cdr(defs);
@@ -1018,7 +1017,7 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 {
     TYPE* result;
     
-    if (is_nil(exp))
+    if (IS_NIL(exp))
     {
         result = exp;
     } 

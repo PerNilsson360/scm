@@ -877,7 +877,7 @@ abbreviation(FILE* file)
 		{
 			parse_error(file, "ABBREVIATION: quoted datum is NULL.");
 		}
-		else if (is_nil(d))
+		else if (IS_NIL(d))
 		{
 			result = d;
 		}
@@ -961,7 +961,7 @@ datum_plus(FILE* file)
 		{
 			parse_error(file, "DATUM_PLUS: . follows by NULL");
 		}
-		else if (is_nil(result))
+		else if (IS_NIL(result))
 		{
 			parse_error(file, "DATUM_PLUS: . follows by '()");
 		}

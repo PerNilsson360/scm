@@ -27,8 +27,9 @@
 #define TCP_SOCKET          20
 #define SERVER_SOCKET       21
 #define BOUND_VAR           22
-#define ALGEBRAIC           23
-#define ESCAPE_PROC         24
+#define ESCAPE_PROC         23
+
+#define is_eq(LEFT, RIGHT) ((LEFT)->d.s == (RIGHT)->d.s)
 
 struct PAIR_DATA;
 struct vector;
@@ -73,13 +74,6 @@ struct vector
 };
 typedef struct vector vector;
 
-struct ALGEBRAIC_DATA
-{
-    int n_items;
-    TYPE* type;
-    TYPE* tag;                  /* as symbol */
-    TYPE** items;
-};
 
 struct BOUND_VAR_DATA
 {
@@ -171,13 +165,14 @@ void set_cdr(TYPE* list, const TYPE* value);
 int is_list(const TYPE* sexp);
 TYPE* list(const TYPE* sexp);
 TYPE* mk_list(int elems, ...);
-int is_pair(const TYPE* pair);
+#define is_pair(SEXP) (((const TYPE*)SEXP)->type == PAIR)
 int is_empty_pair(const TYPE* sexp);
 unsigned int length(const TYPE* pair);
 
 int is_procedure(const TYPE* pair);
 
-int is_eq(const TYPE* left, const TYPE* right);
+/* int is_eq(const TYPE* left, const TYPE* right);*/
+
 int is_eqv(const TYPE* left, const TYPE* right);
 int is_equal(const TYPE* left, const TYPE* right);
 

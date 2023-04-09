@@ -36,7 +36,7 @@ first_exp(TYPE* exps)
 int
 is_last_exp(TYPE* exps)
 {
-    return is_nil(cdr(exps));
+    return IS_NIL(cdr(exps));
 }
 
 TYPE*

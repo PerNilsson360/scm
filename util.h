@@ -18,5 +18,4 @@ TYPE* append(const TYPE* list, const TYPE* obj);
 TYPE* assq(const TYPE* obj, const TYPE* list);
 void nstrcpy(char* s1, const char* s2, unsigned int length);
 void* mloc(size_t n);
-
 #endif

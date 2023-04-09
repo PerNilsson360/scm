@@ -14,7 +14,7 @@ _it_bin_pred(const TYPE* list,
 {
     int result;
 
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = TRUE;
     }
@@ -36,7 +36,7 @@ it_bin_pred(const TYPE* list,
 {
     TYPE*  result = nil();
 
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = mk_boolean(TRUE);
     }
@@ -55,7 +55,7 @@ fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right),
 {
     TYPE* result = nil(); 
 
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = identity;
     }
@@ -72,7 +72,7 @@ map1(TYPE* (*f) (const TYPE* arg), TYPE* list)
 {
     TYPE* result = nil();
 
-    if (!is_nil(list))
+    if (!IS_NIL(list))
     {
         result = cons(f(car(list)), map1(f, cdr(list)));
     }
@@ -83,7 +83,7 @@ map1(TYPE* (*f) (const TYPE* arg), TYPE* list)
 static TYPE* 
 _reverse_(const TYPE* list, const TYPE* result)
 {
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         return (TYPE*) result;
     }
@@ -102,7 +102,7 @@ reverse(const TYPE* list)
 TYPE* 
 append(const TYPE* left, const TYPE* right)
 {
-    if (is_nil(left)) 
+    if (IS_NIL(left)) 
     {
         return (TYPE*) right;
     }
@@ -115,7 +115,7 @@ append(const TYPE* left, const TYPE* right)
 TYPE*
 _unzip_(const TYPE* list, const TYPE* left, const TYPE* right)
 {
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         return cons(reverse(left), reverse(right));
     }
@@ -143,7 +143,7 @@ assq(const TYPE* obj, const TYPE* list)
         throw_error(CONSTRAINT_ERROR, "INTERNAL ASSQ: list is not a list");
     }
 
-    if (!is_nil(list))
+    if (!IS_NIL(list))
     {
         TYPE* a = car(list);
         

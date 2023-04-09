@@ -187,7 +187,7 @@ MAKE_WRAPPER_ONE_ARG(cadddr);
 
 MAKE_VOID_WRAPPER_TWO_ARG(set_car);
 MAKE_VOID_WRAPPER_TWO_ARG(set_cdr);
-MAKE_PREDICATE_WRAPPER_ONE_ARG(is_nil);
+MAKE_PREDICATE_WRAPPER_ONE_ARG(IS_NIL);
 MAKE_WRAPPER(list);
 MAKE_WRAPPER_ONE_ARG(reverse);
 MAKE_WRAPPER_ONE_ARG(unzip);
@@ -1072,7 +1072,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(cadddr, cadddr);
     ADD_PROCEDURE(set_car, set-car!);
     ADD_PROCEDURE(set_cdr, set-cdr!);
-    ADD_PROCEDURE(is_nil, null?);
+    ADD_PROCEDURE(IS_NIL, null?);
     ADD_PROCEDURE(list, list);
     ADD_PROCEDURE(reverse, reverse);
     ADD_PROCEDURE(unzip, unzip);
@@ -1230,13 +1230,13 @@ is_symbol_primitive_procedure(const TYPE* procedure)
 {
     return 
         is_symbol(procedure) 
-        && !is_nil(hash_table_ref(_primitive_procedure_table_, procedure));
+        && !IS_NIL(hash_table_ref(_primitive_procedure_table_, procedure));
 }
 
 int
 is_primitive_procedure(const TYPE* procedure)
 {
-    return !is_nil(procedure) && procedure->type == PRIMITIVE_PROCEDURE;
+    return !IS_NIL(procedure) && procedure->type == PRIMITIVE_PROCEDURE;
 }
 
 TYPE* 
@@ -1248,7 +1248,7 @@ find_primitive_procedure(const TYPE* symbol)
 
     result = hash_table_ref(_primitive_procedure_table_, symbol);
 
-    assert(!is_nil(result) && "could not find primitive procedure");
+    assert(!IS_NIL(result) && "could not find primitive procedure");
     
     return result;
 }
@@ -1260,7 +1260,7 @@ apply_primitive_procedure(const TYPE* procedure,
 {
     TYPE* result;
 
-    assert(!is_nil(procedure) && 
+    assert(!IS_NIL(procedure) && 
            procedure->type == PRIMITIVE_PROCEDURE &&
            "APPLY_PRIMITIVE_PROCEDURE: wrong type of stored procedure");
     

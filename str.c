@@ -82,7 +82,7 @@ _mk_string_from_chars(TYPE* string, const TYPE* char_list, unsigned int i)
 {
     TYPE* result = string;
 
-    if (!is_nil(char_list))
+    if (!IS_NIL(char_list))
     {
         assert_throw(is_char(car(char_list)),
                      TYPE_ERROR,
@@ -392,7 +392,7 @@ list_to_string(const TYPE* sexp)
 
     TYPE* result;
     
-    if (is_nil(sexp))
+    if (IS_NIL(sexp))
     {
 	result = (TYPE*)sexp;
     }
@@ -414,7 +414,7 @@ list_to_string(const TYPE* sexp)
 
 	    buffer[i++] = c->d.i;
 	    list = cdr(list);
-	} while (!is_nil(list));
+	} while (!IS_NIL(list));
 	
 	buffer[i] = '\0';
 	result = mk_string_with_length(buffer, i);

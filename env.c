@@ -40,7 +40,7 @@ is_env(const TYPE* sexp)
 int
 is_empty_env(const TYPE* env)
 {
-    return is_nil(env->d.t);
+    return IS_NIL(env->d.t);
 }
 
 TYPE*
@@ -93,7 +93,7 @@ lookup_scan(TYPE* var, TYPE* vars, TYPE* vals, TYPE** result)
 {
     int rc = FALSE;
 
-    while (!is_nil(vars))
+    while (!IS_NIL(vars))
     {
         if (is_eq(var, vars->d.p->car))
         {
@@ -199,7 +199,7 @@ set_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* env)
 {
     TYPE* result = nil();
 
-    if (is_symbol(vars) || is_nil(vars))
+    if (is_symbol(vars) || IS_NIL(vars))
     {
         result = set_env_loop(var, val, enclosing_environment(env));
     }
@@ -288,7 +288,7 @@ extend_environment(TYPE* vars, TYPE* vals, TYPE* env)
 void
 define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 {
-    if (is_symbol(vars) || is_nil(vars))
+    if (is_symbol(vars) || IS_NIL(vars))
     {
         add_binding_to_frame(var, val, frame);
     }

@@ -207,7 +207,7 @@ is_list(const TYPE* sexp)
 {
     int result;
 
-    if (is_nil(sexp))
+    if (IS_NIL(sexp))
     {
         result = 1;
     }
@@ -248,16 +248,18 @@ mk_list(int count, ...)
     return reverse(result);
 }
 
+/*
 int 
 is_pair(const TYPE* pair)
 {
     return pair->type == PAIR;
 }
+*/
 
 int 
 is_empty_pair(const TYPE* sexp)
 {
-    return is_pair(sexp) && is_nil(car(sexp)) && is_nil(cdr(sexp));
+    return is_pair(sexp) && IS_NIL(car(sexp)) && IS_NIL(cdr(sexp));
 }
 
 unsigned int 
@@ -265,9 +267,9 @@ length(const TYPE* pair)
 {
     unsigned int result = 0;
         
-    assert(is_pair(pair) || is_nil(pair));
+    assert(is_pair(pair) || IS_NIL(pair));
 
-    if (!is_nil(pair))
+    if (!IS_NIL(pair))
     {
         result = 1 + length(cdr(pair));
     }
@@ -281,11 +283,13 @@ is_procedure(const TYPE* proc)
 	return proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE;
 }
 
+/*
 int
 is_eq(const TYPE* left, const TYPE* right)
 {
     return left->d.s == right->d.s;
 }
+*/
 
 int
 is_eqv(const TYPE* left, const TYPE* right)
@@ -337,7 +341,7 @@ mk_quoted(const TYPE* sexp)
 int 
 is_quoted(const TYPE* sexp)
 {
-    return is_tagged_list(sexp, _quote_keyword_symbol_) && length(sexp) < 3;
+    return is_tagged_list(sexp, _quote_keyword_symbol_);
 }
 
 TYPE* 
@@ -387,7 +391,7 @@ is_true(const TYPE* sexp)
 int
 is_eof_object(const TYPE* sexp)
 {
-    return !is_nil(sexp) && sexp->type == ENDOFFILE;
+    return !IS_NIL(sexp) && sexp->type == ENDOFFILE;
 }
 
 TYPE*
@@ -409,7 +413,7 @@ mk_eof()
 int
 is_escape_proc(const TYPE* sexp)
 {
-	return !is_nil(sexp) && sexp->type == ESCAPE_PROC;
+	return sexp->type == ESCAPE_PROC;
 }
 
 TYPE*

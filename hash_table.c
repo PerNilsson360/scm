@@ -57,7 +57,7 @@ _find(TYPE* list,
 {
     TYPE* result;
     /* @todo remove recursion on this function */
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = list;
     }
@@ -87,7 +87,7 @@ _remove(TYPE* list,
 
     assert(key != NULL && "_REMOVE: key can not be NULL");
     
-    if (is_nil(list))
+    if (IS_NIL(list))
     {
         result = list;
     }
@@ -137,7 +137,7 @@ hash_table_set(TYPE* hash_table, const TYPE* key, const TYPE* data)
 
     assert(key != NULL && "HASH_TABLE_SET: key can not be NULL");
 
-    if (is_nil(entry))
+    if (IS_NIL(entry))
     {
         vector_set(hash_table->d.h->vector,
                    get_index(hash_table, key),

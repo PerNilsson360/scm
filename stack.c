@@ -6,6 +6,7 @@
 
 #include "type.h"
 #include "stack.h"
+#include "util.h"
 
 static int max_size = 0;
 static int n_pushes = 0;
@@ -16,7 +17,7 @@ stack_init()
 {
 	stack.size = 1024;
     stack.top = 0;
-    stack.data = GC_MALLOC(sizeof(void*) * stack.size);
+    stack.data = mloc(sizeof(void*) * stack.size);
 }
 
 void 
@@ -41,8 +42,6 @@ save(void* data)
 void 
 restore(void** data)
 {
-    assert(stack.top > 0 && stack.top <= stack.size);
-
     *data = stack.data[--stack.top];
     /* enable garabage collection */
     stack.data[stack.top] = 0;
@@ -59,7 +58,7 @@ copy_stack(STACK* dest, const STACK* src)
 {
 	dest->size = src->size;
 	dest->top = src->top;
-	dest->data = GC_MALLOC(sizeof(void*) * src->size);
+	dest->data = mloc(sizeof(void*) * src->size);
 	memcpy(dest->data, src->data, sizeof(void*) * src->size);
 }
 

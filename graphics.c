@@ -33,7 +33,7 @@ _get_height(const TYPE* exp, int display_height)
 
     TYPE* height = assq(mk_symbol("height"), exp);
     
-    if (is_nil(height) || is_nil(cdr(height)) || !is_number(car(cdr(height))))
+    if (IS_NIL(height) || IS_NIL(cdr(height)) || !is_number(car(cdr(height))))
     {
         result = display_height / 4;
     }
@@ -52,7 +52,7 @@ _get_width(const TYPE* exp, int display_width)
 
     TYPE* width = assq(mk_symbol("width"), exp);
     
-    if (is_nil(width) || is_nil(cdr(width)) || !is_number(car(cdr(width))))
+    if (IS_NIL(width) || IS_NIL(cdr(width)) || !is_number(car(cdr(width))))
     {
         result = display_width / 4;
     }
@@ -70,7 +70,7 @@ _get_window_name(const TYPE* exp)
     char* result = "Scheme graphics";
     TYPE* name = assq(mk_symbol("window-name"), exp);
     
-    if (!is_nil(name) && !is_nil(cdr(name)) && is_string(car(cdr(name))))
+    if (!IS_NIL(name) && !IS_NIL(cdr(name)) && is_string(car(cdr(name))))
     {
         result = car(cdr(name))->d.s;
     }

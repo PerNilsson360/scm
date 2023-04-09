@@ -2,16 +2,20 @@
 #define _SYMBOL_H_
 
 #include "type.h"
+extern TYPE* _nil_;
+#define IS_NIL(PAIR) ((PAIR) == _nil_)
+
 unsigned int _symbol_hash_(const TYPE* symbol);
 void init_symbol_table();
 TYPE* mk_symbol(const char* symbol);
-int is_symbol(const TYPE* symbol);
+#define is_symbol(SEXP) ((SEXP)->type == SYMBOL && !IS_NIL(SEXP))
 int is_symbol_eq(const TYPE* left, const TYPE* right);
 TYPE* symbol_to_string(const TYPE* symbol);
 TYPE* string_to_symbol(const TYPE* symbol);
 
 TYPE* nil();
-int is_nil(const TYPE* pair);
+
+/* int is_nil(const TYPE* pair);*/
 
 int is_reserved_symbol(const TYPE* symbol);
 

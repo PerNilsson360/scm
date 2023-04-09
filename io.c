@@ -116,12 +116,12 @@ display_pair(const TYPE* sexp, FILE* file)
         display_inside_list(sexp->d.p->car, file);
     }
 
-    if (!is_pair(cdr(sexp)) && !is_nil(cdr(sexp)))
+    if (!is_pair(cdr(sexp)) && !IS_NIL(cdr(sexp)))
     {
         fprintf(file, " .");
     }
 
-    if (!is_nil(sexp->d.p->cdr))
+    if (!IS_NIL(sexp->d.p->cdr))
     {
         fprintf(file, " ");
         display_inside_list(sexp->d.p->cdr, file);           
