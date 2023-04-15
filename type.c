@@ -248,14 +248,6 @@ mk_list(int count, ...)
     return reverse(result);
 }
 
-/*
-int 
-is_pair(const TYPE* pair)
-{
-    return pair->type == PAIR;
-}
-*/
-
 int 
 is_empty_pair(const TYPE* sexp)
 {
@@ -266,8 +258,8 @@ unsigned int
 length(const TYPE* pair)
 {
     unsigned int result = 0;
-        
-    assert(is_pair(pair) || IS_NIL(pair));
+
+	assert_throw(is_pair(pair) || IS_NIL(pair), TYPE_ERROR, "LENGTH: not a pair");
 
     if (!IS_NIL(pair))
     {
@@ -282,14 +274,6 @@ is_procedure(const TYPE* proc)
 {
 	return proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE;
 }
-
-/*
-int
-is_eq(const TYPE* left, const TYPE* right)
-{
-    return left->d.s == right->d.s;
-}
-*/
 
 int
 is_eqv(const TYPE* left, const TYPE* right)

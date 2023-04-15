@@ -146,7 +146,7 @@ get_var_from_frame(unsigned int var_index, int is_inproper_list, TYPE* vals)
 {
     for (;var_index != 0; var_index--)
     {
-	vals = vals->d.p->cdr;
+		vals = vals->d.p->cdr;
     }
     
     return is_inproper_list ? vals : vals->d.p->car;

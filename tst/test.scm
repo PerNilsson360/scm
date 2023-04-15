@@ -301,7 +301,7 @@
   (match x
 	 (() 0)
 	 ((?hd . ?tl) (+ 1 (le tl)))
-	 (? (error "asdasd"))))
+	 (? (display 'foo) (newline) (error "asdasd"))))
 
 (define (foo clauses)
   (and (not (last-clause? clauses)) (else-clause? (car clauses))))
@@ -651,3 +651,11 @@
 			 '(54 0 37 -3 245 19))))
 
 (for-each (lambda (x) (display x)) '(1 2))
+
+(define (a-stream)
+  (define (next n)
+	(cons n (delay (next (+ n 1)))))
+  (next 0))
+
+(define a-stream (letrec ((next (lambda (n) (cons n (delay (next (+ n 1)))))))
+						  (next 0)))

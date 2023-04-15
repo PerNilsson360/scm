@@ -537,14 +537,12 @@ ev_match_done:
     goto *reg.cont;
 ev_delay:
     save(reg.cont);
-    if (length(reg.exp) != 2)
-    {
-        throw_error(EVAL_ERROR, "DELAY: must have exactly one operand");
-    }
+	save(reg.exp);
     reg.exp = mk_lambda(nil(), operands(reg.exp));
     reg.cont = &&ev_delay_done;
     goto eval_dispatch;
 ev_delay_done:
+	restore(&reg.exp);
     restore(&reg.cont);
     goto *reg.cont;
 ev_stream_cons:
@@ -745,7 +743,12 @@ apply_dispatch:
     if (is_primitive_procedure(reg.proc)) goto primitive_apply;
     else if (is_compound_procedure(reg.proc)) goto compound_apply;
 	else if (is_escape_proc(reg.proc)) goto escape_proc_apply;
-    else throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
+    else
+	{
+		display_debug(reg.exp);
+		display_debug(reg.proc);
+		throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
+	}
 primitive_apply:
     reg.val = apply_primitive_procedure(reg.proc, reg.arg1, reg.env);
     restore(&reg.cont);
@@ -974,7 +977,7 @@ match_clauses_to_name_free(TYPE* clauses,
                            exp_to_name_free_exp(body,
                                                 match_body_context)),
                       match_clauses_to_name_free(cdr(clauses),
-                                                context));
+												 context));
     }
     
     return result;
@@ -984,31 +987,31 @@ static
 TYPE*
 scan_internal_defs(TYPE* exps)
 {
-  TYPE* result = nil();
+	TYPE* result = nil();
         
-  while (!IS_NIL(exps))
-  {
-      TYPE* exp = car(exps);
-      if (is_definition(exp))
-      {
-	  TYPE* var = definition_variable(exp);
-	  result = cons(var, result);
-      }
-      exps = cdr(exps);
-  }
+	while (!IS_NIL(exps))
+	{
+		TYPE* exp = car(exps);
+		if (is_definition(exp))
+		{
+			TYPE* var = definition_variable(exp);
+			result = cons(var, result);
+		}
+		exps = cdr(exps);
+	}
 
-  return reverse(result);
+	return reverse(result);
 }
 
 static
 void
 add_defs_to_context(TYPE* defs, TYPE* ctx)
 {
-  while (!IS_NIL(defs))
-  {
-      add_definition_to_context(car(defs), ctx);
-      defs = cdr(defs);
-  }
+	while (!IS_NIL(defs))
+	{
+		add_definition_to_context(car(defs), ctx);
+		defs = cdr(defs);
+	}
 }
 
 static 
@@ -1051,6 +1054,13 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
         result = mk_match(exp_to_name_free_exp(key, context), 
                           match_clauses_to_name_free(clauses, context));
     }
+	else if (is_delay(exp)) {
+		assert_throw(length(exp) == 2,
+					 PARSE_ERROR,
+					 "DELAY: must have exactly one argument");
+		TYPE* ctx = extend_context(nil(), context);
+		result = mk_list(2, _delay_keyword_symbol_, exp_to_name_free_exp(cadr(exp), ctx));
+	}
     else if (is_pair(exp))
     {
         TYPE* hd = exp_to_name_free_exp(car(exp), context);

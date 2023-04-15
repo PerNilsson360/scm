@@ -1,14 +1,3 @@
-(define (length li)
-  (cond ((not (or (pair? li) (null? li)))
-	 (error "LENGTH: parameter is not a a pair or nil" li))
-	((null? li) 0)
-	(else (+ 1 (length (cdr li))))))
-
-(define (list? list)
-  (cond ((null? list) #t)
-	((and (pair? list) (pair? (cdr list))) (list? (cdr list)))
-	(else (and (pair? list) (null? (cdr list))))))
-
 (define (list-ref list k)
   (cond ((null? list) (error "LIST-REF: argument out of length"))
 	((= k 0) (car list))
@@ -24,8 +13,8 @@
   (if (null? left) 
       right
       (if (null? right) 
-	  left
-	  (cons (car left) (inner (cdr left) right)))))
+		  left
+		  (cons (car left) (inner (cdr left) right)))))
   (accumulate inner '() args))
 
 (define (get-list-of-cars lists result)

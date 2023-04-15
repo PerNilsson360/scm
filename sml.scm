@@ -84,6 +84,11 @@
   ; extend-type-env var val env
   '(extend-type-env symbol? type? type-env?))
 
+(define-datatype 'type-result
+  '(error-type-result string?)
+  ;; success-type-result type substitution list
+  '(success-type-result type? list?))
+
 (define (apply-type-env env search-var)
   (match env
 	((empty-type-env) (error "apply-type-env: can not find type for var: " search-var))
@@ -112,10 +117,90 @@
 	 (list (type-to-external-form arg-type) "->" (type-to-external-form result-type)))
 	(? (error "type-to-external-form: unkown type: " type))))
 
-(define (type-of exp)
+;; Substitutions
+(define (empty-subst) '())
+
+;; substitute tv for t1 in t0, t0[tv = t1]
+;; Type x Tvar x Type -> Type
+(define (apply-one-subst ty0 tvar ty1)
+  (match ty0
+	((int-type) (int-type))
+	((bool-type) (bool-type))
+	((proc-type ?arg-type ?result-type)
+	 (proc-type (apply-one-subst arg-type tvar ty1)
+				(apply-one-subst result-type tvar ty1)))
+	((var-type ?sn) (if (equal? ty0 tvar) ty1 ty0))
+	(? (error "apply-one-subst: unkown type" ty0))))
+  
+
+;; Type x Subst -> Type
+(define (apply-subst-to-type ty subst)
+  (match ty
+	((int-type) (int-type))
+	((bool-type) (bool-type))
+	((proc-type ?arg-type ?result-type)
+	 (proc-type (apply-subst-to-type arg-type subst)
+				(apply-subst-to-type result-type subst)))
+	((var-type ?sn)
+	 (let ((s (assoc ty subst))) (if s (cdr s) ty)))))
+
+;; Subst x Tvar x Type -> Subst
+(define (extend-subst subst tvar ty)
+  (cons
+   (cons tvar ty)						; add the new substitution
+   (map (lambda (p)                     ; apply the the substitution
+		  (let ((old-lhs (car p))		; on the allready added ones
+				(old-rhs (cdr p)))
+			(cons old-lhs (apply-one-subst old-rhs tvar ty))))
+		subst)))
+
+;; Type x Type x Subst x Exp -> Subst
+(define (unifier ty1 ty2 subst exp)
+  (let ((ty1 (apply-subst-to-type ty1 subst))
+		(ty2 (apply-subst-to-type ty2 subst)))
+	(cond ((equal? ty1 ty2) subst)
+		  ((var-type? ty1)
+		   (if (no-occurence? ty1 ty2)
+			   (extend-subst subst ty1 ty2)
+			   (error "unifier: failed occuence check" ty1 ty2 exp)))
+		  ((var-type? ty2)
+		   (if (no-occurence? ty2 ty1)
+			   (extend-subst subst ty2 ty1)
+			   (error "unifier: failed occuence check" ty2 ty1 exp)))
+		  ((and (proc-type? ty1) (proc-type? ty2))
+		   (let ((subst (unifier (proc-type->arg-type ty1)
+								 (proc-type->arg-type ty2)
+								 subst
+								 exp)))
+			 (let ((subst (unifier (proc-type->result-type ty1)
+								   (proc-type->result-type ty2)
+								   subst
+								   exp)))
+			   subst)))
+		  (else (error "unifier: failed unify" ty1 ty2 exp)))))
+
+;; Tvar x Type -> Bool
+(define (no-occurence? tvar ty)
+  (match ty
+	((int-type) #t)
+	((bool-type) #t)
+	((proc-type ?arg-type ?result-type)
+	 (and  (no-occurence? tvar arg-type) (no-occurence? tvar result-type)))
+	((var-type ?) (not (equal? tvar ty)))
+	(? (error "no-occurence?: not supported type" ty))))
+
+(define (type-of-prg exp env subst)
+  (call-with-current-continuation
+   (lambda (throw)
+	 (match exp
+	   ((exp-prg ?exp) (type-of exp env subst throw))
+	   ((dec-prg ?dec) (type-of dec env subst throw))
+	   (? (throw (error-type-result "type-of-prg: unkown prg")))))))
+
+(define (type-of exp env subst throw)
   (match exp
-	((const-int-exp ?) (int-type))
-	(? (error "type-of: unkown expression" exp))))
+	((const-int-exp ?) (success-type-result (int-type) subst))
+	(? (throw (error-type-result "type-of: unkown expression")))))
 
 ;; Repl
 (define (print-sml exp) (display exp) (newline))
@@ -127,14 +212,16 @@
   (display '>)
   (let ((statement (read-sml)))
 	(display statement) (newline)
-	(let ((type (type-of statement type-env)))
-	  (match type
-		((none) (display 'typing-failure) (newline))
-		((some ?t)
-		 (print-type t)
+	(let ((result (type-of-prg statement type-env (empty-subst))))
+	  (match result
+		((error-type-result ?e) (display e) (newline))
+		((success-type-result ?type ?subst)
+		 (print-type type)
 		 (let ((translated (sml->scheme statement)))
 		   (display translated) (newline)
 		   (let ((result (eval translated environment)))
-			 (print-sml result)))))
-	  (repl-sml))))
+			 (print-sml result))))
+		(? (error "repl-sml: unkown result of type checking")))
+	    (repl-sml))))
+
 	

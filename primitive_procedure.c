@@ -189,6 +189,19 @@ MAKE_VOID_WRAPPER_TWO_ARG(set_car);
 MAKE_VOID_WRAPPER_TWO_ARG(set_cdr);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(IS_NIL);
 MAKE_WRAPPER(list);
+MAKE_PREDICATE_WRAPPER_ONE_ARG(is_list);
+
+static 
+TYPE* 
+_length_procedure_(const TYPE* arguments, const TYPE* env)
+{
+    assert_throw(length(arguments) == 1,
+                 APPLY_ERROR,
+                 "wrong # of arguments in length");
+    
+    return mk_number_from_int(length(car(arguments)));
+}
+
 MAKE_WRAPPER_ONE_ARG(reverse);
 MAKE_WRAPPER_ONE_ARG(unzip);
 
@@ -347,7 +360,7 @@ static
 TYPE* 
 _plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
-  return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
+	return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
 }
 
 static 
@@ -1073,7 +1086,9 @@ init_primitive_procedures()
     ADD_PROCEDURE(set_car, set-car!);
     ADD_PROCEDURE(set_cdr, set-cdr!);
     ADD_PROCEDURE(IS_NIL, null?);
+	ADD_PROCEDURE(is_list, list?);
     ADD_PROCEDURE(list, list);
+	ADD_PROCEDURE(length, length);
     ADD_PROCEDURE(reverse, reverse);
     ADD_PROCEDURE(unzip, unzip);
 
