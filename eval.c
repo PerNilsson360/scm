@@ -536,14 +536,7 @@ ev_match_done:
     restore(&reg.exp);
     goto *reg.cont;
 ev_delay:
-    save(reg.cont);
-	save(reg.exp);
-    reg.exp = mk_lambda(nil(), operands(reg.exp));
-    reg.cont = &&ev_delay_done;
-    goto eval_dispatch;
-ev_delay_done:
-	restore(&reg.exp);
-    restore(&reg.cont);
+	reg.val = mk_procedure(_nil_, operands(reg.exp), reg.env);
     goto *reg.cont;
 ev_stream_cons:
     save(reg.unev);
