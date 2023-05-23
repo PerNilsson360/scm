@@ -148,7 +148,7 @@ get_var_from_frame(unsigned int var_index, int is_inproper_list, TYPE* vals)
     {
 		vals = vals->d.p->cdr;
     }
-    
+
     return is_inproper_list ? vals : vals->d.p->car;
 }
 
@@ -170,7 +170,7 @@ get_var(unsigned int frame_index,
     result = get_var_from_frame(var_index,
     				is_inproper_list,
     				frame_vals(f));
-    
+
     return result;
 }
 
@@ -261,9 +261,7 @@ set_var(unsigned int frame_index,
 void 
 set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
-    assert(is_env(env) && "Env must be a environment");
-
-    if (is_symbol(var))
+	if (is_symbol(var))
     {
         set_env_loop(var, val, env);
     }
@@ -279,8 +277,6 @@ set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 TYPE* 
 extend_environment(TYPE* vars, TYPE* vals, TYPE* env)
 {
-    assert(is_env(env) && "Env must be a anvironment");
-    
     TYPE* e = mk_env(cons(make_frame(vars, vals), env));
     return e;
 }
@@ -305,11 +301,7 @@ define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 void 
 define_variable(TYPE* var, TYPE* val, TYPE* env)
 {
-    TYPE* frame;
-
-    assert(is_env(env) && "Env must be a list");
-
-    frame = first_frame(env);
+    TYPE* frame = first_frame(env);
     define_scan(var, 
                 val, 
                 frame_vars(frame), 

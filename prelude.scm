@@ -142,7 +142,7 @@
 	((= b 1) a)
 	(else (* a (expt a (dec b))))))
 
-;; algebraic data types
+;algebraic data types
 
 (define (check-variant-args preds args)
   (if (not (= (length preds) (length args)))
@@ -191,3 +191,17 @@
 (define-datatype 'int
   '(z)
   '(s int?))
+
+(define random
+  (let ((a 1229.0) (c 1) (m (expt 2.0 32))(seed 1223)) ;(seed 19380110))
+	(lambda ()
+      (set! seed (remainder (+ (* seed a) c) m))
+	  (/ seed m))))
+
+(define (find p li)
+  (let loop ((l li))
+	(if (null? l)
+		#f
+		(or (p (car l)) (loop (cdr l))))))
+
+	  

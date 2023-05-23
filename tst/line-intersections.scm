@@ -1,0 +1,78 @@
+(load "/home/per/git/scm/tst/2d-geometry.scm")
+(load "/home/per/prg/c++/scheme/keysymdef.scm")
+(load "/home/per/git/scm/rgb-colors.scm")
+
+(define window-width 640)
+(define window-height 400)
+
+(define (mk-random-line)
+  (let ((x1 (* window-width (random)))
+		(x2 (* window-width (random)))
+		(y1 (* window-height (random)))
+		(y2 (* window-height (random))))
+	(<line-2d> (<point-2d> x1 y1) (<point-2d> x2 y2))))
+
+(define (mk-lines)
+  (define (add l n)
+	(if (< (length l) n)
+		(add (cons (mk-random-line) l) n)
+		l))
+  (define (draw-intersections lines)
+	(for-each
+	 (lambda (l0)
+	   (for-each
+		(lambda (l1)
+		  (draw-intersection (line-2d-intersect l0 l1)))
+		  lines))
+	   lines))
+  (let ((lines (add '() 30)))
+	(define (animate)
+	  (for-each draw-line lines)
+	  (draw-intersections lines))
+	(lambda (message)
+	  (match message
+		(animate (animate))
+		(? (error "mk-lines unkown message " message))))))
+
+(define (draw-intersection p)
+  (if (not (null? p))
+	  (begin (gr-set-foreground maroon)
+			 (gr-move-to-point-2d! p)
+			 (gr-fill-arc 10 10 0 (* 360 64)))))
+
+(define (draw-line l)
+  (let ((p0 (<line-2d>:p0 l))
+		(p1 (<line-2d>:p1 l)))
+  (gr-set-foreground blue)
+  (gr-draw-line
+   (<point-2d>:x p0) (<point-2d>:y p0) (<point-2d>:x p1) (<point-2d>:y p1))))
+
+(define (run)
+  (let  ((running #t)
+		 (lines (mk-lines)))
+	(define (handle-events n-events)
+      (if (> n-events 0)
+		  (let ((event (x-next-event)))
+			(match event
+			  ((key-press ?win ?x ?y ?state ?key ?str) 
+		       (if (= key xk-Q)
+				   (begin (print-line event) (set! running #f))
+				   (begin (print-line event) (handle-events (dec n-events)))))
+			  (? (begin (handle-events (dec n-events))))))))
+	(let loop ()
+	  (if running
+		  (let ((n-events (x-events-queued)))
+			(if (= n-events 0)
+				(begin (lines 'animate)
+					   (gr-swap-buffers)
+					   (nano-sleep 0 20000000)
+					   (loop))
+				(begin (handle-events n-events) (loop))))))))
+
+(gr-open `((width ,window-width)
+		   (height ,window-height)
+		   (window-name "line intersections")))
+
+;(load "/home/per/git/scm/tst/line-intersections.scm")
+;(run)
+;(gr-close)

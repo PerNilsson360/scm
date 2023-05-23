@@ -4,10 +4,15 @@
 
 (define grr (lambda (a b c) (+ a b c)))
 
+(define foo (lambda (a)
+			  (define id (lambda (x) x))
+			  (display a)
+			  (id 1)))
 
 (define cruel (lambda (a)
-		(define bar (lambda (a) (+ a a)))
-		(bar (+ a 5))))
+				(display a)
+				(define id (lambda (a) a))
+				(id 2)))
 
 (define (foo a1)
   (define (bar a2)

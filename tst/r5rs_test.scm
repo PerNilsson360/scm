@@ -294,11 +294,43 @@
   (expect '(equal? (list-ref '(a b c d) (round 1.8)) 'c)) ; (inexact->exact (round 1.8))
   )
 
+;;
+(define (test-symbols)
+  (expect '(symbol? 'foo))
+  (expect '(symbol? (car '(a b))))
+  (expect '(not (symbol? "bar")))
+  (expect '(symbol? 'nil))
+  (expect '(not (symbol? '())))
+  (expect '(not (symbol? #f)))
+  (expect '(equal? (symbol->string 'flying-fish) "flying-fish"))
+  ; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
+  (expect '(equal? (symbol->string (string->symbol "Malvina")) "Malvina"))
+  ; todo does not even parse (expect '(eq? 'mISSISSIppi 'mississippi))
+  )
+
+;; 6.3.4 Characters
+(define (test-characters)
+  ; todo (expect '(char=? #\A #\B))
+  ; (expect '(char<? #\a #\b))
+  ;(expect '(char<? #\0 #\9))
+  ;(expect '(char-ci=? #\A #\a))
+  ;; todo need more testcase
+  (display "todo test characters") (newline)
+  )
+
+;; 6.3.5 Strings
+
+;; 6.3.6 Vectors
+(define (test-vectors)
+  (expect '(equal? (vector 'a 'b 'c) #(a b c)))
+  (expect '(equal? (vector-ref '#(1 1 2 3 5 8 13 21) 5) 8))
+  )
+
 ;; 6.4
 
 (define compose
   (lambda (f g)
-	(lambda (args)
+	(lambda args
 	  (f (apply g args)))))
 
 (define a-stream (letrec ((next (lambda (n) (cons n (delay (next (+ n 1)))))))
@@ -314,7 +346,7 @@
   (expect '(equal? (apply + (list 3 4)) 7))
   (expect '(equal? (apply + 1 (list 1 1)) 3))	 ; not in r5rs 
   (expect '(equal? (apply (lambda () 1) '()) 1)) ; 0 arguments
-  ; todo implement sqrt (expect '(equal? ((compose sqrt *) 12 75) 30))
+  ; TODO lambda no paren on arg bug (expect '(equal? ((compose sqrt *) 12 75) 30))
   (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))
   (expect '(equal? (map (lambda (n) (expt n n)) '(1 2 3 4 5)) '(1 4 27 256 3125)))
   (expect '(equal? (map + '(1 2 3) '(4 5 6)) '(5 7 9)))
@@ -393,6 +425,9 @@
   (test-equal?)
   (test-booleans)
   (test-pairs-and-lists)
+  (test-symbols)
+  (test-characters)
+  (test-vectors)
   (test-control-features)
   (test-memq?)
   (test-assq)
@@ -401,6 +436,6 @@
   (newline)
   )
 
-(test)
+;(test)
 
 ;; (load "r5rs_test.scm")

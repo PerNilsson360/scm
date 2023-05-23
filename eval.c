@@ -642,7 +642,7 @@ ev_appl_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
     reg.arg1 = nil();
-    reg.proc = reg.val;    
+    reg.proc = reg.val;
     if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_appl_operand_loop:
@@ -981,14 +981,21 @@ TYPE*
 scan_internal_defs(TYPE* exps)
 {
 	TYPE* result = nil();
-        
+	int found_non_definition = 0;
 	while (!IS_NIL(exps))
 	{
 		TYPE* exp = car(exps);
 		if (is_definition(exp))
 		{
+			if (found_non_definition)
+			{
+				throw_error(PARSE_ERROR, 
+							"EVAL: internal definition must come first in a body");
+			}
 			TYPE* var = definition_variable(exp);
 			result = cons(var, result);
+		} else {
+			found_non_definition = 1;
 		}
 		exps = cdr(exps);
 	}

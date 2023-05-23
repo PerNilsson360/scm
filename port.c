@@ -68,6 +68,7 @@ open_input_file(const TYPE* filename)
 
      if (file == NULL)
      {
+		 fprintf(stderr, "filename: %s\n", filename->d.s);
          throw_error(OS_ERROR, 
                      "OPEN_INPUT_FILE: could not open file");
      }
@@ -88,6 +89,7 @@ open_output_file(const TYPE* filename)
 
      if (file == NULL)
      {
+		 fprintf(stderr, "filename: %s\n", filename->d.s);
          throw_error(OS_ERROR, 
                      "OPEN_OUTPUT_FILE: could not open file");
      }

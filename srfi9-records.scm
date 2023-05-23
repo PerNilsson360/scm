@@ -152,12 +152,6 @@
 	(else (let ((index (symbol-index (record-symbol-list obj) field)))
 		(vector-ref obj index)))))
 
-(define p (make-record '<point> '(x y)))
-(record-set! p 'x 1)
-(record-set! p 'y 2)
-(record-ref p 'x)
-(record-ref p 'y)
-
 (define (accessor-name type slot-name)
   (string->symbol (string-append (symbol->string type) 
 				 ":" 
@@ -193,20 +187,14 @@
   (if (not (pair? ctor-spec))
       (error "DEFINE-RECORD-TYPE: ctor spec is not a list")
       (let ((ctor (car ctor-spec))
-	    (slot-names (cdr ctor-spec)))
-	(eval `(define (,ctor . slot-values) 
-			 (let ((r (make-record (quote ,type) (quote ,slot-names))))
-			   (record-values-set! r slot-values)
-		       r))
-	      environment)
-	(define-accessor-and-mutators type slot-names)
-	(define-record-predicate type))))
- 
-(define-record-type 
-  '<point> 
-  '(make-point x y)
-  ;; '(translate (self delta)
-  ;;  			  (begin (<point>:x! self (+ (<point>:x self) delta))
-  ;;  					 (<point>:y! self (+ (<point>:y self) delta))))
-  )
-		     
+			(slot-names (cdr ctor-spec)))
+		(display (list "define-record-type:" ctor slot-names))
+		(eval `(define (,ctor . slot-values) 
+				 (let ((r (make-record (quote ,type) (quote ,slot-names))))
+				   (record-values-set! r slot-values)
+				   r))
+			  environment)
+		(define-accessor-and-mutators type slot-names)
+		(define-record-predicate type)
+		)))
+ 		     

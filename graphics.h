@@ -21,11 +21,11 @@ void gr_set_foreground(const TYPE* exp); /* int */
 TYPE* x_events_queued();
 TYPE* x_next_event();
 void x_flush();
-void x_fill_arc(const TYPE* drawable, 
-                const TYPE* width, 
-                const TYPE* height, 
-                const TYPE* angle1, 
-                const TYPE* angle2);
-TYPE* gr_root_win();
+void gr_fill_rect(const TYPE* width, const TYPE* height);
+void gr_fill_arc(const TYPE* width, 
+				 const TYPE* height, 
+				 const TYPE* angle1, 
+				 const TYPE* angle2);
+void gr_swap_buffers();
 
 #endif

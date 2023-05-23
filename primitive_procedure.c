@@ -414,7 +414,7 @@ static
 TYPE* 
 _modulo_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    assert(FALSE);
+	assert(FALSE);
     return NULL;
 }
 
@@ -466,12 +466,33 @@ _cos_procedure_(const TYPE* arguments, const TYPE* env)
 	const TYPE* n = car(arguments);
 	assert_throw(is_number(n),
                  TYPE_ERROR, 
-				 "COS: n must be a string");
+				 "COS: n must be a number");
 
 	TYPE* result = mk_unasigned_number(REAL);	
 	result->d.d = cos(n->d.d);
 	
 	return result;
+}
+
+static
+TYPE*
+_sqrt_procedure_(const TYPE* arguments, const TYPE* env)
+{
+	assert_throw(length(arguments) == 1,
+                 APPLY_ERROR,
+                 "wrong # of arguments in sqrt");
+	
+	const TYPE* n = car(arguments);
+	assert_throw(is_number(n),
+                 TYPE_ERROR, 
+				 "SQRT: n must be a number");
+
+	TYPE* result = mk_unasigned_number(REAL);
+	
+	result->d.d = is_integer(n) ? sqrt(n->d.i) : sqrt(n->d.d);
+	
+	return result;
+	
 }
 
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_boolean);
@@ -1031,35 +1052,26 @@ _x_flush_procedure_(const TYPE* arguments, const TYPE* env)
     return mk_none();
 }
 
+MAKE_VOID_WRAPPER_TWO_ARG(gr_fill_rect);
+
 static 
 TYPE* 
-_x_fill_arc_procedure_(const TYPE* arguments, const TYPE* env)
+_gr_fill_arc_procedure_(const TYPE* arguments, const TYPE* env)
 {
     assert_throw(
-        length(arguments) == 5,
+        length(arguments) == 4,
         APPLY_ERROR,
-        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in x-fill-arc");
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in gr-fill-arc");
  
-    x_fill_arc(car(arguments),
-               car(cdr(arguments)),
-               car(cdr(cdr(arguments))),
-               car(cdr(cdr(cdr(arguments)))),
-               car(cdr(cdr(cdr(cdr(arguments))))));
+    gr_fill_arc(car(arguments),
+				car(cdr(arguments)),
+				car(cdr(cdr(arguments))),
+				car(cdr(cdr(cdr(arguments)))));
 
     return mk_none();
 }
 
-static
-TYPE*
-_gr_root_win_procedure_(const TYPE* arguments, const TYPE* env)
-{
-    assert_throw(
-        length(arguments) == 0,
-        APPLY_ERROR,
-        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in gr-open");
-
-    return gr_root_win();
-}
+MAKE_VOID_WRAPPER_NO_ARG(gr_swap_buffers);
 
 void 
 init_primitive_procedures()
@@ -1135,11 +1147,13 @@ init_primitive_procedures()
     ADD_PROCEDURE(abs, abs);
     ADD_PROCEDURE(quotient, quotient);
     ADD_PROCEDURE(modulo, modulo);
+	ADD_PROCEDURE(remainder_number, remainder);
     ADD_PROCEDURE(gcd, gcd);
     ADD_PROCEDURE(lcm, lcm);
 	ADD_PROCEDURE(round_number, round);
 	ADD_PROCEDURE(sin, sin);
 	ADD_PROCEDURE(cos, cos);
+	ADD_PROCEDURE(sqrt, sqrt);
 
     /* boolean */
     ADD_PROCEDURE(is_boolean, boolean?);
@@ -1233,11 +1247,12 @@ init_primitive_procedures()
 	ADD_PROCEDURE(gr_draw_point, gr-draw-point);
 	ADD_PROCEDURE(gr_draw_line, gr-draw-line);
     ADD_PROCEDURE(gr_set_foreground, gr-set-foreground);
-    ADD_PROCEDURE(gr_root_win, gr-root-win);
+    ADD_PROCEDURE(gr_swap_buffers, gr-swap-buffers);
     ADD_PROCEDURE(x_events_queued, x-events-queued);
     ADD_PROCEDURE(x_next_event, x-next-event);
     ADD_PROCEDURE(x_flush, x-flush);
-    ADD_PROCEDURE(x_fill_arc, x-fill-arc);
+    ADD_PROCEDURE(gr_fill_arc, gr-fill-arc);
+	ADD_PROCEDURE(gr_fill_rect, gr-fill-rect);
 }
 
 int

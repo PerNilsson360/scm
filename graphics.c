@@ -17,14 +17,17 @@
 #include "graphics.h"
 #include "char.h"
 
-static Display *display = 0;
+static Display* display = NULL;
 static Window win;
 static GC gc;
 static XFontStruct* font_struct;
 static int screen_number;
+static int width;
+static int height;
 static pthread_t gr_thread;
 static unsigned int point_x = 0;
 static unsigned int point_y = 0;
+static Pixmap pixmap;
 
 static int 
 _get_height(const TYPE* exp, int display_height)
@@ -83,7 +86,7 @@ gr_open(const TYPE* exp)
 {
     int x = 0; 
     int y = 0;
-    int width, height, display_width, display_height;
+    int display_width, display_height;
     XSizeHints *size_hints;      /* need to free this */
     XWMHints *wm_hints;         /* need to free this */
     XEvent event;
@@ -115,6 +118,10 @@ gr_open(const TYPE* exp)
                               BlackPixel(display, screen_number), 
                               WhitePixel(display, screen_number));
 
+	XWindowAttributes attrib;
+	int status = XGetWindowAttributes(display, win, & attrib);
+	fprintf(stderr, "status %d depth %d\n", status, attrib.depth);
+	
     if ((size_hints = XAllocSizeHints()) == NULL) 
     {
         fprintf(stderr, "GR-OPEN: can not get mem for sizehints");
@@ -173,15 +180,16 @@ gr_open(const TYPE* exp)
     gc_values.font = font_struct->fid;
     unsigned long bl = BlackPixel(display, screen_number);
     unsigned long wh = WhitePixel(display, screen_number);
-    gc_values.foreground = bl ^ wh;
+    gc_values.foreground = bl;
     gc_values.background = WhitePixel(display, screen_number);
-    gc_values.function = GXxor;
+    gc_values.function = GXcopy;
     gc = XCreateGC(display, 
                    win, 
                    (GCFont | GCForeground | GCBackground | GCFunction),
                    &gc_values);
 
     XMapWindow(display, win);
+	pixmap = XCreatePixmap(display, win, width, height, 24);
     XFlush(display);
 }
 
@@ -211,7 +219,7 @@ gr_draw_char(const TYPE* exp)
     string[1] = '\0';
 
     XDrawString(display,
-                win,
+                pixmap,
                 gc,
                 point_x,
                 point_y,
@@ -227,7 +235,7 @@ gr_draw_string(const TYPE* exp)
                  "GR_DRAW_STRING: expects a string as argument");
 
     XDrawString(display, 
-                win, 
+                pixmap, 
                 gc,
                 point_x,
                 point_y,
@@ -281,13 +289,14 @@ gr_set_foreground(const TYPE* exp)
 
     XSetForeground(display, 
                    gc, 
-                   (unsigned long) exp->d.i ^ WhitePixel(display, screen_number));
+                   (unsigned long) exp->d.i);
 }
 
 void
 gr_draw_point()
 {
-	int rc = XDrawPoint(display, win, gc, point_x, point_y);
+	fprintf(stderr, "%d %d\n", point_x, point_y);
+	int rc = XDrawPoint(display, pixmap, gc, point_x, point_y);
 
 	if (rc == 0)
 	{
@@ -305,13 +314,13 @@ gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2)
                  "GR_SET_FOREGROUND: x1 is not an integer");
 	assert_throw(is_number(y1), 
 				 TYPE_ERROR,
-                 "GR_SET_FOREGROUND: x1 is not an integer");
+                 "GR_SET_FOREGROUND: y1 is not an integer");
 	assert_throw(is_number (x2), 
                  TYPE_ERROR,
-                 "GR_SET_FOREGROUND: x1 is not an integer");
+                 "GR_SET_FOREGROUND: x2 is not an integer");
 	assert_throw(is_number(y2), 
                  TYPE_ERROR,
-                 "GR_SET_FOREGROUND: x1 is not an integer");
+                 "GR_SET_FOREGROUND: y1 is not an integer");
 
 	if (display == 0) {
 		fprintf(stderr, "GR_DRAW_LINE: need to call gr-open.\n");
@@ -319,7 +328,7 @@ gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2)
 	}
 	
 	int rc = XDrawLine(display,
-					   win,
+					   pixmap,
 					   gc,
 					   as_integer(x1),
 					   as_integer(y1),
@@ -388,50 +397,76 @@ x_next_event()
         break;
     }   
     default:
-        result = cons(mk_symbol("not-implemented"), nil());
+        result = cons(mk_symbol("not-implemented-event"), nil());
         break;
     }
     
     return result;
 }
 
+void
+gr_fill_rect(const TYPE* width, const TYPE* height) {
+	assert_throw(is_integer(width), 
+				 TYPE_ERROR,
+                 "GR_FILL_RECTANGLE: width must be an integer");
+	
+	assert_throw(is_integer(height), 
+				 TYPE_ERROR,
+                 "GR_FILL_RECTANGLE: height must be an integer");
+	
+	int status = XFillRectangle(display,
+								pixmap,
+								gc,
+								point_x,
+								point_y,
+								width->d.i,
+								height->d.i);
+	if (status == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, status, buff, 256);
+		fprintf(stderr, "GR_FILL_RECT: error %s.\n", buff);
+	}
+}
+
+
 void 
-x_fill_arc(const TYPE* drawable, 
-           const TYPE* width, 
-           const TYPE* height, 
-           const TYPE* angle1, 
-           const TYPE* angle2)
+gr_fill_arc(const TYPE* width, 
+			const TYPE* height, 
+			const TYPE* angle1, 
+			const TYPE* angle2)
 {
-    assert_throw(is_number(drawable), 
+    assert_throw(is_integer(width), 
                  TYPE_ERROR,
-                 "GR_TEXT_SIZE: drawable is a number");
+                 "GR_FILL_ARC: width is an integer");
 
-    assert_throw(is_number(width), 
+    assert_throw(is_integer(height), 
                  TYPE_ERROR,
-                 "GR_TEXT_SIZE: width is a number");
+                 "GR_FILL_ARC: height is a integer");
 
-    assert_throw(is_number(height), 
+    assert_throw(is_integer(angle1), 
                  TYPE_ERROR,
-                 "GR_TEXT_SIZE: height is a number");
+                 "GR_FILL_ARC: angle1 is a integer");
 
-    assert_throw(is_number(angle1), 
+    assert_throw(is_integer(angle2), 
                  TYPE_ERROR,
-                 "GR_TEXT_SIZE: angle1 is a number");
+                 "GR_FILL_ARC: angle2 is a integer");
 
-    assert_throw(is_number(angle2), 
-                 TYPE_ERROR,
-                 "GR_TEXT_SIZE: angle2 is a number");
-
-
-    XFillArc(display, 
-             drawable->d.i,
-             gc,
-             point_x, 
-             point_y, 
-             width->d.i, 
-             height->d.i, 
-             angle1->d.i, 
-             angle2->d.i);
+    int status = XFillArc(display, 
+						  pixmap,
+						  gc,
+						  point_x, 
+						  point_y, 
+						  width->d.i, 
+						  height->d.i, 
+						  angle1->d.i, 
+						  angle2->d.i);
+	if (status == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, status, buff, 256);
+		fprintf(stderr, "GR_FILL_ARC: error %s.\n", buff);
+	}
 }
 
 void
@@ -440,8 +475,17 @@ x_flush()
     XFlush(display);
 }
 
-TYPE* 
-gr_root_win()
+void
+gr_swap_buffers()
 {
-    return mk_number_from_int(win);
+    int status = XCopyArea(display, pixmap, win, gc, 0, 0, width, height, 0,0);
+
+	if (status == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, status, buff, 256);
+		fprintf(stderr, "GR_SWAP_BUFFERS: error %s.\n", buff);
+	}
+    
+    XSync(display, False);
 }

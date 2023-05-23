@@ -313,6 +313,7 @@ define_to_lambda(const TYPE* exp)
 {
     if (length(exp) < 3)
     {
+		display_debug(exp);
 		throw_error(EVAL_ERROR,
 					"DEFINE_TO_LAMBDA: define must have at least 3 elements");
     }

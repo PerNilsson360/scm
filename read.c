@@ -261,7 +261,7 @@ initial(char c)
     int result = FALSE;
 
     /* letter --> a | b | c | ... | z  */
-    if (isalpha(c) && islower(c))
+    if (isalpha(c)) /* && islower(c)) alow uppercase letters*/
     {
         result = TRUE;
     }
