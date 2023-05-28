@@ -116,7 +116,7 @@ main(int argc, char** argv)
     init_symbol_table();
     init_primitive_procedures();
     
-    env = extend_environment(nil(), nil(), mk_env(nil()));
+    env = mk_empty_env();
     environment_symbol = mk_symbol("environment");
     define_variable(environment_symbol, env, env);
 

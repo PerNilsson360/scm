@@ -22,18 +22,17 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     }
     
     result->type = PROCEDURE;
-	result->d.pr = mloc(sizeof(PROCEDUR_DATA));
+	result->d.pr = mloc(sizeof(PROCEDURE_DATA));
 
     if (result->d.pr == NULL)
     {
-        fprintf(stderr, "MK_PROCEDUR: could not allocate memory for data");
+        fprintf(stderr, "MK_PROCEDURE: could not allocate memory for data");
         exit(1);
     }
 	
 	result->d.pr->parameters = parameters;
 	result->d.pr->body = body;
 	result->d.pr->env = env;
-	/* result->d.t = cons(parameters, cons(body, cons(env, nil())));*/
 
     return result;
 }

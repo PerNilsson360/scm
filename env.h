@@ -1,9 +1,10 @@
 #ifndef _ENV_H_
 #define _ENV_H_
 #include "type.h"
-
-TYPE* mk_env(TYPE* data);
-TYPE* mk_first_env_frame();
+/**
+ * Creates an empty environment.
+ */
+TYPE* mk_empty_env();
 
 int is_env(const TYPE* sexp);
 

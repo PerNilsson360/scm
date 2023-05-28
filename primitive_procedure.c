@@ -1256,14 +1256,6 @@ init_primitive_procedures()
 }
 
 int
-is_symbol_primitive_procedure(const TYPE* procedure)
-{
-    return 
-        is_symbol(procedure) 
-        && !IS_NIL(hash_table_ref(_primitive_procedure_table_, procedure));
-}
-
-int
 is_primitive_procedure(const TYPE* procedure)
 {
     return !IS_NIL(procedure) && procedure->type == PRIMITIVE_PROCEDURE;
@@ -1272,15 +1264,13 @@ is_primitive_procedure(const TYPE* procedure)
 TYPE* 
 find_primitive_procedure(const TYPE* symbol)
 {
-    TYPE* result;
-    
-    assert(is_symbol(symbol) && "symbol must be a symbol");
+    if (!is_symbol(symbol)) {
+		fprintf(stderr, "FIND_PRIMITIVE_PROCEDURE: not a symbol");
+		display_debug(symbol);
+		return _nil_;
+	}
 
-    result = hash_table_ref(_primitive_procedure_table_, symbol);
-
-    assert(!IS_NIL(result) && "could not find primitive procedure");
-    
-    return result;
+    return hash_table_ref(_primitive_procedure_table_, symbol);
 }
 
 TYPE* 

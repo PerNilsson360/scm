@@ -48,9 +48,9 @@ struct TYPE
 		int                      i;
 		double                   d;
 		char*                    s;
-		struct TYPE*             t;
+		struct ENVIRONMENT_DATA* en;
 		struct PAIR_DATA*        p;
-		struct PROCEDUR_DATA*    pr;
+		struct PROCEDURE_DATA*   pr;
 		struct VECTOR_DATA*      v;
 		struct BOUND_VAR_DATA*   b;
 		struct PORT_DATA*        po;
@@ -69,15 +69,22 @@ struct PAIR_DATA
 };
 typedef struct PAIR_DATA  PAIR_DATA;
 
-struct PROCEDUR_DATA
+struct PROCEDURE_DATA
 {
 	TYPE* parameters;
 	TYPE* body;
 	TYPE* env;
 
 };
-typedef struct PROCEDUR_DATA  PROCEDUR_DATA;
+typedef struct PROCEDURE_DATA  PROCEDURE_DATA;
 
+struct ENVIRONMENT_DATA
+{
+	TYPE* vars;
+	TYPE* vals;
+	TYPE* previous_frame;
+};
+typedef struct ENVIRONMENT_DATA ENVIRONMENT_DATA;
 
 struct VECTOR_DATA
 {

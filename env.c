@@ -15,20 +15,35 @@
 #include "primitive_procedure.h"
 
 TYPE* 
-mk_env(TYPE* data)
+mk_env(TYPE* vars, TYPE* vals, TYPE* previous_frame)
 {
-    TYPE* result = mloc(sizeof(TYPE));
+	TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
-        fprintf(stderr, "MK_ENV: could not allocate memory for type");
+        fprintf(stderr, "MK_EMPTY_ENV: could not allocate memory for type");
         exit(1);
     }
 
-    result->type = ENVIRONMENT;
-    result->d.t = data;
+	result->type = ENVIRONMENT;
+	result->d.en = mloc(sizeof(ENVIRONMENT_DATA));
+	
+	if (result->d.en == NULL)
+    {
+        fprintf(stderr, "MK_EMPTY_ENV: could not allocate memory for data");
+        exit(1);
+    }
+	
+	result->d.en->vars = vars;
+	result->d.en->vals = vals;
+	result->d.en->previous_frame = previous_frame;
+	return result;
+}
 
-    return result; 
+TYPE*
+mk_empty_env()
+{
+	return mk_env(_nil_, _nil_, _nil_);
 }
 
 int
@@ -37,53 +52,11 @@ is_env(const TYPE* sexp)
     return sexp->type == ENVIRONMENT;
 }
 
-int
-is_empty_env(const TYPE* env)
-{
-    return IS_NIL(env->d.t);
-}
-
-TYPE*
-enclosing_environment(const TYPE* env)
-{
-    return cdr(env->d.t);
-}
-
-int
-is_last_frame(const TYPE* env)
-{
-    return is_empty_env(enclosing_environment(env));
-}
-
-TYPE*
-first_frame(TYPE* env)
-{
-    return car(env->d.t);
-}
-
-TYPE* 
-make_frame(TYPE* vars, TYPE* vals)
-{
-    return cons(vars, vals);
-}
-
-TYPE*
-frame_vars(TYPE* frame)
-{
-    return car(frame);
-}
-
-TYPE*
-frame_vals(TYPE* frame)
-{
-    return cdr(frame);
-}
-
 void
 add_binding_to_frame(TYPE* var, TYPE* val, TYPE* frame)
 {
-    set_car(frame, cons(var, car(frame)));
-    set_cdr(frame, cons(val, cdr(frame)));
+	frame->d.en->vars = cons(var, frame->d.en->vars);
+	frame->d.en->vals = cons(val, frame->d.en->vals);
 }
 
 TYPE* lookup_env_loop(TYPE* var, TYPE* env);
@@ -115,21 +88,17 @@ lookup_env_loop(TYPE* var, TYPE* env)
     TYPE* result;
     int rc;
 
-    while (!is_last_frame(env)) 
+    while (!IS_NIL(env->d.en->previous_frame)) 
     {
-        env = enclosing_environment(env);
+        env = env->d.en->previous_frame;
     }
 
-    TYPE* frame = first_frame(env);    
-    rc = lookup_scan(var, frame_vars(frame), frame_vals(frame), &result);
+    rc = lookup_scan(var, env->d.en->vars, env->d.en->vals, &result);
 
     if(rc == FALSE)
     {
-        if (is_symbol_primitive_procedure(var))
-        {
-            result = find_primitive_procedure(var);
-        }
-        else
+		result = find_primitive_procedure(var);
+		if (IS_NIL(result))
         {
             printf("Missing var: ");
             display(var);
@@ -163,13 +132,12 @@ get_var(unsigned int frame_index,
 
     for (;frame_index != 0; frame_index--)
     {
-    	env = env->d.t->d.p->cdr;
+    	env = env->d.en->previous_frame;
     }
 
-    TYPE* f = first_frame(env);
     result = get_var_from_frame(var_index,
-    				is_inproper_list,
-    				frame_vals(f));
+								is_inproper_list,
+								env->d.en->vals);
 
     return result;
 }
@@ -201,7 +169,7 @@ set_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* env)
 
     if (is_symbol(vars) || IS_NIL(vars))
     {
-        result = set_env_loop(var, val, enclosing_environment(env));
+        result = set_env_loop(var, val, env->d.en->previous_frame);
     }
     else if (is_eq(var, car(vars)))
     {
@@ -220,11 +188,9 @@ set_env_loop(TYPE* var, TYPE* val, TYPE* env)
 {
     TYPE* result = nil();
 
-    if(!is_empty_env(env))
+    if(!IS_NIL(env))
     {
-        TYPE* frame = first_frame(env);
-
-        result = set_scan(var, val, frame_vars(frame), frame_vals(frame), env);
+        result = set_scan(var, val, env->d.en->vars, env->d.en->vals, env);
     }
     else
     {
@@ -243,11 +209,11 @@ set_var(unsigned int frame_index,
 {
     while (frame_index > 0)
     {
-        env = enclosing_environment(env);
+        env = env->d.en->previous_frame;
         frame_index--;
     }
 
-    TYPE* vals = frame_vals(first_frame(env));
+    TYPE* vals = env->d.en->vals;
 
     while (var_index > 0)
     {
@@ -277,8 +243,7 @@ set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 TYPE* 
 extend_environment(TYPE* vars, TYPE* vals, TYPE* env)
 {
-    TYPE* e = mk_env(cons(make_frame(vars, vals), env));
-    return e;
+    return mk_env(vars, vals, env);
 }
 
 void
@@ -301,10 +266,5 @@ define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 void 
 define_variable(TYPE* var, TYPE* val, TYPE* env)
 {
-    TYPE* frame = first_frame(env);
-    define_scan(var, 
-                val, 
-                frame_vars(frame), 
-                frame_vals(frame), 
-                frame);
+    define_scan(var, val, env->d.en->vars, env->d.en->vals, env);
 }
