@@ -29,7 +29,7 @@ _mk_vector(const TYPE* length)
     }
 
     result->type = VECTOR;
-    result->d.v = mloc(sizeof(vector));
+    result->d.v = mloc(sizeof(VECTOR_DATA));
 
     if (result->d.v == NULL)
     {

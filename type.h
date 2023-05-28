@@ -32,7 +32,8 @@
 #define is_eq(LEFT, RIGHT) ((LEFT)->d.s == (RIGHT)->d.s)
 
 struct PAIR_DATA;
-struct vector;
+struct PROCEDURE_DATA;
+struct VECTOR_DATA;
 struct BOUND_VAR_DATA;
 struct PORT_DATA;
 struct FUNCTION;
@@ -49,7 +50,8 @@ struct TYPE
 		char*                    s;
 		struct TYPE*             t;
 		struct PAIR_DATA*        p;
-		struct vector*           v;
+		struct PROCEDUR_DATA*    pr;
+		struct VECTOR_DATA*      v;
 		struct BOUND_VAR_DATA*   b;
 		struct PORT_DATA*        po;
 		struct FUNCTION*         f;
@@ -67,13 +69,22 @@ struct PAIR_DATA
 };
 typedef struct PAIR_DATA  PAIR_DATA;
 
-struct vector
+struct PROCEDUR_DATA
+{
+	TYPE* parameters;
+	TYPE* body;
+	TYPE* env;
+
+};
+typedef struct PROCEDUR_DATA  PROCEDUR_DATA;
+
+
+struct VECTOR_DATA
 {
     struct TYPE* length;
     struct TYPE** slots;
 };
-typedef struct vector vector;
-
+typedef struct VECTOR_DATA VECTOR_DATA;
 
 struct BOUND_VAR_DATA
 {

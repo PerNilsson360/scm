@@ -436,6 +436,6 @@
   (newline)
   )
 
-;(test)
+(test)
 
 ;; (load "r5rs_test.scm")

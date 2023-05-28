@@ -22,7 +22,18 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     }
     
     result->type = PROCEDURE;
-    result->d.t = cons(parameters, cons(body, cons(env, nil())));
+	result->d.pr = mloc(sizeof(PROCEDUR_DATA));
+
+    if (result->d.pr == NULL)
+    {
+        fprintf(stderr, "MK_PROCEDUR: could not allocate memory for data");
+        exit(1);
+    }
+	
+	result->d.pr->parameters = parameters;
+	result->d.pr->body = body;
+	result->d.pr->env = env;
+	/* result->d.t = cons(parameters, cons(body, cons(env, nil())));*/
 
     return result;
 }
@@ -43,8 +54,8 @@ procedure_parameters(TYPE* procedure)
         throw_error(TYPE_ERROR,
                     "PROCEDURE_PARAMETERS: procedure must be a procedure");
     }
-
-    return car(procedure->d.t);
+	
+    return procedure->d.pr->parameters;
 }
 
 TYPE* 
@@ -54,7 +65,7 @@ procedure_body(TYPE* procedure)
                  TYPE_ERROR,
                  "PROCEDURE_BODY: procedure must be a procedure");
 
-    return car(cdr(procedure->d.t));
+    return procedure->d.pr->body;
 }
 
 TYPE* 
@@ -64,6 +75,6 @@ procedure_environment(TYPE* procedure)
                  TYPE_ERROR,
                  "PROCEDURE_ENVIRONMENT: procedure must be a procedure");
 
-    return car(cdr(cdr(procedure->d.t)));
+    return procedure->d.pr->env;
 }
 
