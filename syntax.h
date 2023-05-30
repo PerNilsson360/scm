@@ -3,8 +3,8 @@
 
 int is_tagged_list(const TYPE* exp, TYPE* symbol);
 
-TYPE* mk_lambda(TYPE* parameters, TYPE* body);
-TYPE* mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative);
+TYPE* mk_sexp_lambda(TYPE* parameters, TYPE* body);
+TYPE* mk_sexp_if(TYPE* predicate, TYPE* consequent, TYPE* alternative);
 TYPE* first_exp(TYPE* exps);
 int is_last_exp(TYPE* exps);
 TYPE* mk_begin(TYPE* exp);

@@ -96,6 +96,17 @@ display_inside_list(const TYPE* sexp, FILE* file)
 		case ESCAPE_PROC:
 			fprintf(file, "escape-proc");
 			break;
+		case LAMBDA:
+			fprintf(file, "(lambda ");
+			display(LAMBDA_PARAMETERS(sexp));
+			display(LAMBDA_BODY(sexp));
+			fprintf(file, ")\n");
+			break;
+		case QUOTE:
+			fprintf(file, "(quote ");
+			display(QUOTATION_VALUE(sexp));
+			fprintf(file, ")\n");
+			break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);
 			/*assert(FALSE && 

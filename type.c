@@ -315,21 +315,37 @@ is_equal(const TYPE* left, const TYPE* right)
     return result;
 }
 
+TYPE* 
+mk_sexp_quoted(const TYPE* sexp)
+{
+	return cons(_quote_keyword_symbol_, cons(sexp, nil()));
+}
 
 TYPE* 
 mk_quoted(const TYPE* sexp)
 {
-    return cons(_quote_keyword_symbol_, cons(sexp, nil()));
+	TYPE* result = mloc(sizeof(TYPE));
+	   
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_QUOTED: could not allocate memory for type");
+        exit(1);
+    }
+
+	result->type = QUOTE;
+	result->d.t = (TYPE*)sexp;
+	
+    return result;
 }
 
 int 
-is_quoted(const TYPE* sexp)
+is_sexp_quoted(const TYPE* sexp)
 {
     return is_tagged_list(sexp, _quote_keyword_symbol_);
 }
 
 TYPE* 
-quotation_value(const TYPE* sexp)
+sexp_quotation_value(const TYPE* sexp)
 {
     return car(cdr(sexp));
 }
@@ -391,6 +407,59 @@ mk_eof()
 
     result->type = ENDOFFILE;
 
+    return result;
+}
+
+TYPE*
+mk_lambda(TYPE* parameters, TYPE* body)
+{
+	TYPE* result = mloc(sizeof(TYPE));
+    
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_LAMBDA: could not allocate memory for type");
+        exit(1);
+    }
+    
+    result->type = LAMBDA;
+	result->d.l = mloc(sizeof(LAMBDA_DATA));
+
+    if (result->d.l == NULL)
+    {
+        fprintf(stderr, "MK_LAMBDA: could not allocate memory for data");
+        exit(1);
+    }
+	
+	result->d.l->parameters = parameters;
+	result->d.l->body = body;
+	
+    return result;
+}
+
+TYPE*
+mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
+{
+	TYPE* result = mloc(sizeof(TYPE));
+    
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_IF: could not allocate memory for type");
+        exit(1);
+    }
+    
+    result->type = IF_TYPE;
+	result->d.ifd = mloc(sizeof(IF_DATA));
+
+    if (result->d.ifd == NULL)
+    {
+        fprintf(stderr, "MK_IF: could not allocate memory for data");
+        exit(1);
+    }
+	
+	result->d.ifd->predicate = predicate;
+	result->d.ifd->consequent = consequent;
+	result->d.ifd->alternative = alternative;
+	
     return result;
 }
 

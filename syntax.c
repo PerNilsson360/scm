@@ -12,14 +12,14 @@ is_tagged_list(const TYPE* exp, TYPE* symbol)
 
 
 TYPE*
-mk_lambda(TYPE* parameters, TYPE* body)
+mk_sexp_lambda(TYPE* parameters, TYPE* body)
 {
 	TYPE* result = cons(_lambda_keyword_symbol_, cons(parameters, body));
     return result;
 }
 
 TYPE*
-mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
+mk_sexp_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
 {
     return cons(_if_keyword_symbol_,
                 cons(predicate,

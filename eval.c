@@ -91,43 +91,43 @@ definition_value(TYPE* exp)
 }
 
 int
-is_lambda(TYPE* exp)
+is_sexp_lambda(TYPE* exp)
 {
     return is_tagged_list(exp, _lambda_keyword_symbol_);
 }
 
 TYPE* 
-lambda_parameters(TYPE* exp)
+lambda_sexp_parameters(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 TYPE*
-lambda_body(TYPE* exp)
+lambda_sexp_body(TYPE* exp)
 {
     return cdr(cdr(exp));
 }
 
 int
-is_if(TYPE* exp)
+is_sexp_if(TYPE* exp)
 {
     return is_tagged_list(exp, _if_keyword_symbol_);
 }
 
 TYPE* 
-if_predicate(TYPE* exp)
+if_sexp_predicate(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 TYPE*
-if_consequent(TYPE* exp)
+if_sexp_consequent(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
 
 TYPE*
-if_alternative(TYPE* exp)
+if_sexp_alternative(TYPE* exp)
 {
     TYPE* result = mk_none();
     
@@ -211,7 +211,6 @@ mk_match(TYPE* key, TYPE* clauses)
 {
     return cons(_match_keyword_symbol_, cons(key, clauses));
 }
-
 
 static TYPE*
 match_key(TYPE* exp)
@@ -462,14 +461,14 @@ eval_dispatch:
         display_debug(reg.exp);
         fflush(NULL);
     }
-    
+
     if (is_self_evaluating(reg.exp)){goto ev_self_eval;}
     else if (is_variable(reg.exp)){goto ev_variable;}
-    else if (is_quoted(reg.exp)){goto ev_quoted;}
+    else if (IS_QUOTED(reg.exp)){goto ev_quoted;}
     else if (is_assignment(reg.exp)){goto ev_assignment;}
     else if (is_definition(reg.exp)){goto ev_definition;}
-    else if (is_if(reg.exp)){goto ev_if;}
-    else if (is_lambda(reg.exp)){goto ev_lambda;}
+    else if (IS_IF(reg.exp)){goto ev_if;}
+    else if (IS_LAMBDA(reg.exp)){goto ev_lambda;}
     else if (is_begin(reg.exp)){goto ev_begin;}
     else if (is_match(reg.exp)){goto ev_match;}
     else if (is_delay(reg.exp)){goto ev_delay;}
@@ -489,11 +488,11 @@ ev_variable:
     reg.val = lookup_variable_value(reg.exp, reg.env);
     goto *reg.cont;
 ev_quoted:
-    reg.val = quotation_value(reg.exp);
+    reg.val = QUOTATION_VALUE(reg.exp);
     goto *reg.cont;
 ev_lambda:
-    reg.val = mk_procedure(lambda_parameters(reg.exp),
-                           lambda_body(reg.exp),
+    reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),
+                           LAMBDA_BODY(reg.exp),
                            reg.env);
     goto *reg.cont;
 ev_begin:
@@ -688,7 +687,7 @@ ev_if:
     save(reg.env);
     save(reg.cont);
     reg.cont = &&ev_if_decide;
-    reg.exp = if_predicate(reg.exp);
+    reg.exp = IF_PREDICATE(reg.exp);
     goto eval_dispatch;
 ev_if_decide:
     restore(&reg.cont);
@@ -696,10 +695,10 @@ ev_if_decide:
     restore(&reg.exp);
     if (is_true(reg.val)) goto ev_if_consequent;
 ev_if_alternative:
-    reg.exp = if_alternative(reg.exp);
+    reg.exp = IF_ALTERNATIVE(reg.exp);
     goto eval_dispatch;
 ev_if_consequent:
-    reg.exp = if_consequent(reg.exp);
+    reg.exp = IF_CONSEQUENT(reg.exp);
     goto eval_dispatch;
 ev_assignment:
     reg.unev = assignment_variable(reg.exp);
@@ -1019,20 +1018,26 @@ TYPE*
 exp_to_name_free_exp(TYPE* exp, TYPE* context)
 {
     TYPE* result;
-    
+		
     if (IS_NIL(exp))
     {
         result = exp;
     } 
-    else if (is_quoted(exp))
+    else if (is_sexp_quoted(exp))
     {
-        result = exp;
+        result = mk_quoted(sexp_quotation_value(exp));
     }
-    else if (is_lambda(exp))
+	else if (is_sexp_if(exp))
+	{
+		result = mk_if(exp_to_name_free_exp(if_sexp_predicate(exp), context),
+					   exp_to_name_free_exp(if_sexp_consequent(exp), context),
+					   exp_to_name_free_exp(if_sexp_alternative(exp), context));
+	}
+    else if (is_sexp_lambda(exp))
     {
-        TYPE* vars = lambda_parameters(exp);
+        TYPE* vars = lambda_sexp_parameters(exp);
 		TYPE* ctx = extend_context(vars, context);
-		TYPE* body = lambda_body(exp);
+		TYPE* body = lambda_sexp_body(exp);
 		TYPE* defs = scan_internal_defs(body);
 		add_defs_to_context(defs, ctx);
         result = mk_lambda(vars, 
@@ -1082,13 +1087,12 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 TYPE*
 eval(TYPE* exp, TYPE* env)
 {
-    /* reg.exp = cons(mk_symbol("__internal-translate__"), */
-    /*                cons(mk_quoted(exp), nil())); */
-    /* reg.env = env; */
-    /* hairy_eval(); */
-    /* eval_no_translation(reg.val, env); */
-    eval_no_translation(exp, env);
-
+	reg.exp = exp_to_name_free_exp(exp, nil());
+    reg.env = env;
+    hairy_eval();
+	if (_debug_) {
+		stack_print_statistics();
+	}
     return reg.val;
 }
 
@@ -1096,16 +1100,4 @@ TYPE*
 data_eval(TYPE* exp, TYPE* env)
 {
     return eval(xlat(exp), env);
-}
-
-TYPE*
-eval_no_translation(TYPE* exp, TYPE* env)
-{
-    reg.exp = exp_to_name_free_exp(exp, nil());
-    reg.env = env;
-    hairy_eval();
-	if (_debug_) {
-		stack_print_statistics();
-	}
-    return reg.val;
 }

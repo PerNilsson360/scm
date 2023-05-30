@@ -34,15 +34,15 @@ inner_or_to_if(TYPE*exp)
 		TYPE*  xlat_car = xlat(car(exp));
 		if (IS_NIL(cdr(exp)))
 		{
-			result = mk_if(xlat_car,
-						   xlat_car,
-						   mk_boolean(FALSE));
+			result = mk_sexp_if(xlat_car,
+								xlat_car,
+								mk_boolean(FALSE));
 		}
 		else
 		{
-			result = mk_if(xlat_car,
-						   xlat_car,
-						   inner_or_to_if(cdr(exp)));
+			result = mk_sexp_if(xlat_car,
+								xlat_car,
+								inner_or_to_if(cdr(exp)));
 		}
     }
 
@@ -78,15 +78,15 @@ inner_and_to_if(TYPE* exp)
 		TYPE*  xlat_car = xlat(car(exp));
 		if (IS_NIL(cdr(exp)))
 		{
-			result = mk_if(xlat_car,
-						   xlat_car,
-						   mk_boolean(FALSE));
+			result = mk_sexp_if(xlat_car,
+								xlat_car,
+								mk_boolean(FALSE));
 		}
 		else
 		{
-			result = mk_if(xlat_car,
-						   inner_and_to_if(cdr(exp)),
-						   mk_boolean(FALSE));
+			result = mk_sexp_if(xlat_car,
+								inner_and_to_if(cdr(exp)),
+								mk_boolean(FALSE));
 		}
     }
     
@@ -121,13 +121,13 @@ let_to_combination(TYPE* exp)
 
     if (IS_NIL(bindings))
     {
-		result = mk_list(1, mk_lambda(nil(), body)); 
+		result = mk_list(1, mk_sexp_lambda(nil(), body)); 
     }
     else if (is_pair(bindings))
     {
 		TYPE* unzip_bindings = unzip(bindings);
 	
-		result = cons(mk_lambda(car(unzip_bindings), body),
+		result = cons(mk_sexp_lambda(car(unzip_bindings), body),
 					  xlat(cdr(unzip_bindings)));
     }
     else
@@ -364,9 +364,9 @@ expand_cond_clauses(const TYPE* exp)
     }
     else
     {
-		result = mk_if(xlat(cond_predicate(car(exp))),
-					   sequence_to_exp(cond_actions(car(exp))),
-					   xlat(expand_cond_clauses(cdr(exp))));
+		result = mk_sexp_if(xlat(cond_predicate(car(exp))),
+							sequence_to_exp(cond_actions(car(exp))),
+							xlat(expand_cond_clauses(cdr(exp))));
     }
 
     return result;
@@ -579,12 +579,12 @@ TYPE*
 xlat(TYPE* exp)
 {
     TYPE* result;
-    if (is_quoted(exp))
+    if (is_sexp_quoted(exp))
     {
 		assert_throw(length(exp) == 2,
 					 EVAL_ERROR,
 					 "XLAT: quote must have 1 operand");
-		result = exp;
+		result = mk_quoted(sexp_quotation_value(exp));
     }
 	else if (!is_pair(exp)) {
 		result = exp;

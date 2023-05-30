@@ -883,7 +883,7 @@ abbreviation(FILE* file)
 		}
 		else
 		{
-			result = mk_quoted(d);
+			result = mk_sexp_quoted(d);
 		}
     }
     else if (token->type == '`')
