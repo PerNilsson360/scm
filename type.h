@@ -37,6 +37,8 @@
 #define NIL                 30
 #define DELAY               31
 #define CALL_CC             32
+#define MATCH               33
+#define APPLY               34
 
 #define is_eq(LEFT, RIGHT) ((LEFT)->d.s == (RIGHT)->d.s)
 
@@ -259,11 +261,20 @@ TYPE* mk_lambda(TYPE* parametes, TYPE* body);
 TYPE* mk_begin(TYPE* actions);
 #define BEGIN_ACTIONS(TY) (((TYPE*)(TY))->d.t)
 
+TYPE*
+mk_match(TYPE* key, TYPE* clauses);
+#define MATCH_KEY(TY) (((TYPE*)(TY))->d.p->car)
+#define MATCH_CLAUSES(TY) (((TYPE*)(TY))->d.p->cdr)
+
 TYPE* mk_delay(TYPE* actions);
 #define DELAY_ACTIONS(TY) (((TYPE*)(TY))->d.t)
 
 TYPE* mk_call_cc(TYPE* escape_procedure);
 #define ESCAPE_PROCEDURE(TY) (((TYPE*)(TY))->d.t)
+
+TYPE* mk_apply(TYPE* procedure, TYPE* arguments);
+#define APPLY_PROCEDURE(TY) (((TYPE*)(TY))->d.p->car)
+#define APPLY_ARGUMENTS(TY) (((TYPE*)(TY))->d.p->cdr)
 
 int is_escape_proc(const TYPE* sexp);
 TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);

@@ -457,6 +457,12 @@ mk_begin(TYPE* actions)
 }
 
 TYPE*
+mk_match(TYPE* key, TYPE* clauses)
+{
+	return mk_pair_data(MATCH, key, clauses);
+}
+
+TYPE*
 mk_delay(TYPE* actions)
 {
 	return mk_cell_data(DELAY, actions);
@@ -465,6 +471,11 @@ mk_delay(TYPE* actions)
 TYPE* mk_call_cc(TYPE* escape_procedure)
 {
 	return mk_cell_data(CALL_CC, escape_procedure);
+}
+
+TYPE* mk_apply(TYPE* procedure, TYPE* arguments)
+{
+	return mk_pair_data(APPLY, procedure, arguments);
 }
 
 TYPE*

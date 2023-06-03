@@ -112,6 +112,13 @@ display_inside_list(const TYPE* sexp, FILE* file)
 			display(LAMBDA_BODY(sexp));
 			fprintf(file, ")");
 			break;
+		case MATCH:
+			fprintf(file, "(match ");
+			display(MATCH_KEY(sexp));
+			fprintf(file, " ");
+			display(MATCH_CLAUSES(sexp));
+			fprintf(file, ")");
+			break;
 		case QUOTE:
 			fprintf(file, "(quote ");
 			display(QUOTATION_VALUE(sexp));

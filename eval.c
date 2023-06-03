@@ -195,25 +195,19 @@ rest_operands(TYPE* operands)
 }
 
 static int
-is_match(const TYPE* exp)
+is_sexp_match(const TYPE* exp)
 {
     return is_tagged_list(exp, _match_keyword_symbol_);
 }
 
 static TYPE*
-mk_match(TYPE* key, TYPE* clauses)
-{
-    return cons(_match_keyword_symbol_, cons(key, clauses));
-}
-
-static TYPE*
-match_key(TYPE* exp)
+sexp_match_key(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 static TYPE*
-match_clauses(TYPE* exp)
+sexp_match_clauses(TYPE* exp)
 {
     return cdr(cdr(exp));
 }
@@ -321,7 +315,7 @@ find_matching_match_clause(const TYPE* key,
         first_clause = car(clauses);
         if (pattern_match(key, car(first_clause), &tmp_vars, &tmp_vals))
         { 
-            *eval_exp = mk_begin(cdr(first_clause));
+            *eval_exp = cdr(first_clause);
             *vars = tmp_vars;
             *vals = tmp_vals;
             result = TRUE;
@@ -340,21 +334,21 @@ find_matching_match_clause(const TYPE* key,
 }
 
 static int 
-is_apply(const TYPE* exp)
+is_sexp_apply(const TYPE* exp)
 {
     return is_tagged_list(exp, _apply_keyword_symbol_);
 }
 
 static TYPE*
-apply_arguments(const TYPE* exp)
+sexp_apply_procedure(const TYPE* exp)
 {
-	return cdr(cdr(exp));
+    return car(cdr(exp));
 }
 
 static TYPE*
-apply_procedure(const TYPE* exp)
+sexp_apply_arguments(const TYPE* exp)
 {
-    return car(cdr(exp));
+	return cdr(cdr(exp));
 }
 
 static int 
@@ -486,22 +480,22 @@ eval_dispatch:
 		goto ev_lambda;
 	case BEGIN_TYPE:
 		goto ev_begin;
+	case MATCH:
+		goto ev_match;
 	case DELAY:
 		goto ev_delay;
 	case CALL_CC:
 		goto ev_call_cc;
-/*	case PAIR:
-	goto ev_application;*/
+	case APPLY:
+		goto ev_apply;
+	case PAIR:
+		goto ev_application;
 	default:
-		if (is_match(reg.exp)){goto ev_match;}
-		else if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
-		else if (is_apply(reg.exp)){goto ev_apply;}
-		else if (is_application(reg.exp)){goto ev_application;}
-		else
-		{
-			display_debug(reg.exp);
-			throw_error(APPLY_ERROR, "EVAL: not a valid expression");
-		}
+		// TODO:
+		//if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
+		display_debug(reg.exp);
+		throw_error(APPLY_ERROR, "EVAL: not a valid expression");
+		break;
 	}
 ev_self_eval:
     reg.val = reg.exp;
@@ -524,10 +518,9 @@ ev_begin:
 ev_match:
     save(reg.exp);
     save(reg.cont);
-    if (length(reg.exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
-    reg.unev = match_clauses(reg.exp);
+    reg.unev = MATCH_CLAUSES(reg.exp);
     save(reg.unev);
-    reg.exp = match_key(reg.exp);
+    reg.exp = MATCH_KEY(reg.exp);
     reg.cont = &&ev_match_key_evaluated;
     goto eval_dispatch;
 ev_match_key_evaluated:
@@ -587,7 +580,7 @@ ev_call_cc_done:
     goto *reg.cont;
     /* special form apply */
 ev_apply:
-    reg.unev = apply_arguments(reg.exp);
+    reg.unev = APPLY_ARGUMENTS(reg.exp);
 	if (IS_NIL(reg.unev)) {
 		throw_error(APPLY_ERROR,
                     "APPLY: needs at least one argument");
@@ -598,7 +591,7 @@ ev_apply:
 		throw_error(APPLY_ERROR,
                     "APPLY: malformed arguments in application");
     }
-	reg.exp = apply_procedure(reg.exp);
+	reg.exp = APPLY_PROCEDURE(reg.exp);
 	save(reg.cont);
 	save(reg.exp);
 	save(reg.env);
@@ -985,8 +978,8 @@ match_clauses_to_name_free(TYPE* clauses,
         }
 
         result = cons(cons(pattern,
-                           exp_to_name_free_exp(body,
-                                                match_body_context)),
+                           mk_begin(exp_to_name_free_exp(body,
+														 match_body_context))),
                       match_clauses_to_name_free(cdr(clauses),
 												 context));
     }
@@ -1077,11 +1070,12 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 	{
 		result = mk_begin(exp_to_name_free_exp(sexp_begin_actions(exp), context));
 	}
-    else if (is_match(exp))
+    else if (is_sexp_match(exp))
     {
-        TYPE* key = match_key(exp);
-        TYPE* clauses = match_clauses(exp);
-
+		/* TODO: fix better checking? */
+		if (length(exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
+        TYPE* key = sexp_match_key(exp);
+        TYPE* clauses = sexp_match_clauses(exp);		
         result = mk_match(exp_to_name_free_exp(key, context), 
                           match_clauses_to_name_free(clauses, context));
     }
@@ -1100,6 +1094,11 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 					 "CALL_CC: must have exactly one argument");
 		result = mk_call_cc(exp_to_name_free_exp(car(operands(exp)), context));
 	
+	}
+	else if (is_sexp_apply(exp))
+	{
+		return mk_apply(exp_to_name_free_exp(sexp_apply_procedure(exp), context),
+						exp_to_name_free_exp(sexp_apply_arguments(exp), context));
 	}
     else if (is_pair(exp))
     {
