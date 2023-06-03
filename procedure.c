@@ -40,7 +40,7 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
 int
 is_compound_procedure(const TYPE* procedure)
 {
-    return !IS_NIL(procedure) && procedure->type == PROCEDURE;
+    return procedure->type == PROCEDURE;
 }
 
 TYPE* 

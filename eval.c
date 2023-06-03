@@ -451,7 +451,6 @@ eval_dispatch:
     }
 
 	switch (((TYPE*)reg.exp)->type) {
-		// Self evaluating
 	case INTEGER:
 	case RATIONAL:
 	case REAL:
@@ -464,9 +463,12 @@ eval_dispatch:
 	case NONE:
 	case NIL:
 	case ESCAPE_PROC:
-		goto ev_self_eval;
+		/* Self evalutating expressions */
+		reg.val = reg.exp;
+		goto *reg.cont;
 	case QUOTE:
-		goto ev_quoted;
+		reg.val = QUOTATION_VALUE(reg.exp);
+		goto *reg.cont;
 	case SYMBOL:
 	case BOUND_VAR:
 		goto ev_variable;
@@ -497,14 +499,8 @@ eval_dispatch:
 		throw_error(APPLY_ERROR, "EVAL: not a valid expression");
 		break;
 	}
-ev_self_eval:
-    reg.val = reg.exp;
-    goto *reg.cont;
 ev_variable:
     reg.val = lookup_variable_value(reg.exp, reg.env);
-    goto *reg.cont;
-ev_quoted:
-    reg.val = QUOTATION_VALUE(reg.exp);
     goto *reg.cont;
 ev_lambda:
     reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),

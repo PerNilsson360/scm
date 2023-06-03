@@ -413,7 +413,7 @@ is_true(const TYPE* sexp)
 int
 is_eof_object(const TYPE* sexp)
 {
-    return !IS_NIL(sexp) && sexp->type == ENDOFFILE;
+    return sexp->type == ENDOFFILE;
 }
 
 TYPE*

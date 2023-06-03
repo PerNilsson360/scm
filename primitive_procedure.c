@@ -1258,7 +1258,7 @@ init_primitive_procedures()
 int
 is_primitive_procedure(const TYPE* procedure)
 {
-    return !IS_NIL(procedure) && procedure->type == PRIMITIVE_PROCEDURE;
+    return procedure->type == PRIMITIVE_PROCEDURE;
 }
 
 TYPE* 

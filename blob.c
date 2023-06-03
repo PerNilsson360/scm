@@ -15,7 +15,7 @@
 int 
 is_blob(const TYPE* sexp)
 {
-    return !IS_NIL(sexp) && sexp->type == BLOB;
+    return sexp->type == BLOB;
 }
 
 TYPE* 
