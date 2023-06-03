@@ -31,6 +31,12 @@
 #define IF_TYPE             24
 #define LAMBDA              25
 #define QUOTE               26
+#define ASSIGNMENT          27
+#define DEFINITION          28
+#define BEGIN_TYPE          29
+#define NIL                 30
+#define DELAY               31
+#define CALL_CC             32
 
 #define is_eq(LEFT, RIGHT) ((LEFT)->d.s == (RIGHT)->d.s)
 
@@ -64,7 +70,6 @@ struct TYPE
 		struct HASH_TABLE_DATA*  h;
 		struct BLOB_DATA*        bl;
 		struct ESCAPE_PROC_DATA* e;
-		struct LAMBDA_DATA*      l;
     } d;
 };
 typedef struct TYPE  TYPE;
@@ -145,13 +150,6 @@ struct BLOB_DATA
     unsigned char* data;
 };
 typedef struct BLOB_DATA  BLOB_DATA;
-
-struct LAMBDA_DATA
-{
-	TYPE* parameters;
-	TYPE* body;
-};
-typedef struct LAMBDA_DATA LAMBDA_DATA;
 
 /* registers for scheme VM */
 
@@ -237,18 +235,35 @@ int is_eof_object(const TYPE* sexp);
 TYPE* mk_eof();
 
 /* internal syntax i.e non list based */
-TYPE*
-mk_lambda(TYPE* parametes, TYPE* body);
-#define IS_LAMBDA(TY) (((TYPE*)(TY))->type == LAMBDA)
-#define LAMBDA_PARAMETERS(TY) (((TYPE*)(TY))->d.l->parameters)
-#define LAMBDA_BODY(TY) (((TYPE*)(TY))->d.l->body)
+TYPE* mk_assignment(TYPE* variable, TYPE* value);
+//#define IS_ASSIGNMENT(TY) (((TYPE*)(TY))->type == ASSIGNMENT)
+#define ASSIGNMENT_VARIABLE(TY) (((TYPE*)(TY))->d.p->car)
+#define ASSIGNMENT_VALUE(TY) (((TYPE*)(TY))->d.p->cdr)
 
-TYPE*
-mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative);
-#define IS_IF(TY) (((TYPE*)(TY))->type == IF_TYPE)
+TYPE* mk_definition(TYPE* variable, TYPE* value);
+//#define IS_DEFINITION(TY) (((TYPE*)(TY))->type == DEFINITION)
+#define DEFINITION_VARIABLE(TY) (((TYPE*)(TY))->d.p->car)
+#define DEFINITION_VALUE(TY) (((TYPE*)(TY))->d.p->cdr)
+
+TYPE* mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative);
+//#define IS_IF(TY) (((TYPE*)(TY))->type == IF_TYPE)
 #define IF_PREDICATE(TY) (((TYPE*)(TY))->d.ifd->predicate)
 #define IF_CONSEQUENT(TY) (((TYPE*)(TY))->d.ifd->consequent)
 #define IF_ALTERNATIVE(TY) (((TYPE*)(TY))->d.ifd->alternative)
+
+TYPE* mk_lambda(TYPE* parametes, TYPE* body);
+//#define IS_LAMBDA(TY) (((TYPE*)(TY))->type == LAMBDA)
+#define LAMBDA_PARAMETERS(TY) (((TYPE*)(TY))->d.p->car)
+#define LAMBDA_BODY(TY) (((TYPE*)(TY))->d.p->cdr)
+
+TYPE* mk_begin(TYPE* actions);
+#define BEGIN_ACTIONS(TY) (((TYPE*)(TY))->d.t)
+
+TYPE* mk_delay(TYPE* actions);
+#define DELAY_ACTIONS(TY) (((TYPE*)(TY))->d.t)
+
+TYPE* mk_call_cc(TYPE* escape_procedure);
+#define ESCAPE_PROCEDURE(TY) (((TYPE*)(TY))->d.t)
 
 int is_escape_proc(const TYPE* sexp);
 TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);

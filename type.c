@@ -10,6 +10,7 @@
 #include "io.h"
 #include "symbol.h"
 #include "number.h"
+#include "char.h"
 #include "str.h"
 #include "vector.h"
 #include "common.h"
@@ -78,24 +79,42 @@ is_none(const TYPE* sexp)
     return sexp->type == NONE;
 }
 
-
+static
 TYPE* 
-cons(const TYPE* car, const TYPE* cdr)
+mk_cell_data(int type, const TYPE* sexp)
+{
+	TYPE* result = mloc(sizeof(TYPE));
+	   
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_CELL_DATA: could not allocate memory for type");
+        exit(1);
+    }
+
+	result->type = type;
+	result->d.t = (TYPE*)sexp;
+	
+    return result;
+}
+
+static
+TYPE*
+mk_pair_data(int type, const TYPE* car, const TYPE* cdr)
 {
     TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
-        fprintf(stderr, "CONS: could not allocate memory for type");
+        fprintf(stderr, "MK_PAIR_DATA: could not allocate memory for type");
         exit(1);
     }
 
-    result->type = PAIR;
+    result->type = type;
     result->d.p = mloc(sizeof(PAIR_DATA));
 
     if (result->d.p == NULL)
     {
-        fprintf(stderr, "CONS: could not allocate memory for data");
+        fprintf(stderr, "MK_PAIR_DATA: could not allocate memory for data");
         exit(1);
     }
 
@@ -103,6 +122,13 @@ cons(const TYPE* car, const TYPE* cdr)
     result->d.p->cdr = (TYPE*) cdr;
 
     return result; 
+	
+}
+
+TYPE* 
+cons(const TYPE* car, const TYPE* cdr)
+{
+	return mk_pair_data(PAIR, car, cdr);
 }
 
 TYPE* 
@@ -240,7 +266,7 @@ mk_list(int count, ...)
 
     for (i = 0; i < count; i++)
     {
-	result = cons(va_arg(ap, TYPE*), result);
+		result = cons(va_arg(ap, TYPE*), result);
     }
     
     va_end(ap);
@@ -278,17 +304,24 @@ is_procedure(const TYPE* proc)
 int
 is_eqv(const TYPE* left, const TYPE* right)
 {
-    int result = FALSE;
-    if (is_number(left) && is_number(right))
-    {
-        result = is_number_equal(left, right);
-    }
-    else
-    {
-        result = left->d.s == right->d.s;
-    }
-    
-    return result;
+	if (left->type != right->type) {
+		return FALSE;
+	}
+    switch (left->type) {
+	case INTEGER:
+	case RATIONAL:
+	case REAL:
+	case COMPLEX:
+		return is_number_equal(left, right);
+	case CHAR:
+		return is_char_equal(left, right);
+	case BOOLEAN:
+		return left->d.i == right->d.i;
+	case SYMBOL:
+        return left->d.s == right->d.s;
+	default:
+		return left == right;
+	}
 }
 
 int
@@ -324,18 +357,7 @@ mk_sexp_quoted(const TYPE* sexp)
 TYPE* 
 mk_quoted(const TYPE* sexp)
 {
-	TYPE* result = mloc(sizeof(TYPE));
-	   
-    if (result == NULL)
-    {
-        fprintf(stderr, "MK_QUOTED: could not allocate memory for type");
-        exit(1);
-    }
-
-	result->type = QUOTE;
-	result->d.t = (TYPE*)sexp;
-	
-    return result;
+	return mk_cell_data(QUOTE, sexp);
 }
 
 int 
@@ -411,29 +433,38 @@ mk_eof()
 }
 
 TYPE*
+mk_assignment(TYPE* parameters, TYPE* body)
+{
+	return mk_pair_data(ASSIGNMENT, parameters, body);
+}
+
+TYPE*
+mk_definition(TYPE* var, TYPE* value)
+{
+	return mk_pair_data(DEFINITION, var, value);
+}
+
+TYPE*
 mk_lambda(TYPE* parameters, TYPE* body)
 {
-	TYPE* result = mloc(sizeof(TYPE));
-    
-    if (result == NULL)
-    {
-        fprintf(stderr, "MK_LAMBDA: could not allocate memory for type");
-        exit(1);
-    }
-    
-    result->type = LAMBDA;
-	result->d.l = mloc(sizeof(LAMBDA_DATA));
+	return mk_pair_data(LAMBDA, parameters, body);
+}
 
-    if (result->d.l == NULL)
-    {
-        fprintf(stderr, "MK_LAMBDA: could not allocate memory for data");
-        exit(1);
-    }
-	
-	result->d.l->parameters = parameters;
-	result->d.l->body = body;
-	
-    return result;
+TYPE*
+mk_begin(TYPE* actions)
+{
+	return mk_cell_data(BEGIN_TYPE, actions);
+}
+
+TYPE*
+mk_delay(TYPE* actions)
+{
+	return mk_cell_data(DELAY, actions);
+}
+
+TYPE* mk_call_cc(TYPE* escape_procedure)
+{
+	return mk_cell_data(CALL_CC, escape_procedure);
 }
 
 TYPE*

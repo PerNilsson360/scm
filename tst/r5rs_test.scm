@@ -406,6 +406,12 @@
 				   #f))
   )
 
+;; Non standard features
+(define (test-match)
+  (expect '(equal? ((lambda (x) (match x (0 'zero) (1 'one) (? 'unkown))) 0) 'zero))
+  (expect '(equal? ((lambda (x) (match x (0 'zero) (1 'one) (? 'unkown))) 2) 'unkown))
+  )
+
 (define (test)
   (test-simple-examples)
   (test-conditionals)
@@ -432,6 +438,7 @@
   (test-memq?)
   (test-assq)
   (test-call/cc)
+  (test-match)
   (display "tests ok")
   (newline)
   )

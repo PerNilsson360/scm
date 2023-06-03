@@ -96,16 +96,36 @@ display_inside_list(const TYPE* sexp, FILE* file)
 		case ESCAPE_PROC:
 			fprintf(file, "escape-proc");
 			break;
+		case IF_TYPE:
+			fprintf(file, "(if ");
+			display(IF_PREDICATE(sexp));
+			fprintf(file, " ");
+			display(IF_CONSEQUENT(sexp));
+			fprintf(file, " ");
+			display(IF_ALTERNATIVE(sexp));
+			fprintf(file, ")");
+			break;
 		case LAMBDA:
 			fprintf(file, "(lambda ");
 			display(LAMBDA_PARAMETERS(sexp));
+			fprintf(file, " ");
 			display(LAMBDA_BODY(sexp));
-			fprintf(file, ")\n");
+			fprintf(file, ")");
 			break;
 		case QUOTE:
 			fprintf(file, "(quote ");
 			display(QUOTATION_VALUE(sexp));
-			fprintf(file, ")\n");
+			fprintf(file, ")");
+			break;
+		case NIL:
+			fprintf(file, "'()");
+			break;
+		case DEFINITION:
+			fprintf(file, "(define ");
+			display(DEFINITION_VARIABLE(sexp));
+			fprintf(file, " ");
+			display(DEFINITION_VALUE(sexp));
+			fprintf(file, ")");
 			break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);

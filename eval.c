@@ -49,43 +49,37 @@ is_variable(const TYPE* exp)
 }
 
 int
-is_assignment(TYPE* exp)
+is_sexp_assignment(TYPE* exp)
 {
     return is_tagged_list(exp, _set_keyword_symbol_);
 }
 
 TYPE*
-assignment_variable(TYPE* exp)
+sexp_assignment_variable(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 TYPE*
-assignment_value(TYPE* exp)
+sexp_assignment_value(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
 
 int
-is_definition(TYPE* exp)
+is_sexp_definition(TYPE* exp)
 {
     return is_tagged_list(exp, _define_keyword_symbol_);
 }
 
 TYPE*
-definition_variable(TYPE* exp)
+sexp_definition_variable(TYPE* exp)
 {
     return car(cdr(exp));
 }
 
 TYPE*
-mk_definition(TYPE* var, TYPE* value)
-{
-    cons(_define_keyword_symbol_, cons(var, cons(value, nil())));
-}
-
-TYPE*
-definition_value(TYPE* exp)
+sexp_definition_value(TYPE* exp)
 {
     return car(cdr(cdr(exp)));
 }
@@ -141,13 +135,13 @@ if_sexp_alternative(TYPE* exp)
 
 
 int
-is_begin(TYPE* exp)
+is_sexp_begin(TYPE* exp)
 {
     return is_tagged_list(exp, _begin_keyword_symbol_);
 }
 
 TYPE* 
-begin_actions(TYPE* exp)
+sexp_begin_actions(TYPE* exp)
 {
     return cdr(exp);
 }
@@ -364,7 +358,7 @@ apply_procedure(const TYPE* exp)
 }
 
 static int 
-is_delay(const TYPE* exp)
+is_sexp_delay(const TYPE* exp)
 {
     return is_tagged_list(exp, _delay_keyword_symbol_);
 }
@@ -436,7 +430,7 @@ check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* params)
 }
 
 static int
-is_call_cc(const TYPE* exp)
+is_sexp_call_cc(const TYPE* exp)
 {
 	return is_tagged_list(exp, _call_cc_keyword_symbol_);
 }
@@ -462,25 +456,53 @@ eval_dispatch:
         fflush(NULL);
     }
 
-    if (is_self_evaluating(reg.exp)){goto ev_self_eval;}
-    else if (is_variable(reg.exp)){goto ev_variable;}
-    else if (IS_QUOTED(reg.exp)){goto ev_quoted;}
-    else if (is_assignment(reg.exp)){goto ev_assignment;}
-    else if (is_definition(reg.exp)){goto ev_definition;}
-    else if (IS_IF(reg.exp)){goto ev_if;}
-    else if (IS_LAMBDA(reg.exp)){goto ev_lambda;}
-    else if (is_begin(reg.exp)){goto ev_begin;}
-    else if (is_match(reg.exp)){goto ev_match;}
-    else if (is_delay(reg.exp)){goto ev_delay;}
-    else if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
-	else if (is_call_cc(reg.exp)){goto ev_call_cc;}
-    else if (is_apply(reg.exp)){goto ev_apply;}
-    else if (is_application(reg.exp)){goto ev_application;}
-    else
-    {
-        display_debug(reg.exp);
-        throw_error(APPLY_ERROR, "EVAL: not a valid expression");
-    }
+	switch (((TYPE*)reg.exp)->type) {
+		// Self evaluating
+	case INTEGER:
+	case RATIONAL:
+	case REAL:
+	case COMPLEX:
+	case CHAR:
+	case BOOLEAN:
+	case STRING:
+	case IMMUTABLE_STRING:
+	case VECTOR:
+	case NONE:
+	case NIL:
+	case ESCAPE_PROC:
+		goto ev_self_eval;
+	case QUOTE:
+		goto ev_quoted;
+	case SYMBOL:
+	case BOUND_VAR:
+		goto ev_variable;
+	case ASSIGNMENT:
+		goto ev_assignment;
+	case DEFINITION:
+		goto ev_definition;
+	case IF_TYPE:
+		goto ev_if;
+	case LAMBDA:
+		goto ev_lambda;
+	case BEGIN_TYPE:
+		goto ev_begin;
+	case DELAY:
+		goto ev_delay;
+	case CALL_CC:
+		goto ev_call_cc;
+/*	case PAIR:
+	goto ev_application;*/
+	default:
+		if (is_match(reg.exp)){goto ev_match;}
+		else if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
+		else if (is_apply(reg.exp)){goto ev_apply;}
+		else if (is_application(reg.exp)){goto ev_application;}
+		else
+		{
+			display_debug(reg.exp);
+			throw_error(APPLY_ERROR, "EVAL: not a valid expression");
+		}
+	}
 ev_self_eval:
     reg.val = reg.exp;
     goto *reg.cont;
@@ -496,7 +518,7 @@ ev_lambda:
                            reg.env);
     goto *reg.cont;
 ev_begin:
-    reg.unev = begin_actions(reg.exp);
+    reg.unev = BEGIN_ACTIONS(reg.exp);
     save(reg.cont);
     goto ev_sequence;
 ev_match:
@@ -535,9 +557,10 @@ ev_match_done:
     restore(&reg.exp);
     goto *reg.cont;
 ev_delay:
-	reg.val = mk_procedure(_nil_, operands(reg.exp), reg.env);
+	reg.val = mk_procedure(_nil_, DELAY_ACTIONS(reg.exp), reg.env);
     goto *reg.cont;
 ev_stream_cons:
+	/* TODO this does not work */
     save(reg.unev);
     reg.unev = operands(reg.exp);
     if (length(reg.unev) != 2)
@@ -556,11 +579,7 @@ ev_stream_cons_done:
     goto *reg.cont;
 ev_call_cc:
 	save(reg.cont);
-    if (length(reg.exp) != 2)
-    {
-        throw_error(EVAL_ERROR, "CALL_CC: must have exactly one operand");
-    }
-    reg.exp = mk_list(2, car(operands(reg.exp)), mk_escape_proc(get_stack(), &reg));
+    reg.exp = mk_list(2, ESCAPE_PROCEDURE(reg.exp), mk_escape_proc(get_stack(), &reg));
     reg.cont = &&ev_call_cc_done;
     goto eval_dispatch;
 ev_call_cc_done:
@@ -701,9 +720,9 @@ ev_if_consequent:
     reg.exp = IF_CONSEQUENT(reg.exp);
     goto eval_dispatch;
 ev_assignment:
-    reg.unev = assignment_variable(reg.exp);
+    reg.unev = ASSIGNMENT_VARIABLE(reg.exp);
     save(reg.unev);
-    reg.exp = assignment_value(reg.exp);
+    reg.exp = ASSIGNMENT_VALUE(reg.exp);
     save(reg.env);
     save(reg.cont);
     reg.cont = &&ev_assignment_1;
@@ -716,9 +735,9 @@ ev_assignment_1:
     reg.val = mk_none();
     goto *reg.cont;
 ev_definition:
-    reg.unev = definition_variable(reg.exp);
+    reg.unev = DEFINITION_VARIABLE(reg.exp);
     save(reg.unev);
-    reg.exp = definition_value(reg.exp);
+    reg.exp = DEFINITION_VALUE(reg.exp);
     save(reg.env);
     save(reg.cont);
     reg.cont = &&ev_definition_1;
@@ -984,14 +1003,14 @@ scan_internal_defs(TYPE* exps)
 	while (!IS_NIL(exps))
 	{
 		TYPE* exp = car(exps);
-		if (is_definition(exp))
+		if (is_sexp_definition(exp))
 		{
 			if (found_non_definition)
 			{
 				throw_error(PARSE_ERROR, 
 							"EVAL: internal definition must come first in a body");
 			}
-			TYPE* var = definition_variable(exp);
+			TYPE* var = sexp_definition_variable(exp);
 			result = cons(var, result);
 		} else {
 			found_non_definition = 1;
@@ -1027,12 +1046,23 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     {
         result = mk_quoted(sexp_quotation_value(exp));
     }
+	else if (is_sexp_assignment(exp)) {
+		result = mk_assignment(exp_to_name_free_exp(sexp_assignment_variable(exp), context),
+							   exp_to_name_free_exp(sexp_assignment_value(exp), context));
+	}
 	else if (is_sexp_if(exp))
 	{
 		result = mk_if(exp_to_name_free_exp(if_sexp_predicate(exp), context),
 					   exp_to_name_free_exp(if_sexp_consequent(exp), context),
 					   exp_to_name_free_exp(if_sexp_alternative(exp), context));
 	}
+	else if (is_sexp_definition(exp))
+    {
+        TYPE* var = sexp_definition_variable(exp);
+		TYPE* val = sexp_definition_value(exp);
+        result = mk_definition(var,
+                               exp_to_name_free_exp(val, context));
+    }
     else if (is_sexp_lambda(exp))
     {
         TYPE* vars = lambda_sexp_parameters(exp);
@@ -1041,16 +1071,12 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 		TYPE* defs = scan_internal_defs(body);
 		add_defs_to_context(defs, ctx);
         result = mk_lambda(vars, 
-                           exp_to_name_free_exp(body,
-												ctx));
-    } 
-    else if (is_definition(exp))
-    {
-        TYPE* var = definition_variable(exp);
-		TYPE* val = definition_value(exp);
-        result = mk_definition(var,
-                               exp_to_name_free_exp(val, context));
+                           exp_to_name_free_exp(body, ctx));
     }
+	else if (is_sexp_begin(exp))
+	{
+		result = mk_begin(exp_to_name_free_exp(sexp_begin_actions(exp), context));
+	}
     else if (is_match(exp))
     {
         TYPE* key = match_key(exp);
@@ -1059,12 +1085,21 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
         result = mk_match(exp_to_name_free_exp(key, context), 
                           match_clauses_to_name_free(clauses, context));
     }
-	else if (is_delay(exp)) {
+	else if (is_sexp_delay(exp))
+	{
 		assert_throw(length(exp) == 2,
 					 PARSE_ERROR,
 					 "DELAY: must have exactly one argument");
 		TYPE* ctx = extend_context(nil(), context);
-		result = mk_list(2, _delay_keyword_symbol_, exp_to_name_free_exp(cadr(exp), ctx));
+		result = mk_delay(exp_to_name_free_exp(operands(exp), ctx));
+	}
+	else if (is_sexp_call_cc(exp))
+	{
+		assert_throw(length(exp) == 2,
+					 PARSE_ERROR,
+					 "CALL_CC: must have exactly one argument");
+		result = mk_call_cc(exp_to_name_free_exp(car(operands(exp)), context));
+	
 	}
     else if (is_pair(exp))
     {

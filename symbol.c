@@ -14,7 +14,6 @@
 #include "symbol.h"
 #include "error.h"
 
-#define NIL "'()"
 
 static TYPE* symbol_table;
 TYPE* _nil_;
@@ -52,16 +51,7 @@ init_symbol_table()
         exit(1);
     }
         
-    _nil_->type = SYMBOL;
-    _nil_->d.s = mloc(sizeof(char) * strlen(NIL));
-    
-    if (_nil_->d.s == NULL)
-    {
-        fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
-        exit(1);
-    }
-    
-    strcpy(_nil_->d.s, NIL);
+    _nil_->type = NIL;
 
     symbol_table = mk_hash_table(_equal_, _symbol_hash_);
     _else_keyword_symbol_ = mk_symbol("else");
@@ -161,14 +151,6 @@ nil()
 {
     return _nil_;
 }
-
-/*
-int
-is_nil(const TYPE* pair)
-{
-    return pair == _nil_; 
-}
-*/
 
 int 
 is_reserved_symbol(const TYPE* symbol)

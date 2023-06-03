@@ -40,7 +40,7 @@ is_last_exp(TYPE* exps)
 }
 
 TYPE*
-mk_begin(TYPE* exp)
+mk_sexp_begin(TYPE* exp)
 {
     return cons(_begin_keyword_symbol_, exp);
 }
