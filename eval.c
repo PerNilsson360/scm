@@ -1006,21 +1006,6 @@ add_defs_to_context(TYPE* defs, TYPE* ctx)
 	}
 }
 
-static
-TYPE*
-begin_actions_to_name_free_exp(TYPE* exp, TYPE* context)
-{
-	TYPE* result = _nil_;
-
-	if (!IS_NIL(exp))
-	{
-		result = cons(exp_to_name_free_exp(car(exp), context),
-					  begin_actions_to_name_free_exp(cdr(exp), context));
-	}
-	
-	return result;
-}
-
 static 
 TYPE*
 exp_to_name_free_exp(TYPE* exp, TYPE* context)
@@ -1064,7 +1049,7 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     }
 	else if (is_sexp_begin(exp))
 	{
-		result = mk_begin(begin_actions_to_name_free_exp(
+		result = mk_begin(exp_to_name_free_exp(
 							  sexp_begin_actions(exp), context));
 	}
     else if (is_sexp_match(exp))

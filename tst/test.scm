@@ -649,9 +649,7 @@
 	  a))
   (bar))
 
-(cond ((= a 1)
-	   (set! a 2)
-	   (set! a 3)))
+(let ((a 1)) (cond ((= a 1) (set! a 2) (set! a 3))) a)
 
 (define a 1)
 

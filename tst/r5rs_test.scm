@@ -55,6 +55,8 @@
   ;; (expect (equal? (cond ((assv 'b '((a 1) (b 2))) => cadr)
   ;; 			(else #f))
   ;; 		  2))
+  ;; not in r5rs
+  (expect '(equal? (let ((a 1)) (cond ((= a 1) (set! a 2) (set! a 3))) a) 3))
   )
 
 ;; 4.2.1
