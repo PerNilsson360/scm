@@ -285,8 +285,6 @@ length(const TYPE* pair)
 {
     unsigned int result = 0;
 
-	assert_throw(is_pair(pair) || IS_NIL(pair), TYPE_ERROR, "LENGTH: not a pair");
-
     if (!IS_NIL(pair))
     {
         result = 1 + length(cdr(pair));

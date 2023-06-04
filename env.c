@@ -40,10 +40,49 @@ mk_env(TYPE* vars, TYPE* vals, TYPE* previous_frame)
 	return result;
 }
 
+static TYPE* global_env = NULL;
+
 TYPE*
-mk_empty_env()
+get_global_env()
 {
-	return mk_env(_nil_, _nil_, _nil_);
+	if (global_env == NULL)
+	{
+		global_env = mk_env(_nil_, _nil_, _nil_);
+	}
+	
+	return global_env;
+}
+
+TYPE*
+lookup_unbound_var(TYPE* var) {
+	TYPE* result = _nil_;
+	TYPE* vars = global_env->d.en->vars;
+	TYPE* vals = global_env->d.en->vals;
+	
+	while (!IS_NIL(vars))
+    {
+        if (is_eq(var, vars->d.p->car))
+        {
+            result = vals->d.p->car;
+            break;
+        }
+
+        vars = vars->d.p->cdr;
+        vals = vals->d.p->cdr;
+    }
+
+	if (IS_NIL(result))
+	{
+		result = find_primitive_procedure(var);
+		if (IS_NIL(result))
+        {
+            printf("Missing var: ");
+            display(var);
+            throw_error(EVAL_ERROR, "\nLOOKUP_ENV_LOOP: could not find var");
+        }
+	}
+
+	return result;
 }
 
 int
@@ -145,19 +184,10 @@ get_var(unsigned int frame_index,
 TYPE* 
 lookup_variable_value(TYPE* var, TYPE* env)
 {
-    assert(is_env(env) && "Env must be an environment");
-
-    if (is_symbol(var))
-    {
-        return lookup_env_loop(var, env);
-    }
-    else
-    {
-        return get_var(var->d.b->frame_index,
-                       var->d.b->var_index,
-                       var->d.b->is_inproper_list,
-                       env);
-    }
+	return get_var(var->d.b->frame_index,
+				   var->d.b->var_index,
+				   var->d.b->is_inproper_list,
+				   env);
 }
 
 TYPE* set_env_loop(TYPE* var, TYPE* val, TYPE* env);
@@ -229,7 +259,7 @@ set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
 	if (is_symbol(var))
     {
-        set_env_loop(var, val, env);
+        set_env_loop(var, val, global_env);
     }
     else
     {

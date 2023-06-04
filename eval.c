@@ -470,28 +470,93 @@ eval_dispatch:
 		reg.val = QUOTATION_VALUE(reg.exp);
 		goto *reg.cont;
 	case SYMBOL:
+		reg.val = lookup_unbound_var(reg.exp);
+		goto *reg.cont;
 	case BOUND_VAR:
-		goto ev_variable;
+		reg.val = lookup_variable_value(reg.exp, reg.env);
+		goto *reg.cont;
 	case ASSIGNMENT:
-		goto ev_assignment;
+		reg.unev = ASSIGNMENT_VARIABLE(reg.exp);
+		save(reg.unev);
+		reg.exp = ASSIGNMENT_VALUE(reg.exp);
+		save(reg.env);
+		save(reg.cont);
+		reg.cont = &&ev_assignment_1;
+		goto eval_dispatch;
 	case DEFINITION:
-		goto ev_definition;
+		reg.unev = DEFINITION_VARIABLE(reg.exp);
+		save(reg.unev);
+		reg.exp = DEFINITION_VALUE(reg.exp);
+		save(reg.env);
+		save(reg.cont);
+		reg.cont = &&ev_definition_1;
+		goto eval_dispatch;
 	case IF_TYPE:
-		goto ev_if;
+		save(reg.exp);
+		save(reg.env);
+		save(reg.cont);
+		reg.cont = &&ev_if_decide;
+		reg.exp = IF_PREDICATE(reg.exp);
+		goto eval_dispatch;
 	case LAMBDA:
-		goto ev_lambda;
+		reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),
+							   LAMBDA_BODY(reg.exp),
+							   reg.env);
+		goto *reg.cont;
 	case BEGIN_TYPE:
-		goto ev_begin;
+		reg.unev = BEGIN_ACTIONS(reg.exp);
+		save(reg.cont);
+		goto ev_sequence;
 	case MATCH:
-		goto ev_match;
+		save(reg.exp);
+		save(reg.cont);
+		reg.unev = MATCH_CLAUSES(reg.exp);
+		save(reg.unev);
+		reg.exp = MATCH_KEY(reg.exp);
+		reg.cont = &&ev_match_key_evaluated;
+		goto eval_dispatch;
 	case DELAY:
-		goto ev_delay;
+		reg.val = mk_procedure(_nil_, DELAY_ACTIONS(reg.exp), reg.env);
+		goto *reg.cont;
 	case CALL_CC:
-		goto ev_call_cc;
+		save(reg.cont);
+		reg.exp = mk_list(2, ESCAPE_PROCEDURE(reg.exp), mk_escape_proc(get_stack(), &reg));
+		reg.cont = &&ev_call_cc_done;
+		goto eval_dispatch;
 	case APPLY:
-		goto ev_apply;
+		reg.unev = APPLY_ARGUMENTS(reg.exp);
+		if (IS_NIL(reg.unev)) {
+			throw_error(APPLY_ERROR,
+						"APPLY: needs at least one argument");
+		}
+		if (!is_pair(reg.unev))
+		{
+			display_debug(reg.unev);
+			throw_error(APPLY_ERROR,
+						"APPLY: malformed arguments in application");
+		}
+		reg.exp = APPLY_PROCEDURE(reg.exp);
+		save(reg.cont);
+		save(reg.exp);
+		save(reg.env);
+		save(reg.unev);
+		reg.cont = &&ev_apply_did_operator;
+		goto eval_dispatch;
 	case PAIR:
-		goto ev_application;
+		reg.unev = operands(reg.exp);
+		if (!IS_NIL(reg.unev) && !is_pair(reg.unev))
+		{
+			display_debug(reg.unev);
+			throw_error(APPLY_ERROR,
+						"APPLICATION: malformed arguments in application");
+		}
+		reg.exp = operator(reg.exp);
+		save(reg.cont);
+		save(reg.exp);
+		save(reg.env);
+		save(reg.unev);
+		reg.cont = &&ev_appl_did_operator;
+		goto eval_dispatch;
 	default:
 		// TODO:
 		//if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
@@ -499,26 +564,6 @@ eval_dispatch:
 		throw_error(APPLY_ERROR, "EVAL: not a valid expression");
 		break;
 	}
-ev_variable:
-    reg.val = lookup_variable_value(reg.exp, reg.env);
-    goto *reg.cont;
-ev_lambda:
-    reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),
-                           LAMBDA_BODY(reg.exp),
-                           reg.env);
-    goto *reg.cont;
-ev_begin:
-    reg.unev = BEGIN_ACTIONS(reg.exp);
-    save(reg.cont);
-    goto ev_sequence;
-ev_match:
-    save(reg.exp);
-    save(reg.cont);
-    reg.unev = MATCH_CLAUSES(reg.exp);
-    save(reg.unev);
-    reg.exp = MATCH_KEY(reg.exp);
-    reg.cont = &&ev_match_key_evaluated;
-    goto eval_dispatch;
 ev_match_key_evaluated:
     restore(&reg.unev);
     save(reg.env);
@@ -545,9 +590,6 @@ ev_match_done:
     restore(&reg.cont);
     restore(&reg.exp);
     goto *reg.cont;
-ev_delay:
-	reg.val = mk_procedure(_nil_, DELAY_ACTIONS(reg.exp), reg.env);
-    goto *reg.cont;
 ev_stream_cons:
 	/* TODO this does not work */
     save(reg.unev);
@@ -566,34 +608,11 @@ ev_stream_cons_done:
     restore(&reg.cont);
     restore(&reg.unev);
     goto *reg.cont;
-ev_call_cc:
-	save(reg.cont);
-    reg.exp = mk_list(2, ESCAPE_PROCEDURE(reg.exp), mk_escape_proc(get_stack(), &reg));
-    reg.cont = &&ev_call_cc_done;
-    goto eval_dispatch;
 ev_call_cc_done:
 	restore(&reg.cont);
     goto *reg.cont;
     /* special form apply */
 ev_apply:
-    reg.unev = APPLY_ARGUMENTS(reg.exp);
-	if (IS_NIL(reg.unev)) {
-		throw_error(APPLY_ERROR,
-                    "APPLY: needs at least one argument");
-	}
-    if (!is_pair(reg.unev))
-    {
-		display_debug(reg.unev);
-		throw_error(APPLY_ERROR,
-                    "APPLY: malformed arguments in application");
-    }
-	reg.exp = APPLY_PROCEDURE(reg.exp);
-	save(reg.cont);
-	save(reg.exp);
-	save(reg.env);
-    save(reg.unev);
-    reg.cont = &&ev_apply_did_operator;
-    goto eval_dispatch;
 ev_apply_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
@@ -630,21 +649,6 @@ ev_apply_accum_last_arg:
     restore(&reg.proc);
     goto apply_dispatch;
     /* application of operator to operands */
-ev_application:
-	reg.unev = operands(reg.exp);
-    if (!IS_NIL(reg.unev) && !is_pair(reg.unev))
-    {
-		display_debug(reg.unev);
-		throw_error(APPLY_ERROR,
-                    "APPLICATION: malformed arguments in application");
-    }
-	reg.exp = operator(reg.exp);
-	save(reg.cont);
-	save(reg.exp);
-	save(reg.env);
-    save(reg.unev);
-    reg.cont = &&ev_appl_did_operator;
-    goto eval_dispatch;
 ev_appl_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
@@ -690,13 +694,6 @@ ev_sequence_continue:
 ev_sequence_last_exp:
     restore(&reg.cont);
     goto eval_dispatch;
-ev_if:
-    save(reg.exp);
-    save(reg.env);
-    save(reg.cont);
-    reg.cont = &&ev_if_decide;
-    reg.exp = IF_PREDICATE(reg.exp);
-    goto eval_dispatch;
 ev_if_decide:
     restore(&reg.cont);
     restore(&reg.env);
@@ -708,14 +705,6 @@ ev_if_alternative:
 ev_if_consequent:
     reg.exp = IF_CONSEQUENT(reg.exp);
     goto eval_dispatch;
-ev_assignment:
-    reg.unev = ASSIGNMENT_VARIABLE(reg.exp);
-    save(reg.unev);
-    reg.exp = ASSIGNMENT_VALUE(reg.exp);
-    save(reg.env);
-    save(reg.cont);
-    reg.cont = &&ev_assignment_1;
-    goto eval_dispatch;
 ev_assignment_1:
     restore(&reg.cont);
     restore(&reg.env);
@@ -723,14 +712,6 @@ ev_assignment_1:
     set_variable_value(reg.unev, reg.val, reg.env);
     reg.val = mk_none();
     goto *reg.cont;
-ev_definition:
-    reg.unev = DEFINITION_VARIABLE(reg.exp);
-    save(reg.unev);
-    reg.exp = DEFINITION_VALUE(reg.exp);
-    save(reg.env);
-    save(reg.cont);
-    reg.cont = &&ev_definition_1;
-    goto eval_dispatch;
 ev_definition_1:
     restore(&reg.cont);
     restore(&reg.env);
@@ -740,14 +721,18 @@ ev_definition_1:
     /* Apply */
 apply_dispatch:
 	restore(&reg.exp); // the name of the procedure for error reporting
-    if (is_primitive_procedure(reg.proc)) goto primitive_apply;
-    else if (is_compound_procedure(reg.proc)) goto compound_apply;
-	else if (is_escape_proc(reg.proc)) goto escape_proc_apply;
-    else
-	{
+	switch (((TYPE*)reg.proc)->type) {
+	case PRIMITIVE_PROCEDURE:
+		goto primitive_apply;
+	case PROCEDURE:
+		goto compound_apply;
+	case ESCAPE_PROC:
+		goto escape_proc_apply;
+	default:
 		display_debug(reg.exp);
 		display_debug(reg.proc);
 		throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
+	break;
 	}
 primitive_apply:
     reg.val = apply_primitive_procedure(reg.proc, reg.arg1, reg.env);
@@ -1021,12 +1006,27 @@ add_defs_to_context(TYPE* defs, TYPE* ctx)
 	}
 }
 
+static
+TYPE*
+begin_actions_to_name_free_exp(TYPE* exp, TYPE* context)
+{
+	TYPE* result = _nil_;
+
+	if (!IS_NIL(exp))
+	{
+		result = cons(exp_to_name_free_exp(car(exp), context),
+					  begin_actions_to_name_free_exp(cdr(exp), context));
+	}
+	
+	return result;
+}
+
 static 
 TYPE*
 exp_to_name_free_exp(TYPE* exp, TYPE* context)
 {
     TYPE* result;
-		
+
     if (IS_NIL(exp))
     {
         result = exp;
@@ -1064,7 +1064,8 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     }
 	else if (is_sexp_begin(exp))
 	{
-		result = mk_begin(exp_to_name_free_exp(sexp_begin_actions(exp), context));
+		result = mk_begin(begin_actions_to_name_free_exp(
+							  sexp_begin_actions(exp), context));
 	}
     else if (is_sexp_match(exp))
     {

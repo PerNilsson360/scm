@@ -2,9 +2,15 @@
 #define _ENV_H_
 #include "type.h"
 /**
- * Creates an empty environment.
+ * Returns the global environment.
  */
-TYPE* mk_empty_env();
+TYPE* get_global_env();
+
+/**
+ * Given an unbound variable (i.e. symbol) find its value
+ * in the global environment.
+ */
+TYPE* lookup_unbound_var(TYPE* var);
 
 int is_env(const TYPE* sexp);
 

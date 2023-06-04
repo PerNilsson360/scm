@@ -507,8 +507,6 @@ sub_numbers(const TYPE* numbers)
 {
     TYPE* result = nil();
 
-    assert(!IS_NIL(numbers) && "SUB_NUMBERS: list of numbers can not be nil");
-
     if (length(numbers) == 1)
     {
       result = _sub_two_numbers(mk_number("0", 1, TRUE, 10), car(numbers));
@@ -517,8 +515,6 @@ sub_numbers(const TYPE* numbers)
     {
         result = _sub_numbers(car(numbers), cdr(numbers));
     }
-    
-    assert(!IS_NIL(result) && "SUB_NUMBERS: wrong result");
     
     return result;
 }

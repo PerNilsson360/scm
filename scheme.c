@@ -116,7 +116,7 @@ main(int argc, char** argv)
     init_symbol_table();
     init_primitive_procedures();
     
-    env = mk_empty_env();
+    env = get_global_env();
     environment_symbol = mk_symbol("environment");
     define_variable(environment_symbol, env, env);
 

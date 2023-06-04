@@ -339,7 +339,7 @@ sequence_to_exp(TYPE* seq)
     }
     else
     {
-        result = mk_begin(xlat(seq));
+        result = mk_sexp_begin(xlat(seq));
     }
 
     return result;

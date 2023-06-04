@@ -134,6 +134,11 @@ display_inside_list(const TYPE* sexp, FILE* file)
 			display(DEFINITION_VALUE(sexp));
 			fprintf(file, ")");
 			break;
+		case BEGIN_TYPE:
+			fprintf(file, "(begin ");
+			display_pair(BEGIN_ACTIONS(sexp), file);
+			fprintf(file, ")");
+			break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);
 			/*assert(FALSE && 

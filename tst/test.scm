@@ -639,7 +639,24 @@
 
 (define (foo v) v)
 ((lambda (x) x) 1)
-  
+
+(define (foo)
+  (define (bar)
+	(let ((a 1))
+	  (cond ((= a 1)
+			 (set! a 2)
+			 (set! a 3)))
+	  a))
+  (bar))
+
+(cond ((= a 1)
+	   (set! a 2)
+	   (set! a 3)))
+
+(define a 1)
+
+(begin (set! a 2) (set! a 3)) 
+
 
 (define (parse value)
   (call-with-current-continuation
