@@ -55,7 +55,6 @@ get_global_env()
 
 TYPE*
 lookup_unbound_var(TYPE* var) {
-	TYPE* result = _nil_;
 	TYPE* vars = global_env->d.en->vars;
 	TYPE* vals = global_env->d.en->vals;
 	
@@ -63,26 +62,21 @@ lookup_unbound_var(TYPE* var) {
     {
         if (is_eq(var, vars->d.p->car))
         {
-            result = vals->d.p->car;
-            break;
+            return vals->d.p->car;
         }
 
         vars = vars->d.p->cdr;
         vals = vals->d.p->cdr;
     }
 
-	if (IS_NIL(result))
-	{
-		result = find_primitive_procedure(var);
-		if (IS_NIL(result))
-        {
-            printf("Missing var: ");
-            display(var);
-            throw_error(EVAL_ERROR, "\nLOOKUP_ENV_LOOP: could not find var");
-        }
-	}
-
-	return result;
+    TYPE* result = find_primitive_procedure(var);
+    if (!IS_NIL(result))
+    {
+        return result;
+    }
+    printf("Missing var: ");
+    display(var);
+    throw_error(EVAL_ERROR, "\nLOOKUP_ENV_LOOP: could not find var");
 }
 
 int

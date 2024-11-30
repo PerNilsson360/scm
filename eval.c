@@ -24,48 +24,6 @@ static REGS reg;
 
 /* Syntax procedures */
 
-static
-inline
-int
-is_self_evaluating(const TYPE* sexp)
-{
-    return 
-        is_number(sexp) ||
-        is_char(sexp) ||
-        is_boolean(sexp) ||
-        is_string(sexp) ||
-        is_vector(sexp) ||
-        is_none(sexp) ||
-        IS_NIL(sexp) ||
-		is_escape_proc(sexp);
-}
-
-static
-inline
-int
-is_variable(const TYPE* exp)
-{
-    return is_symbol(exp) || is_bound_var(exp);
-}
-
-int
-is_sexp_assignment(TYPE* exp)
-{
-    return is_tagged_list(exp, _set_keyword_symbol_);
-}
-
-TYPE*
-sexp_assignment_variable(TYPE* exp)
-{
-    return car(cdr(exp));
-}
-
-TYPE*
-sexp_assignment_value(TYPE* exp)
-{
-    return car(cdr(cdr(exp)));
-}
-
 int
 is_sexp_definition(TYPE* exp)
 {
@@ -1020,9 +978,9 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     {
         result = mk_quoted(sexp_quotation_value(exp));
     }
-	else if (is_sexp_assignment(exp)) {
-		result = mk_assignment(exp_to_name_free_exp(sexp_assignment_variable(exp), context),
-							   exp_to_name_free_exp(sexp_assignment_value(exp), context));
+	else if (IS_SEXP_ASSIGNMENT(exp)) {
+		result = mk_assignment(exp_to_name_free_exp(SEXP_ASSIGNMENT_VARIABLE(exp), context),
+							   exp_to_name_free_exp(SEXP_ASSIGNMENT_VALUE(exp), context));
 	}
 	else if (is_sexp_if(exp))
 	{

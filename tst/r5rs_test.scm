@@ -29,6 +29,15 @@
   (expect '(equal? ((lambda (x y . z) z) 3 4 5 6) '(5 6)))
   )
 
+(define test-define-x 28)
+(define test-define-a '())
+
+;; 4.1.1
+(define (test-define)
+  (expect '(equal? test-define-x 28))
+  (expect '(null? test-define-a))
+  )
+
 ;; 4.1.5
 (define (test-conditionals)
   (expect '(equal? (if (> 3 2) 'yes 'no) 'yes))
@@ -416,6 +425,7 @@
 
 (define (test)
   (test-simple-examples)
+  (test-define)
   (test-conditionals)
   (test-assignemnt)
   (test-cond)

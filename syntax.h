@@ -3,6 +3,10 @@
 
 int is_tagged_list(const TYPE* exp, TYPE* symbol);
 
+#define IS_SEXP_ASSIGNMENT(exp) is_tagged_list(exp, _set_keyword_symbol_)
+#define SEXP_ASSIGNMENT_VARIABLE(exp) car(cdr(exp))
+#define SEXP_ASSIGNMENT_VALUE(exp) car(cdr(cdr(exp)))
+
 TYPE* mk_sexp_lambda(TYPE* parameters, TYPE* body);
 TYPE* mk_sexp_if(TYPE* predicate, TYPE* consequent, TYPE* alternative);
 TYPE* first_exp(TYPE* exps);
