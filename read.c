@@ -864,12 +864,11 @@ abbreviation(FILE* file)
     */
     TYPE* result = NULL;
     TOKEN* token = next_token(file);
-
     if (token == NULL)
     {
 		return NULL;
     }
-    
+
     if (token->type == '\'')
     {
 		TYPE* d = datum(file);
@@ -899,19 +898,6 @@ abbreviation(FILE* file)
     }
     else if (token->type == ',')
     {
-		token = next_token(file);
-	
-		const char* unquote;
-        if (token->type == '@')
-        {
-            unquote = "unquote-splicing";
-        }
-        else
-        {
-            unquote = "unquote";
-			unget_token(token);
-        }
-	
 		TYPE* d = datum(file);
 
 		if (d == NULL)
@@ -919,13 +905,24 @@ abbreviation(FILE* file)
 			parse_error(file, "ABBREVIATION: unquote datum is NULL.");
 		}
 	
-		result = cons(mk_symbol(unquote), cons(d, nil()));
+		result = cons(mk_symbol("unquote"), cons(d, nil()));
+    }
+    else if (token->type == T_UNQUOTE_SPLICING)
+    {
+        TYPE* d = datum(file);
+
+		if (d == NULL)
+		{
+			parse_error(file, "ABBREVIATION: unquote-spicing datum is NULL.");
+		}
+	
+		result = cons(mk_symbol("unquote-splicing"), cons(d, nil()));
     }
     else
     {
 		unget_token(token);
     }
-    
+
     return result;
 }
 

@@ -195,19 +195,19 @@ display_char(const TYPE* sexp, FILE* file)
     switch (sexp->d.i)
     {
     case 0x10:
-        fprintf(file, "#\\space");
+        fprintf(file, " ");
         break;
     case 0x09:
-        fprintf(file, "#ht");
+        fprintf(file, "\t");
         break;
     case 0x0A:
-        fprintf(file, "#\\cr");
+        fprintf(file, "\n");
         break;
     case 0x0D:
-        fprintf(file, "#\\lf");
+        fprintf(file, "\n");
         break;
     default:
-        fprintf(file, "#\\%c", (char)sexp->d.i);
+        fprintf(file, "%c", (char)sexp->d.i);
     }
 }
 
