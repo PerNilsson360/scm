@@ -4,7 +4,7 @@
 #include "type.h"
 extern TYPE* _nil_;
 #define IS_NIL(PAIR) (((TYPE*)(PAIR))->type == NIL)
-
+int _symbol_equal_(const TYPE* left, const TYPE* right);
 unsigned int _symbol_hash_(const TYPE* symbol);
 void init_symbol_table();
 TYPE* mk_symbol(const char* symbol);

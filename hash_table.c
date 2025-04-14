@@ -9,6 +9,7 @@
 #include "vector.h"
 #include "util.h"
 #include "hash_table.h"
+#include "io.h"
 
 TYPE* 
 mk_hash_table(int (*equal) (const TYPE* left, const TYPE* right),
@@ -137,16 +138,14 @@ hash_table_set(TYPE* hash_table, const TYPE* key, const TYPE* data)
 
     assert(key != NULL && "HASH_TABLE_SET: key can not be NULL");
 
-    if (IS_NIL(entry))
+    if (!IS_NIL(entry))
     {
-        vector_set(hash_table->d.h->vector,
-                   get_index(hash_table, key),
-                   cons(cons(key, data), 
-                        vector_ref(hash_table->d.h->vector, 
-                                   get_index(hash_table, key))));
+        hash_table_delete(hash_table, key);
     }
-    else
-    {
-        set_cdr(entry, data);
-    }
+    
+    vector_set(hash_table->d.h->vector,
+               get_index(hash_table, key),
+               cons(cons(key, data), 
+                    vector_ref(hash_table->d.h->vector, 
+                               get_index(hash_table, key))));
 }

@@ -3,6 +3,8 @@
 
 #include "type.h"
 
+void gr_init();
+
 /*
  * @param exp is association list that understands height, width 
  *            and window-name                        
@@ -17,7 +19,7 @@ void gr_set_text_size(const TYPE* exp); /* int */
 TYPE* gr_text_size();                   /* (pair int int) */
 void gr_draw_point();
 void gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2);
-void gr_set_foreground(const TYPE* exp); /* int */
+void gr_set_foreground(const TYPE* exp); /* symbol */
 TYPE* x_events_queued();
 TYPE* x_next_event();
 void x_flush();

@@ -19,6 +19,7 @@
 #include "read.h"
 #include "char.h"
 #include "elab.h"
+#include "graphics.h"
 
 static 
 void
@@ -115,6 +116,7 @@ main(int argc, char** argv)
     
     init_symbol_table();
     init_primitive_procedures();
+    gr_init();
     
     env = get_global_env();
     environment_symbol = mk_symbol("environment");

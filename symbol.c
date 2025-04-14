@@ -18,8 +18,8 @@
 static TYPE* symbol_table;
 TYPE* _nil_;
 
-static int
-_equal_(const TYPE* left, const TYPE* right)
+int
+_symbol_equal_(const TYPE* left, const TYPE* right)
 {
     return strcmp(right->d.s, left->d.s) == 0;
 }
@@ -53,7 +53,7 @@ init_symbol_table()
         
     _nil_->type = NIL;
 
-    symbol_table = mk_hash_table(_equal_, _symbol_hash_);
+    symbol_table = mk_hash_table(_symbol_equal_, _symbol_hash_);
     _else_keyword_symbol_ = mk_symbol("else");
     _define_keyword_symbol_ = mk_symbol("define");
     _unquote_keyword_symbol_ = mk_symbol("unquote");
