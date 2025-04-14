@@ -16,6 +16,7 @@
 #include "procedure.h"
 #include "graphics.h"
 #include "char.h"
+#include "vector.h"
 
 static Display* display = NULL;
 static Window win;
@@ -466,6 +467,49 @@ gr_fill_arc(const TYPE* width,
 		char buff[256];
 		XGetErrorText(display, status, buff, 256);
 		fprintf(stderr, "GR_FILL_ARC: error %s.\n", buff);
+	}
+}
+
+void gr_fill_polygon(const TYPE* points)
+{
+    assert_throw(is_vector(points),
+                 TYPE_ERROR,
+                 "GR_FILL_POLYGON: points must be a vector");
+    
+    int n_points = points->d.v->length->d.i;
+    XPoint* ps = mloc(sizeof(XPoint) * n_points);
+    for (int i = 0; i < n_points; i++) {
+        TYPE* point = vector_ref(points, i);
+        assert_throw(is_pair(point),
+                     TYPE_ERROR,
+                     "GR_FILL_POLYGON: point must be a pair");
+        TYPE* x = car(point);
+        assert_throw(is_integer(x),
+                     TYPE_ERROR,
+                     "GR_FILL_POLYGON: x must be an integer");
+        TYPE* y = cdr(point);
+        assert_throw(is_integer(x),
+                     TYPE_ERROR,
+                     "GR_FILL_POLYGON: y must be an integer");
+        ps[i].x = x->d.i;
+        ps[i].y = y->d.i;
+        fprintf(stderr, "point %d %d ", ps[i].x, ps[i].y);
+    }
+
+    fprintf(stderr, "n points %d\n", n_points);
+    
+    int status = XFillPolygon(display,
+                              pixmap,
+                              gc,
+                              ps,
+                              n_points,
+                              Convex,
+                              CoordModeOrigin);
+	if (status == 0)
+	{
+		char buff[256];
+		XGetErrorText(display, status, buff, 256);
+		fprintf(stderr, "GR_FILL_POLYGON: error %s.\n", buff);
 	}
 }
 

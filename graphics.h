@@ -26,6 +26,7 @@ void gr_fill_arc(const TYPE* width,
 				 const TYPE* height, 
 				 const TYPE* angle1, 
 				 const TYPE* angle2);
+void gr_fill_polygon(const TYPE* points); /* #((1 . 2)(3 . 4)) i.e. array of pairs */
 void gr_swap_buffers();
 
 #endif

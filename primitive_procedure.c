@@ -1053,6 +1053,7 @@ _x_flush_procedure_(const TYPE* arguments, const TYPE* env)
 }
 
 MAKE_VOID_WRAPPER_TWO_ARG(gr_fill_rect);
+MAKE_VOID_WRAPPER_ONE_ARG(gr_fill_polygon);
 
 static 
 TYPE* 
@@ -1253,6 +1254,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(x_flush, x-flush);
     ADD_PROCEDURE(gr_fill_arc, gr-fill-arc);
 	ADD_PROCEDURE(gr_fill_rect, gr-fill-rect);
+    ADD_PROCEDURE(gr_fill_polygon, gr-fill-polygon);
 }
 
 int
