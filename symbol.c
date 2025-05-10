@@ -16,7 +16,6 @@
 
 
 static TYPE* symbol_table;
-TYPE* _nil_;
 
 int
 _symbol_equal_(const TYPE* left, const TYPE* right)
@@ -43,16 +42,6 @@ _symbol_hash_(const TYPE* symbol)
 void
 init_symbol_table()
 {
-    _nil_ = mloc(sizeof(TYPE));
-    
-    if (_nil_ == NULL)
-    {
-        fprintf(stderr, "MK_SYMBOL: could not allocate memory for type");
-        exit(1);
-    }
-        
-    _nil_->type = NIL;
-
     symbol_table = mk_hash_table(_symbol_equal_, _symbol_hash_);
     _else_keyword_symbol_ = mk_symbol("else");
     _define_keyword_symbol_ = mk_symbol("define");
@@ -93,7 +82,7 @@ mk_symbol(const char* symbol)
     /* special handling for nil since hash_table is using it */
     if (strcmp(symbol, "'()") == 0)
     {
-        return _nil_;
+        return nil();
     }
 
     symbol_in_table = hash_table_ref(symbol_table, &lookup_symbol);
@@ -149,7 +138,7 @@ string_to_symbol(const TYPE* string)
 TYPE* 
 nil()
 {
-    return _nil_;
+    return (TYPE*)NIL_TYPE_TAG;
 }
 
 int 

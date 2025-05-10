@@ -13,7 +13,7 @@
 int
 is_vector(const TYPE* sexp)
 {
-    return sexp->type == VECTOR;
+    return IS_STRUCT_OF_TYPE(sexp, VECTOR);
 }
 
 TYPE*

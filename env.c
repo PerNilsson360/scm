@@ -47,7 +47,7 @@ get_global_env()
 {
 	if (global_env == NULL)
 	{
-		global_env = mk_env(_nil_, _nil_, _nil_);
+		global_env = mk_env(nil(), nil(), nil());
 	}
 	
 	return global_env;

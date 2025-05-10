@@ -2,7 +2,21 @@
 #define _TYPE_H_
 
 #include <stdio.h>
+#include <stdint.h>
 #include "stack.h"
+
+/**
+ * Classical lisp implementation of tagged pointers.
+ * It works since malloc returns 16 byte alligned pointers.
+ */
+
+#define NIL_TYPE_TAG         1
+
+#define GET_TYPE_TAG(POINTER) ((intptr_t)POINTER & 0xF)
+#define IS_POINTER_TO_STRUCT(POINTER) (GET_TYPE_TAG(POINTER) == 0)
+#define IS_STRUCT_OF_TYPE(POINTER, TAG) (IS_POINTER_TO_STRUCT(POINTER) && \
+                                         ((const TYPE*)POINTER)->type == TAG)
+
 
 #define NONE                 0
 #define PAIR                 1
@@ -40,7 +54,12 @@
 #define MATCH               33
 #define APPLY               34
 
-#define is_eq(LEFT, RIGHT) ((LEFT)->d.s == (RIGHT)->d.s)
+/**
+ * TODO: comparing the string representation looks wrong for struct types.
+ */
+#define is_eq(LEFT, RIGHT) (IS_POINTER_TO_STRUCT(LEFT) && IS_POINTER_TO_STRUCT(RIGHT) ? \
+                            (LEFT)->d.s == (RIGHT)->d.s : \
+                            LEFT == RIGHT)
 
 struct PAIR_DATA;
 struct PROCEDURE_DATA;
@@ -205,7 +224,7 @@ void set_cdr(TYPE* list, const TYPE* value);
 int is_list(const TYPE* sexp);
 TYPE* list(const TYPE* sexp);
 TYPE* mk_list(int elems, ...);
-#define is_pair(SEXP) (((const TYPE*)SEXP)->type == PAIR)
+#define is_pair(SEXP) (IS_STRUCT_OF_TYPE(SEXP, PAIR))
 int is_empty_pair(const TYPE* sexp);
 unsigned int length(const TYPE* pair);
 

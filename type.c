@@ -296,30 +296,36 @@ length(const TYPE* pair)
 int
 is_procedure(const TYPE* proc)
 {
-	return proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE;
+	return
+        IS_POINTER_TO_STRUCT(proc) &&
+        (proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE);
 }
 
 int
 is_eqv(const TYPE* left, const TYPE* right)
 {
-	if (left->type != right->type) {
-		return FALSE;
-	}
-    switch (left->type) {
-	case INTEGER:
-	case RATIONAL:
-	case REAL:
-	case COMPLEX:
+    if (IS_POINTER_TO_STRUCT(left) && IS_POINTER_TO_STRUCT(right)) {
+        if (left->type != right->type) {
+            return FALSE;
+        }
+        switch (left->type) {
+        case INTEGER:
+        case RATIONAL:
+        case REAL:
+        case COMPLEX:
 		return is_number_equal(left, right);
-	case CHAR:
-		return is_char_equal(left, right);
-	case BOOLEAN:
-		return left->d.i == right->d.i;
-	case SYMBOL:
-        return left->d.s == right->d.s;
-	default:
-		return left == right;
-	}
+        case CHAR:
+            return is_char_equal(left, right);
+        case BOOLEAN:
+            return left->d.i == right->d.i;
+        case SYMBOL:
+            return left->d.s == right->d.s;
+        default:
+            return left == right;
+        }
+    } else {
+        return left == right;
+    }
 }
 
 int
@@ -391,7 +397,7 @@ mk_boolean(int t)
 int 
 is_boolean(const TYPE* sexp)
 {
-    return sexp->type == BOOLEAN;
+    return IS_STRUCT_OF_TYPE(sexp, BOOLEAN);
 }
 
 TYPE* 
@@ -403,9 +409,8 @@ not(const TYPE* sexp)
 int 
 is_true(const TYPE* sexp)
 {
-    return !(sexp != NULL && 
-             sexp->type == BOOLEAN && 
-             sexp->d.i == FALSE);
+    /* TODO: do you really need to check if not null */
+    return !(sexp != NULL && IS_STRUCT_OF_TYPE(sexp, BOOLEAN) && sexp->d.i == FALSE);
 }
 
 int

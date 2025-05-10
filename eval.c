@@ -408,6 +408,12 @@ eval_dispatch:
         fflush(NULL);
     }
 
+    if (!IS_POINTER_TO_STRUCT(reg.exp)) {
+        /* All non struct types are self evaluating i.e. values */
+        reg.val = reg.exp;
+		goto *reg.cont;
+    }
+    
 	switch (((TYPE*)reg.exp)->type) {
 	case INTEGER:
 	case RATIONAL:
@@ -419,7 +425,6 @@ eval_dispatch:
 	case IMMUTABLE_STRING:
 	case VECTOR:
 	case NONE:
-	case NIL:
 	case ESCAPE_PROC:
 		/* Self evalutating expressions */
 		reg.val = reg.exp;
@@ -474,7 +479,7 @@ eval_dispatch:
 		reg.cont = &&ev_match_key_evaluated;
 		goto eval_dispatch;
 	case DELAY:
-		reg.val = mk_procedure(_nil_, DELAY_ACTIONS(reg.exp), reg.env);
+		reg.val = mk_procedure(nil(), DELAY_ACTIONS(reg.exp), reg.env);
 		goto *reg.cont;
 	case CALL_CC:
 		save(reg.cont);

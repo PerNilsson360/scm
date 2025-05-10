@@ -132,7 +132,6 @@
 	((var-type ?sn) (if (equal? ty0 tvar) ty1 ty0))
 	(? (error "apply-one-subst: unkown type" ty0))))
   
-
 ;; Type x Subst -> Type
 (define (apply-subst-to-type ty subst)
   (match ty
@@ -197,30 +196,40 @@
 	   ((dec-prg ?dec) (type-of dec env subst throw))
 	   (? (throw (error-type-result "type-of-prg: unkown prg")))))))
 
+(define (type-of-numeric-operator left right env subt throw)
+  ;; TODO
+  )
+
 (define (type-of exp env subst throw)
   (match exp
 	((const-int-exp ?) (success-type-result (int-type) subst))
 	(? (throw (error-type-result "type-of: unkown expression")))))
 
 ;; Repl
-(define (print-sml exp) (display exp) (newline))
+(define (print-sml exp type)
+  (display exp)
+  (display #\space)
+  (display #\:)
+  (display #\space)
+  (display (type-to-external-form type))
+  (newline))
+
 (define (print-type type) (display (type-to-external-form type)) (newline))
 
 (define type-env (init-type-env))
 
 (define (repl-sml)
-  (display '>)
+  (display 'sml>)
   (let ((statement (read-sml)))
 	(display statement) (newline)
 	(let ((result (type-of-prg statement type-env (empty-subst))))
 	  (match result
 		((error-type-result ?e) (display e) (newline))
 		((success-type-result ?type ?subst)
-		 (print-type type)
 		 (let ((translated (sml->scheme statement)))
 		   (display translated) (newline)
 		   (let ((result (eval translated environment)))
-			 (print-sml result))))
+			 (print-sml result type))))
 		(? (error "repl-sml: unkown result of type checking")))
 	    (repl-sml))))
 

@@ -1,3 +1,5 @@
+#!/home/per/git/scm/scheme
+
 (define expect
   (lambda (x) 
     (if (not x)

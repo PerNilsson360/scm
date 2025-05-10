@@ -1269,7 +1269,7 @@ find_primitive_procedure(const TYPE* symbol)
     if (!is_symbol(symbol)) {
 		fprintf(stderr, "FIND_PRIMITIVE_PROCEDURE: not a symbol");
 		display_debug(symbol);
-		return _nil_;
+		return nil();
 	}
 
     return hash_table_ref(_primitive_procedure_table_, symbol);

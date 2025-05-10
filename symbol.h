@@ -2,13 +2,12 @@
 #define _SYMBOL_H_
 
 #include "type.h"
-extern TYPE* _nil_;
-#define IS_NIL(PAIR) (((TYPE*)(PAIR))->type == NIL)
+#define IS_NIL(pointer) (GET_TYPE_TAG(pointer) == NIL_TYPE_TAG)
 int _symbol_equal_(const TYPE* left, const TYPE* right);
 unsigned int _symbol_hash_(const TYPE* symbol);
 void init_symbol_table();
 TYPE* mk_symbol(const char* symbol);
-#define is_symbol(SEXP) ((SEXP)->type == SYMBOL)
+#define is_symbol(SEXP) (IS_STRUCT_OF_TYPE(SEXP,SYMBOL))
 int is_symbol_eq(const TYPE* left, const TYPE* right);
 TYPE* symbol_to_string(const TYPE* symbol);
 TYPE* string_to_symbol(const TYPE* symbol);

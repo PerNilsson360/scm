@@ -16,15 +16,13 @@
 int
 is_string(const TYPE* sexp)
 {
-    return 
-        sexp->type == STRING || 
-        sexp->type == IMMUTABLE_STRING;
+    return IS_POINTER_TO_STRUCT(sexp) && (sexp->type == STRING || sexp->type == IMMUTABLE_STRING);
 }
 
 int
 is_mutable_string(const TYPE* sexp)
 {
-    return sexp->type == STRING;
+    return IS_POINTER_TO_STRUCT(sexp) && sexp->type == STRING;
 }
 
 TYPE* 
