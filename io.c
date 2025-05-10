@@ -35,6 +35,9 @@ display_inside_list(const TYPE* sexp, FILE* file)
     if (sexp == NULL)
     {
         fprintf(file, "nil");
+    } else if(IS_NIL(sexp))
+    {
+        fprintf(file, "'()");
     }
     else
     {
@@ -123,9 +126,6 @@ display_inside_list(const TYPE* sexp, FILE* file)
 			fprintf(file, "(quote ");
 			display(QUOTATION_VALUE(sexp));
 			fprintf(file, ")");
-			break;
-		case NIL:
-			fprintf(file, "'()");
 			break;
 		case DEFINITION:
 			fprintf(file, "(define ");
