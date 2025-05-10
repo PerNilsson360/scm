@@ -152,6 +152,10 @@ mk_hex_number(const char* symbol, unsigned int length)
 int
 is_number(const TYPE* number)
 {
+    if (!IS_POINTER_TO_STRUCT(number))
+    {
+        return FALSE;
+    }
     int t = number->type; 
     return  t == INTEGER || t == RATIONAL || t == REAL || t == COMPLEX;
 }
@@ -159,13 +163,13 @@ is_number(const TYPE* number)
 int
 is_integer(const TYPE* number)
 {
-	return number->type == INTEGER;
+	return IS_STRUCT_OF_TYPE(number,  INTEGER);
 }
 
 int
 is_real(const TYPE* number)
 {
-	return number->type == REAL;
+	return IS_STRUCT_OF_TYPE(number, REAL);
 }
 
 static

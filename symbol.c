@@ -138,6 +138,7 @@ string_to_symbol(const TYPE* string)
 TYPE* 
 nil()
 {
+    /* TODO: nil is not a symbol any more */
     return (TYPE*)NIL_TYPE_TAG;
 }
 

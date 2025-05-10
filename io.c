@@ -35,9 +35,21 @@ display_inside_list(const TYPE* sexp, FILE* file)
     if (sexp == NULL)
     {
         fprintf(file, "nil");
-    } else if(IS_NIL(sexp))
+        return;
+    }
+    
+    int type_tag = GET_TYPE_TAG(sexp);
+    
+    if (type_tag != 0)
     {
-        fprintf(file, "'()");
+        switch(type_tag) {
+        case NIL_TYPE_TAG:
+            fprintf(file, "'()");
+            break;
+        case BOOLEAN_TYPE_TAG:
+            display_boolean(sexp, file);
+            break;
+        }
     }
     else
     {
@@ -57,9 +69,6 @@ display_inside_list(const TYPE* sexp, FILE* file)
             break;
         case CHAR:
             display_char(sexp, file);
-            break;
-        case BOOLEAN:
-            display_boolean(sexp, file);
             break;
         case VECTOR:
             fprintf(file, "#(");

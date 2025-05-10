@@ -76,7 +76,7 @@ mk_none()
 int 
 is_none(const TYPE* sexp)
 {
-    return sexp->type == NONE;
+    return IS_STRUCT_OF_TYPE(sexp, NONE);
 }
 
 static
@@ -316,8 +316,6 @@ is_eqv(const TYPE* left, const TYPE* right)
 		return is_number_equal(left, right);
         case CHAR:
             return is_char_equal(left, right);
-        case BOOLEAN:
-            return left->d.i == right->d.i;
         case SYMBOL:
             return left->d.s == right->d.s;
         default:
@@ -379,28 +377,18 @@ sexp_quotation_value(const TYPE* sexp)
 TYPE* 
 mk_boolean(int t)
 {
-    TYPE* result = mloc(sizeof(TYPE));
-    
-    if (result == NULL)
-    {
-        fprintf(stderr, "MK_BOOLEAN: could not allocate memory for type");
-        exit(1);
-    }
-
-    result->type = BOOLEAN;
-    
-    result->d.i = t;
-    
-    return result;
+    return (TYPE*)(t == FALSE ?
+                   (intptr_t)BOOLEAN_TYPE_TAG :
+                   (intptr_t)(BOOLEAN_TYPE_TAG | BOOLEAN_TRUE_VALUE));
 }
 
 int 
 is_boolean(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, BOOLEAN);
+    return IS_TAGGED_POINTER_OF_TYPE(sexp, BOOLEAN_TYPE_TAG);
 }
 
-TYPE* 
+TYPE*
 not(const TYPE* sexp)
 {
     return mk_boolean(!is_true(sexp));
@@ -410,13 +398,15 @@ int
 is_true(const TYPE* sexp)
 {
     /* TODO: do you really need to check if not null */
-    return !(sexp != NULL && IS_STRUCT_OF_TYPE(sexp, BOOLEAN) && sexp->d.i == FALSE);
+    return !(sexp != NULL &&
+             IS_TAGGED_POINTER_OF_TYPE(sexp, BOOLEAN_TYPE_TAG) &&
+             (((intptr_t)sexp) & BOOLEAN_TRUE_VALUE) == 0);
 }
 
 int
 is_eof_object(const TYPE* sexp)
 {
-    return sexp->type == ENDOFFILE;
+    return IS_STRUCT_OF_TYPE(sexp, ENDOFFILE);
 }
 
 TYPE*

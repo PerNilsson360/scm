@@ -408,7 +408,7 @@ eval_dispatch:
         fflush(NULL);
     }
 
-    if (!IS_POINTER_TO_STRUCT(reg.exp)) {
+    if (IS_TYPE_TAGGED_POINTER(reg.exp)) {
         /* All non struct types are self evaluating i.e. values */
         reg.val = reg.exp;
 		goto *reg.cont;
@@ -420,7 +420,6 @@ eval_dispatch:
 	case REAL:
 	case COMPLEX:
 	case CHAR:
-	case BOOLEAN:
 	case STRING:
 	case IMMUTABLE_STRING:
 	case VECTOR:
@@ -684,18 +683,22 @@ ev_definition_1:
     /* Apply */
 apply_dispatch:
 	restore(&reg.exp); // the name of the procedure for error reporting
-	switch (((TYPE*)reg.proc)->type) {
-	case PRIMITIVE_PROCEDURE:
+	if (IS_STRUCT_OF_TYPE(reg.proc, PRIMITIVE_PROCEDURE))
+    {
 		goto primitive_apply;
-	case PROCEDURE:
+    }
+	else if (IS_STRUCT_OF_TYPE(reg.proc, PROCEDURE))
+    {
 		goto compound_apply;
-	case ESCAPE_PROC:
+    }
+	else if (IS_STRUCT_OF_TYPE(reg.proc, ESCAPE_PROC))
+    {
 		goto escape_proc_apply;
-	default:
+    }
+    else {
 		display_debug(reg.exp);
 		display_debug(reg.proc);
 		throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
-	break;
 	}
 primitive_apply:
     reg.val = apply_primitive_procedure(reg.proc, reg.arg1, reg.env);
