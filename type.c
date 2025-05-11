@@ -134,7 +134,7 @@ cons(const TYPE* car, const TYPE* cdr)
 TYPE* 
 car(const TYPE* list)
 {
-    if (list->type != PAIR)
+    if (!IS_POINTER_TO_STRUCT_OF_TYPE(list, PAIR))
     {
         display_debug(list);
         printf("not a pair\n");
@@ -148,7 +148,7 @@ car(const TYPE* list)
 TYPE* 
 cdr(const TYPE* list)
 {
-    if (list->type != PAIR)
+    if (!IS_POINTER_TO_STRUCT_OF_TYPE(list, PAIR))
     {
         display_debug(list);
         printf("not a pair\n");

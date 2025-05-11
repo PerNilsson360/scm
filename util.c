@@ -96,7 +96,14 @@ _reverse_(const TYPE* list, const TYPE* result)
 TYPE* 
 reverse(const TYPE* list)
 {
-    return _reverse_(list, nil());
+    if (IS_NIL(list) || IS_NIL(cdr(list)))
+    {
+        return (TYPE*) list;
+    }
+    else
+    {
+        return _reverse_(list, nil());
+    }
 }
 
 TYPE* 
