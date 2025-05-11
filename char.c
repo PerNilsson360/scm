@@ -28,7 +28,7 @@ mk_char(char c)
 int
 is_char(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, CHAR);
+    return IS_POINTER_TO_STRUCT_OF_TYPE(sexp, CHAR);
 }
 
 int

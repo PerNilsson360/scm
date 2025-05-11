@@ -259,7 +259,36 @@
   )
 
 ;; 6.2.4 
-;; todo
+(define (test-numbers)
+  ;; (expect '(complex? 3+4i))
+  ;; (expect '(complex? 3))
+  ;; TODO:
+  ;; (expect '(real? 3))                   
+  ;; (expect '(real? #e1e10))
+  ;; (expect '(rational? 6/10))
+  ;; (expect '(rational? 6/3))
+  ;; (expect '(integer? 3+0i))
+  ;; TODO:
+  ;; (expect '(integer? 3.0))
+  ;; (expect '(integer? 8/4))
+  ;; (expect '(equal? (max 3 4) 4))
+  ;; (expect '(equal? (max 3.9 4) 4.0))
+  (expect '(equal? (- 3 4) -1))
+  (expect '(equal? (- 3 4 5) -6))
+  (expect '(equal? (- 3) -3))
+  (expect '(equal? (abs -7) 7))
+  ;;(expect '(equal? (modulo 13 4) 1))
+  (expect '(equal? (remainder 13 4) 1))
+  ;; (expect '(equal? ((modulo -13 4) 3)
+  (expect '(equal? (remainder -13 4) -1))
+  ;; (expect '(equal? ((modulo -13 -4) -1)
+  (expect '(equal? (remainder -13 -4) -1))
+  (expect '(equal? (remainder -13 -4.0) -1.0))
+  ;; TODO: more page 23
+  )
+
+;; 6.2.6
+;; TODO:
 
 ;; 6.3.1
 (define (test-booleans)
@@ -462,6 +491,8 @@
   (print-line "eq ok")
   (test-equal?)
   (print-line "equal ok")
+  (test-numbers)
+  (print-line "numbers ok")
   (test-booleans)
   (print-line "booleans ok")
   (test-pairs-and-lists)

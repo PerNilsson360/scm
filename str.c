@@ -311,15 +311,17 @@ substring(const TYPE* sexp, const TYPE* start, const TYPE* end)
                  "SUBSTRING: 0 <= start <= end <= string_length(sexp)"
                  " must hold");
 
-    size = end->d.i - start->d.i;
+    int s = as_integer(start);
+    int e = as_integer(end); 
+    size = e - s;
 
     result = mk_string_type(size);
     
-    for (dst = 0, src = start->d.i;
+    for (dst = 0, src = s;
          dst < size;
          dst++, src++)
     {
-        assert(src < end->d.i);
+        assert(src < s);
         (result->d.s)[dst] = sexp->d.s[src];
     }
 
@@ -344,8 +346,8 @@ string_append(const TYPE* left, const TYPE* right)
                  TYPE_ERROR,
                  "SUBSTRING: right must be a number");
 
-    left_size = string_length(left)->d.i;
-    right_size = string_length(right)->d.i;
+    left_size = as_integer(string_length(left));
+    right_size = as_integer(string_length(right));
 
     size = left_size + right_size;
 
@@ -373,7 +375,7 @@ string_to_list(const TYPE* sexp)
     
     TYPE* result = nil();
     
-    for (int i = string_length(sexp)->d.i - 1; i >= 0; i--)
+    for (int i = as_integer(string_length(sexp)) - 1; i >= 0; i--)
     {
 	result = cons(mk_char(sexp->d.s[i]), result);
     }
@@ -426,7 +428,7 @@ string_to_number(const TYPE* sexp, const TYPE* radix)
     char* tail = 0;
     errno = 0;
     
-    int i = strtol(sexp->d.s, &tail, radix->d.i);
+    int i = strtol(sexp->d.s, &tail, as_integer(radix));
     
     if (errno != 0)
     {

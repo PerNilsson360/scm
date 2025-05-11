@@ -76,7 +76,7 @@ mk_none()
 int 
 is_none(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, NONE);
+    return IS_POINTER_TO_STRUCT_OF_TYPE(sexp, NONE);
 }
 
 static
@@ -406,7 +406,7 @@ is_true(const TYPE* sexp)
 int
 is_eof_object(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, ENDOFFILE);
+    return IS_POINTER_TO_STRUCT_OF_TYPE(sexp, ENDOFFILE);
 }
 
 TYPE*

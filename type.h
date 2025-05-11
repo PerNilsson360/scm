@@ -12,21 +12,23 @@
 
 #define NIL_TYPE_TAG         1
 #define BOOLEAN_TYPE_TAG     2
+#define INTEGER_TYPE_TAG     3     
 #define BOOLEAN_TRUE_VALUE   0x10
 
 #define GET_TYPE_TAG(POINTER) (((intptr_t)POINTER) & 0xF)
 #define IS_TAGGED_POINTER_OF_TYPE(POINTER, TAG) (GET_TYPE_TAG(POINTER) == TAG)
 #define IS_TYPE_TAGGED_POINTER(POINTER) (GET_TYPE_TAG(POINTER) != 0)
-#define IS_POINTER_TO_STRUCT(POINTER) (GET_TYPE_TAG(POINTER) == 0)
-#define IS_STRUCT_OF_TYPE(POINTER, TAG) (IS_POINTER_TO_STRUCT(POINTER) && \
-                                         ((const TYPE*)POINTER)->type == TAG)
+#define MK_TAGGED_POINTER(VALUE, TAG) ((TYPE*)((VALUE << 8) | TAG))
 
+#define IS_POINTER_TO_STRUCT(POINTER) (GET_TYPE_TAG(POINTER) == 0)
+#define IS_POINTER_TO_STRUCT_OF_TYPE(POINTER, TAG) (IS_POINTER_TO_STRUCT(POINTER) && \
+                                                    ((const TYPE*)POINTER)->type == TAG)
 
 #define NONE                 0
 #define PAIR                 1
 #define SYMBOL               2
-#define INTEGER              3
 #define RATIONAL             4
+#define INTEGER              3
 #define REAL                 5
 #define COMPLEX              6
 #define CHAR                 7
@@ -227,7 +229,7 @@ void set_cdr(TYPE* list, const TYPE* value);
 int is_list(const TYPE* sexp);
 TYPE* list(const TYPE* sexp);
 TYPE* mk_list(int elems, ...);
-#define is_pair(SEXP) (IS_STRUCT_OF_TYPE(SEXP, PAIR))
+#define is_pair(SEXP) (IS_POINTER_TO_STRUCT_OF_TYPE(SEXP, PAIR))
 int is_empty_pair(const TYPE* sexp);
 unsigned int length(const TYPE* pair);
 

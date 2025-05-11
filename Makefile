@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -pg -Winline -Wl,-defsym,_DYNAMIC=0 # -pedantic -Werror -v 
+CFLAGS = -g -Winline -Wl,-defsym,_DYNAMIC=0 # -pedantic -Werror -v 
 
 OBJECTS = \
 	number.o symbol.o char.o str.o vector.o procedure.o type.o \

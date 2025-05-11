@@ -1,7 +1,7 @@
 #!/home/per/git/scm/scheme
-;real	0m16,547s					   
-;user	0m18,766s
-;sys	0m0,707s
+;real	0m9,007s
+;user	0m10,845s
+;sys	0m0,445s
 (define (fib n)
   (cond ((= n 0) 0)
 	((= n 1) 1)

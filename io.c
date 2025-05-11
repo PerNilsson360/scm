@@ -49,6 +49,8 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case BOOLEAN_TYPE_TAG:
             display_boolean(sexp, file);
             break;
+        case INTEGER_TYPE_TAG:
+            display_number(sexp, file);
         }
     }
     else
@@ -61,7 +63,7 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case SYMBOL:
             display_symbol(sexp, file);
             break;
-        case INTEGER:
+
 		case RATIONAL:
 		case REAL:
 		case COMPLEX:
@@ -194,7 +196,7 @@ display_number(const TYPE* sexp, FILE* file)
 	}
 	else
 	{
-		fprintf(file, "%d", sexp->d.i);
+		fprintf(file, "%d", as_integer(sexp));
 	}
 }
 
@@ -240,7 +242,7 @@ display_vector(const TYPE* sexp, int i, FILE* file)
 {
     assert(is_vector(sexp) && "DISPLAY_VECTOR: Not a vector sexp");
 
-    if (i < vector_length(sexp)->d.i) 
+    if (i < as_integer(vector_length(sexp))) 
     {
         if (i > 0)
         {

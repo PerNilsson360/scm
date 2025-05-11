@@ -683,15 +683,15 @@ ev_definition_1:
     /* Apply */
 apply_dispatch:
 	restore(&reg.exp); // the name of the procedure for error reporting
-	if (IS_STRUCT_OF_TYPE(reg.proc, PRIMITIVE_PROCEDURE))
+	if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PRIMITIVE_PROCEDURE))
     {
 		goto primitive_apply;
     }
-	else if (IS_STRUCT_OF_TYPE(reg.proc, PROCEDURE))
+	else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PROCEDURE))
     {
 		goto compound_apply;
     }
-	else if (IS_STRUCT_OF_TYPE(reg.proc, ESCAPE_PROC))
+	else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, ESCAPE_PROC))
     {
 		goto escape_proc_apply;
     }

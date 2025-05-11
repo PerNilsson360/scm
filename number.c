@@ -30,13 +30,15 @@ mk_unasigned_number(int type)
     return result;
 }
 
+
 TYPE* mk_number_from_int(int n)
 {
-    TYPE* result = mk_unasigned_number(INTEGER);
+    // TODO: handle/check that overflow make sense.
+    // fprintf(stderr, "mk_number_from_int %d %x", ((unsigned int)n & 0x0000000F), -1);
+    // assert_throw((n & 0x0FFFFFFF) <= 0x0EFFFFFF, CONSTRAINT_ERROR, "Integer larger than 54 bits");
 
-    result->d.i = n;
-
-    return result;
+    intptr_t result = (n << 8) | INTEGER_TYPE_TAG;
+    return (TYPE*)result;
 }
 
 static
@@ -70,7 +72,6 @@ int hex_to_number(char c) {
 TYPE* 
 mk_number(const char* symbol, unsigned int length, int positive, int radix)
 {
-    TYPE* result = mk_unasigned_number(INTEGER);
     int number = 0;
     unsigned int i = 0;
         
@@ -84,9 +85,7 @@ mk_number(const char* symbol, unsigned int length, int positive, int radix)
       }
     }
 
-    result->d.i = (positive ? number : (- number));
-
-    return result;
+    return mk_number_from_int(positive ? number : (- number));
 }
 
 TYPE*
@@ -102,7 +101,6 @@ mk_real(const char* symbol, int positive)
 TYPE* 
 mk_hex_number(const char* symbol, unsigned int length)
 {
-    TYPE* result = mk_unasigned_number(INTEGER);
     int number = 0;
     unsigned int i = 0;
         
@@ -144,32 +142,37 @@ mk_hex_number(const char* symbol, unsigned int length)
         }
     }
 
-    result->d.i = number;
-
-    return result;
+    return mk_number_from_int(number);
 }
 
 int
 is_number(const TYPE* number)
 {
-    if (!IS_POINTER_TO_STRUCT(number))
+    if (IS_TAGGED_POINTER_OF_TYPE(number, INTEGER_TYPE_TAG))
     {
-        return FALSE;
+        return TRUE;
     }
     int t = number->type; 
-    return  t == INTEGER || t == RATIONAL || t == REAL || t == COMPLEX;
+    return  t == RATIONAL || t == REAL || t == COMPLEX;
 }
 
 int
 is_integer(const TYPE* number)
 {
-	return IS_STRUCT_OF_TYPE(number,  INTEGER);
+	return IS_TAGGED_POINTER_OF_TYPE(number,  INTEGER);
 }
 
 int
 is_real(const TYPE* number)
 {
-	return IS_STRUCT_OF_TYPE(number, REAL);
+	return IS_POINTER_TO_STRUCT_OF_TYPE(number, REAL);
+}
+
+static
+int
+int_from_tagged_pointer(const TYPE* number) {
+    int i = (intptr_t)number;
+    return (i >> 8);
 }
 
 static
@@ -178,9 +181,9 @@ as_real(const TYPE* number)
 {
 	if (is_integer(number))
 	{
-		return  number->d.i;
+		return int_from_tagged_pointer(number);
 	} else if (is_real(number)) {
-		return  number->d.d;
+		return number->d.d;
 	}
 	else {
 		assert_throw(FALSE,
@@ -192,7 +195,7 @@ as_real(const TYPE* number)
 static
 int
 is_atleast_one(int type, const TYPE* t1, const TYPE* t2) {
-	return t1->type == type || t2->type == type;
+	return IS_POINTER_TO_STRUCT_OF_TYPE(t1, type) || IS_POINTER_TO_STRUCT_OF_TYPE(t2, type);
 }
 
 int
@@ -211,7 +214,7 @@ is_number_equal(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return left->d.i == right->d.i;
+		return left == right;
 	}
 }
 
@@ -231,7 +234,7 @@ is_number_lt(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return left->d.i < right->d.i;
+		return int_from_tagged_pointer(left) < int_from_tagged_pointer(right);
 	}
 }
 
@@ -251,7 +254,7 @@ is_number_gt(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return left->d.i > right->d.i;
+		return int_from_tagged_pointer(left) > int_from_tagged_pointer(right);
 	}
 }
 
@@ -270,7 +273,7 @@ is_number_lt_eq(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return left->d.i <= right->d.i;
+		return int_from_tagged_pointer(left) <= int_from_tagged_pointer(right);
 	}
 }
 
@@ -290,7 +293,7 @@ is_number_gt_eq(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return left->d.i >= (int) right->d.i;
+		return int_from_tagged_pointer(left) >= int_from_tagged_pointer(right);
 	}
 }
 
@@ -306,7 +309,7 @@ is_number_zero(const TYPE* n)
 	}
 	else
 	{
-		return mk_boolean(n->d.i == 0);
+		return mk_boolean(int_from_tagged_pointer(n) == 0);
 	}
 }
 
@@ -323,7 +326,7 @@ is_number_positive(const TYPE* n)
 	}
 	else
 	{
-		return mk_boolean(n->d.i > 0);
+		return mk_boolean(int_from_tagged_pointer(n) > 0);
 	}
 }
 
@@ -340,7 +343,7 @@ is_number_negative(const TYPE* n)
 	}
 	else
 	{
-		return mk_boolean(n->d.i < 0);
+		return mk_boolean(int_from_tagged_pointer(n) < 0);
 	}
 }
 
@@ -357,7 +360,7 @@ is_number_odd(const TYPE* n)
 	}
 	else
 	{
-		return mk_boolean((n->d.i % 2) == 1);
+		return mk_boolean((int_from_tagged_pointer(n) % 2) == 1);
 	}
 }
 
@@ -374,7 +377,7 @@ is_number_even(const TYPE* n)
    }
    else
    {
-	   return mk_boolean(((n->d.i) % 2) == 0);
+	   return mk_boolean((int_from_tagged_pointer(n) % 2) == 0);
    }
 }
 
@@ -387,8 +390,8 @@ max_number(const TYPE* left, const TYPE* right)
     assert_throw(is_number(right),
 		 TYPE_ERROR,
 		 "MAX_NUMBER: right must be a number");
-
-    return (TYPE*) (left->d.i > right->d.i ? left : right);
+    /* TODO: what about REAL */
+    return (TYPE*) (int_from_tagged_pointer(left) > int_from_tagged_pointer(right) ? left : right);
 }
 
 TYPE* min_number(const TYPE* left, const TYPE* right)
@@ -406,7 +409,9 @@ TYPE* min_number(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		return  (TYPE*) (left->d.i < right->d.i ? left : right);
+		return  (TYPE*) (int_from_tagged_pointer(left) < int_from_tagged_pointer(right) ?
+                         left :
+                         right);
 	}
 }
 
@@ -429,8 +434,8 @@ add_number(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		result = mk_unasigned_number(INTEGER);
-		result->d.i = left->d.i + right->d.i;
+		result = mk_number_from_int (int_from_tagged_pointer(left) +
+                                     int_from_tagged_pointer(right));
 	}
     
     return result;
@@ -455,8 +460,8 @@ mul_number(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		result = mk_unasigned_number(INTEGER);
-		result->d.i = left->d.i * right->d.i;
+        result = mk_number_from_int (int_from_tagged_pointer(left) *
+                                     int_from_tagged_pointer(right));
 	}
 
     return result;
@@ -481,8 +486,8 @@ _sub_two_numbers(const TYPE* left, const TYPE* right)
 	}
 	else
 	{
-		result = mk_unasigned_number(INTEGER);
-		result->d.i = left->d.i - right->d.i;
+        result = mk_number_from_int (int_from_tagged_pointer(left) -
+                                     int_from_tagged_pointer(right));
 	}
     
     return result;
@@ -592,12 +597,13 @@ remainder_number(const TYPE* left, const TYPE* right)
 	if (is_atleast_one(REAL, left, right))
 	{
 		TYPE* result = mk_unasigned_number(REAL);
-		result->d.d = fmodf(left->d.d, right->d.d);
+		result->d.d = fmodf(as_real(left), as_real(right));
 		return result;
 	}
 	else
 	{
-		return mk_number_from_int((int) fmodf(left->d.i, right->d.i));
+		return mk_number_from_int(
+            (int) fmodf(int_from_tagged_pointer(left), int_from_tagged_pointer(right)));
 	}
 }
 
@@ -631,7 +637,8 @@ number_to_string(const TYPE* n)
                  TYPE_ERROR, 
                  "STRING_TO_NUMBER: n must be a string");    
 
-    number = n->d.i;
+    /* TODO: waht about reals */
+    number = int_from_tagged_pointer(n);
 
     if (number == 0)
     {
@@ -670,11 +677,12 @@ number_hash(const TYPE* number)
 
 int as_integer(const TYPE* number)
 {
+    /* TODO: looks fishy with casr to unsigned here */
 	if (is_real(number)) {
 		return (unsigned int) number->d.d;
 	}
 	else
 	{
-		return (unsigned int) number->d.i;
+		return int_from_tagged_pointer(number);
 	}
 }

@@ -1063,7 +1063,6 @@ gr_set_foreground(const TYPE* exp)
 void
 gr_draw_point()
 {
-	fprintf(stderr, "%d %d\n", point_x, point_y);
 	int rc = XDrawPoint(display, pixmap, gc, point_x, point_y);
 
 	if (rc == 0)

@@ -15,7 +15,7 @@
 int 
 is_blob(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, BLOB);
+    return IS_POINTER_TO_STRUCT_OF_TYPE(sexp, BLOB);
 }
 
 TYPE* 

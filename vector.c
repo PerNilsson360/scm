@@ -13,7 +13,7 @@
 int
 is_vector(const TYPE* sexp)
 {
-    return IS_STRUCT_OF_TYPE(sexp, VECTOR);
+    return IS_POINTER_TO_STRUCT_OF_TYPE(sexp, VECTOR);
 }
 
 TYPE*
@@ -37,7 +37,10 @@ _mk_vector(const TYPE* length)
         exit(1);
     }
 
-    result->d.v->slots = mloc(sizeof(TYPE*) * length->d.i); 
+    /* TODO: here we could assert and maybe make a more efficient accessor function */
+    int len = as_integer(length);
+    
+    result->d.v->slots = mloc(sizeof(TYPE*) * len); 
 
     if (result->d.v->slots == NULL)
     {
@@ -56,13 +59,14 @@ mk_vector(const TYPE* length, const TYPE* obj)
     TYPE* result;
     int i;
 
-    assert_throw(is_number(length),
+    assert_throw(is_integer(length),
                  TYPE_ERROR,
                  "MK_VECTOR: length must be an integer");
     
     result = _mk_vector(length);
-   
-    for (i = 0; i < length->d.i; i++)
+    int len = as_integer(length);
+    
+    for (i = 0; i < len; i++)
     {
         result->d.v->slots[i] = (TYPE*) obj;
     }
@@ -105,7 +109,7 @@ vector_ref(const TYPE* sexp, int k)
                  TYPE_ERROR,
                  "VECTOR_REF: first argument must be a vector");
     
-    assert_throw(k >= 0 && k < sexp->d.v->length->d.i,
+    assert_throw(k >= 0 && k < as_integer(sexp->d.v->length),
                  TYPE_ERROR,
                  "VECTOR_REF: k is out of range");
 
@@ -119,7 +123,7 @@ vector_set(TYPE* sexp, int k, const TYPE* obj)
                  TYPE_ERROR,
                  "VECTOR_SET: first argument must be a vector");
 
-    assert_throw(k >= 0 && k < sexp->d.v->length->d.i,
+    assert_throw(k >= 0 && k < as_integer(sexp->d.v->length),
                  TYPE_ERROR,
                  "VECTOR_SET: k is out of range");
 
@@ -131,11 +135,12 @@ int
 vector_eq(const TYPE* left, const TYPE* right)
 {
 	int result = TRUE;
-	const TYPE* len = vector_length(left);
+	const TYPE* length = vector_length(left);
 	
-	if (is_eqv(len, vector_length(right)))
+	if (is_eqv(length, vector_length(right)))
 	{
-		for (int i = 0; i < len->d.i; i++)
+        int len = as_integer(length);
+		for (int i = 0; i < len; i++)
 		{
 			if (!is_equal(vector_ref(left, i), vector_ref(right, i)))
 			{
