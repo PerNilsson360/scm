@@ -285,9 +285,10 @@ length(const TYPE* pair)
 {
     unsigned int result = 0;
 
-    if (!IS_NIL(pair))
+    while (!IS_NIL(pair))
     {
-        result = 1 + length(cdr(pair));
+        result++;
+        pair = cdr(pair);
     }
     
     return result;

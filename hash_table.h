@@ -3,7 +3,7 @@
 
 #include "type.h"
 
-#define HASH_TABLE_DEFAULT_SIZE 1024
+#define HASH_TABLE_DEFAULT_SIZE 1021 /* A prime number */
 
 TYPE* mk_hash_table(int (*equal) (const TYPE* left, const TYPE* right),
                           unsigned int (*hash) (const TYPE* key));
