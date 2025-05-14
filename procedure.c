@@ -5,10 +5,41 @@
 
 #include "io.h"
 #include "util.h"
+#include "common.h"
 #include "symbol.h"
 #include "error.h"
 #include "procedure.h"
 #include "primitive_procedure.h"
+
+static int
+is_improper_list(const TYPE* exp)
+{
+    if (IS_NIL(exp))
+    {
+        return FALSE;
+    } 
+    else if (is_pair(exp))
+    {
+        return is_improper_list(cdr(exp));
+    } 
+    else 
+    {
+        return TRUE;
+    } 
+}
+
+static int
+improper_list_length(const TYPE* exp)
+{
+    if (is_pair(exp)) 
+    {
+        return 1 + improper_list_length(cdr(exp));
+    } 
+    else
+    {
+        return 0;
+    }
+}
 
 TYPE*  
 mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
@@ -31,6 +62,16 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     }
 	
 	result->d.pr->parameters = parameters;
+    int is_var_args =  is_improper_list(parameters);
+    result->d.pr->is_var_args = is_var_args;
+    if (is_var_args)
+    {
+        result->d.pr->param_len = improper_list_length(parameters);
+    }
+    else
+    {
+        result->d.pr->param_len = length(parameters);
+    }
 	result->d.pr->body = body;
 	result->d.pr->env = env;
 
@@ -42,6 +83,19 @@ is_compound_procedure(const TYPE* procedure)
 {
     return procedure->type == PROCEDURE;
 }
+
+int
+is_var_arg(const TYPE* procedure)
+{
+    return procedure->d.pr->is_var_args;
+}
+
+int
+param_len(const TYPE* procedure)
+{
+    return procedure->d.pr->param_len;
+}
+
 
 TYPE* 
 procedure_parameters(TYPE* procedure)

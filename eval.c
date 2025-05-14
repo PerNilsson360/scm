@@ -322,55 +322,28 @@ is_stream_cons(const TYPE* exp)
 }
 
 
-static int
-is_improper_list(const TYPE* exp)
-{
-    if (IS_NIL(exp))
-    {
-        return FALSE;
-    } 
-    else if (is_pair(exp))
-    {
-        return is_improper_list(cdr(exp));
-    } 
-    else 
-    {
-        return TRUE;
-    } 
-}
-
-static int
-improper_list_length(const TYPE* exp)
-{
-    if (is_pair(exp)) 
-    {
-        return 1 + improper_list_length(cdr(exp));
-    } 
-    else
-    {
-        return 0;
-    }
-}
 
 static void
-check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* params)
+check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* proc)
 {
-    if (is_improper_list(params))
+    int len = param_len(proc);
+    if (is_var_arg(proc))
     {
-		int min_len = improper_list_length(params);
-		if (arg_len < min_len) {
+		if (arg_len < len)
+        {     /* len is min length */
 			display_debug(proc_name);
 			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
 					arg_len,
-					min_len);
+					len);
 			throw_error(APPLY_ERROR, 
 						"Apply: wrong number of arguments in application");
 		}
     }
     else
     {
-        int len = length(params);
-		if (arg_len != len) {
+
+		if (arg_len != len)
+        {
 			display_debug(proc_name);
 			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
 					arg_len,
@@ -706,7 +679,7 @@ primitive_apply:
     goto *reg.cont;
 compound_apply:
 	tmp = procedure_parameters(reg.proc);
-	check_procedure_arg_len(reg.exp, length(reg.arg1), tmp);
+	check_procedure_arg_len(reg.exp, length(reg.arg1), reg.proc);
     reg.env = extend_environment(tmp,
                                  reg.arg1,
                                  procedure_environment(reg.proc));

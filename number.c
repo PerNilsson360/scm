@@ -616,7 +616,7 @@ round_number(const TYPE* number)
   
 	if (is_real(number))
 	{
-		mk_number_from_int((int) (number->d.d + 0.5));
+		return mk_number_from_int((int) (number->d.d + 0.5));
 	}
 	else
 	{

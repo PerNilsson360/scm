@@ -88,6 +88,7 @@ struct TYPE
 		struct ENVIRONMENT_DATA* en;
 		struct PAIR_DATA*        p;
 		struct PROCEDURE_DATA*   pr;
+        struct APPLY_DATA*   a;
 		struct IF_DATA*          ifd;
 		struct VECTOR_DATA*      v;
 		struct BOUND_VAR_DATA*   b;
@@ -110,11 +111,22 @@ typedef struct PAIR_DATA  PAIR_DATA;
 struct PROCEDURE_DATA
 {
 	TYPE* parameters;
+    int is_var_args;
+    int param_len;
 	TYPE* body;
 	TYPE* env;
 
 };
 typedef struct PROCEDURE_DATA  PROCEDURE_DATA;
+
+struct APPLY_DATA
+{
+	TYPE* procedure;
+    TYPE* args;
+    int arg_len;
+};
+typedef struct APPLY_DATA  APPLY_DATA;
+
 
 struct IF_DATA
 {
@@ -297,8 +309,9 @@ TYPE* mk_call_cc(TYPE* escape_procedure);
 #define ESCAPE_PROCEDURE(TY) (((TYPE*)(TY))->d.t)
 
 TYPE* mk_apply(TYPE* procedure, TYPE* arguments);
-#define APPLY_PROCEDURE(TY) (((TYPE*)(TY))->d.p->car)
-#define APPLY_ARGUMENTS(TY) (((TYPE*)(TY))->d.p->cdr)
+#define APPLY_PROCEDURE(TY) (((TYPE*)(TY))->d.a->procedure)
+#define APPLY_ARGUMENTS(TY) (((TYPE*)(TY))->d.a->args)
+#define APPLY_ARG_LEN(TY) (((TYPE*)(TY))->d.a->arg_len)
 
 int is_escape_proc(const TYPE* sexp);
 TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);

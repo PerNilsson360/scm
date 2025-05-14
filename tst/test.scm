@@ -326,7 +326,7 @@
 
 (case 1
   ((2) 'two)
-  ((1) 'one))
+  (else 'one))
 
 (case (car '(c d))
   ((a) 'a)

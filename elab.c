@@ -457,6 +457,8 @@ inner_construct_case_clauses(const TYPE* clauses)
 						   case_clause_exp(first_clause)),
 					  inner_construct_case_clauses(cdr(clauses)));
     }
+    
+    return result;
 }
 
 static

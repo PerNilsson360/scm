@@ -469,7 +469,28 @@ TYPE* mk_call_cc(TYPE* escape_procedure)
 
 TYPE* mk_apply(TYPE* procedure, TYPE* arguments)
 {
-	return mk_pair_data(APPLY, procedure, arguments);
+    TYPE* result = mloc(sizeof(TYPE));
+        
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_APPLY: could not allocate memory for type");
+        exit(1);
+    }
+    
+    result->type = APPLY;
+	result->d.a = mloc(sizeof(APPLY_DATA));
+
+    if (result->d.a == NULL)
+    {
+        fprintf(stderr, "MK_APPLY: could not allocate memory for data");
+        exit(1);
+    }
+
+    result->d.a->procedure = procedure;
+    result->d.a->args = arguments;
+    result->d.a->arg_len = length(arguments);
+    
+	return result;
 }
 
 TYPE*
