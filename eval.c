@@ -547,7 +547,6 @@ ev_call_cc_done:
 	restore(&reg.cont);
     goto *reg.cont;
     /* special form apply */
-ev_apply:
 ev_apply_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
