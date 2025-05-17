@@ -85,10 +85,10 @@ mk_symbol(const char* symbol)
         return nil();
     }
 
-    symbol_in_table = hash_table_ref(symbol_table, &lookup_symbol);
+    int found = hash_table_ref(symbol_table, &lookup_symbol, &symbol_in_table);
 
 
-    if (IS_NIL(symbol_in_table))
+    if (!found)
     {
         result = mloc(sizeof(TYPE));
         

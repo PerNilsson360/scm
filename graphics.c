@@ -1049,9 +1049,10 @@ gr_set_foreground(const TYPE* exp)
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: expects a symbol");
     unsigned long colour;
-    TYPE* c = hash_table_ref(_colour_table_, exp);
+    TYPE* c;
+    int found = hash_table_ref(_colour_table_, exp, &c);
 
-    assert_throw(!IS_NIL(c),
+    assert_throw(found,
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: could not find colour");
     
@@ -1153,9 +1154,10 @@ x_next_event()
         KeySym ks;
         int nchars = XLookupString(&event.xkey, buffer, bufsize, &ks, NULL);
 
-        TYPE* key_symbol = hash_table_ref(_key_table_, mk_number_from_int(ks));
+        TYPE* key_symbol;
+        int found = hash_table_ref(_key_table_, mk_number_from_int(ks), &key_symbol);
         
-        if (IS_NIL(key_symbol))
+        if (!found)
         {
             key_symbol = mk_symbol("xk-unkown");
         }

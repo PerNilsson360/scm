@@ -1257,22 +1257,30 @@ init_primitive_procedures()
     ADD_PROCEDURE(gr_fill_polygon, gr-fill-polygon);
 }
 
+void
+global_env_define_variable(TYPE* var, TYPE* val)
+{
+    hash_table_set(_primitive_procedure_table_, var, val);
+}
+
+
 int
 is_primitive_procedure(const TYPE* procedure)
 {
     return procedure->type == PRIMITIVE_PROCEDURE;
 }
 
-TYPE* 
-find_primitive_procedure(const TYPE* symbol)
+int
+global_env_lookup_var(const TYPE* var, TYPE** val)
 {
-    if (!is_symbol(symbol)) {
-		fprintf(stderr, "FIND_PRIMITIVE_PROCEDURE: not a symbol");
-		display_debug(symbol);
-		return nil();
+    if (!is_symbol(var)) {
+		fprintf(stderr, "GLOBAL_ENV_LOOKUP_VAR: not a symbol");
+		display_debug(var);
+        *val = nil();
+		return FALSE;
 	}
 
-    return hash_table_ref(_primitive_procedure_table_, symbol);
+    return hash_table_ref(_primitive_procedure_table_, var, val);
 }
 
 TYPE* 

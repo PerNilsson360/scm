@@ -55,28 +55,15 @@ get_global_env()
 
 TYPE*
 lookup_unbound_var(TYPE* var) {
-	TYPE* vars = global_env->d.en->vars;
-	TYPE* vals = global_env->d.en->vals;
-	
-	while (!IS_NIL(vars))
-    {
-        if (is_eq(var, vars->d.p->car))
-        {
-            return vals->d.p->car;
-        }
-
-        vars = vars->d.p->cdr;
-        vals = vals->d.p->cdr;
-    }
-
-    TYPE* result = find_primitive_procedure(var);
-    if (!IS_NIL(result))
+    TYPE* result;
+    int found = global_env_lookup_var(var, &result);
+    if (found)
     {
         return result;
     }
     printf("Missing var: ");
     display(var);
-    throw_error(EVAL_ERROR, "\nLOOKUP_ENV_LOOP: could not find var");
+    throw_error(EVAL_ERROR, "\nLOOKUP_UNBOUND_VAR: could not find var");
 }
 
 int
@@ -90,56 +77,6 @@ add_binding_to_frame(TYPE* var, TYPE* val, TYPE* frame)
 {
 	frame->d.en->vars = cons(var, frame->d.en->vars);
 	frame->d.en->vals = cons(val, frame->d.en->vals);
-}
-
-TYPE* lookup_env_loop(TYPE* var, TYPE* env);
-
-int
-lookup_scan(TYPE* var, TYPE* vars, TYPE* vals, TYPE** result)
-{
-    int rc = FALSE;
-
-    while (!IS_NIL(vars))
-    {
-        if (is_eq(var, vars->d.p->car))
-        {
-            *result = vals->d.p->car;
-            rc = TRUE;
-            break;
-        }
-
-        vars = vars->d.p->cdr;
-        vals = vals->d.p->cdr;
-    }
-
-    return rc;
-}
-
-TYPE* 
-lookup_env_loop(TYPE* var, TYPE* env)
-{
-    TYPE* result;
-    int rc;
-
-    while (!IS_NIL(env->d.en->previous_frame)) 
-    {
-        env = env->d.en->previous_frame;
-    }
-
-    rc = lookup_scan(var, env->d.en->vars, env->d.en->vals, &result);
-
-    if(rc == FALSE)
-    {
-		result = find_primitive_procedure(var);
-		if (IS_NIL(result))
-        {
-            printf("Missing var: ");
-            display(var);
-            throw_error(EVAL_ERROR, "\nLOOKUP_ENV_LOOP: could not find var");
-        }
-    }
-    
-    return result;
 }
 
 static
@@ -184,47 +121,6 @@ lookup_variable_value(TYPE* var, TYPE* env)
 				   env);
 }
 
-TYPE* set_env_loop(TYPE* var, TYPE* val, TYPE* env);
-
-TYPE*
-set_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* env)
-{
-    TYPE* result = nil();
-
-    if (is_symbol(vars) || IS_NIL(vars))
-    {
-        result = set_env_loop(var, val, env->d.en->previous_frame);
-    }
-    else if (is_eq(var, car(vars)))
-    {
-        set_car(vals, val);
-    }
-    else
-    {
-        result = set_scan(var, val, cdr(vars), cdr(vals), env);
-    }
-
-    return result;
-}
-
-TYPE* 
-set_env_loop(TYPE* var, TYPE* val, TYPE* env)
-{
-    TYPE* result = nil();
-
-    if(!IS_NIL(env))
-    {
-        result = set_scan(var, val, env->d.en->vars, env->d.en->vals, env);
-    }
-    else
-    {
-        display(var);
-        throw_error(EVAL_ERROR, "\nSET_ENV_LOOP: could not find var");
-    }
-    
-    return result;
-}
-
 void
 set_var(unsigned int frame_index,
         unsigned int var_index,
@@ -253,7 +149,7 @@ set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
 	if (is_symbol(var))
     {
-        set_env_loop(var, val, global_env);
+        global_env_define_variable(var, val);
     }
     else
     {
@@ -290,5 +186,9 @@ define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 void 
 define_variable(TYPE* var, TYPE* val, TYPE* env)
 {
+    if (env == global_env) {
+        global_env_define_variable(var, val);
+        return;
+    }
     define_scan(var, val, env->d.en->vars, env->d.en->vals, env);
 }

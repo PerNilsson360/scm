@@ -4,6 +4,7 @@
 
 #include <gc.h>
 
+#include "common.h"
 #include "symbol.h"
 #include "number.h"
 #include "vector.h"
@@ -51,16 +52,18 @@ get_index(const TYPE* hash_table, const TYPE* key)
         hash_table->d.h->vector_size;
 }
 
-static TYPE* 
+static int
 _find(TYPE* list, 
-      const TYPE* key, 
+      const TYPE* key,
+      TYPE** result,
       int (*equal)(const TYPE* left, const TYPE* right))
 {
-    TYPE* result;
     /* @todo remove recursion on this function */
+    int found = FALSE;
+    
     if (IS_NIL(list))
     {
-        result = list;
+        *result = nil();
     }
     else 
     {
@@ -68,15 +71,17 @@ _find(TYPE* list,
 
         if (equal(car(first), key))
         {
-            result = cdr(first);
+            *result = cdr(first);
         }
         else
         {
-            result = _find(cdr(list), key, equal);
-        }   
+            return _find(cdr(list), key, result, equal);
+        }
+        
+        found = TRUE;
     }
 
-    return result;
+    return found;
 }
 
 static TYPE*
@@ -109,21 +114,22 @@ _remove(TYPE* list,
     return result;
 }
 
-TYPE* 
-hash_table_ref(const TYPE* hash_table, const TYPE* key)
+int
+hash_table_ref(const TYPE* hash_table, const TYPE* key, TYPE** result)
 {
     assert(key != NULL && "HASH_TABLE_REF: key can not be NULL");
 
     return _find(vector_ref(hash_table->d.h->vector, 
                             get_index(hash_table, key)),
                  key,
+                 result,
                  hash_table->d.h->equal);
 }
 
 void 
 hash_table_delete(TYPE* hash_table, const TYPE* key)
 {
-    assert(key != NULL && "HASH_TABLE_DELETE: key can not be NULL");
+    assert(key != NULL && "HASH_TABLE_DELETE: key can not be NULL"); 
 
     _remove(vector_ref(hash_table->d.h->vector, 
                        get_index(hash_table, key)),
@@ -134,11 +140,12 @@ hash_table_delete(TYPE* hash_table, const TYPE* key)
 void 
 hash_table_set(TYPE* hash_table, const TYPE* key, const TYPE* data)
 {
-    TYPE* entry = hash_table_ref(hash_table, key);
-
+    TYPE* entry;
     assert(key != NULL && "HASH_TABLE_SET: key can not be NULL");
 
-    if (!IS_NIL(entry))
+    int found  = hash_table_ref(hash_table, key, &entry);
+
+    if (found)
     {
         hash_table_delete(hash_table, key);
     }
