@@ -310,7 +310,6 @@ is_eqv(const TYPE* left, const TYPE* right)
             return FALSE;
         }
         switch (left->type) {
-        case INTEGER:
         case RATIONAL:
         case REAL:
         case COMPLEX:

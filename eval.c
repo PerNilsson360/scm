@@ -388,7 +388,6 @@ eval_dispatch:
     }
     
 	switch (((TYPE*)reg.exp)->type) {
-	case INTEGER:
 	case RATIONAL:
 	case REAL:
 	case COMPLEX:

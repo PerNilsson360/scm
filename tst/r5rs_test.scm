@@ -287,6 +287,10 @@
   ;; TODO: more page 23
   )
 
+(define (test-numbers-extra)
+  (expect '(integer? 1))
+  )
+
 ;; 6.2.6
 ;; TODO:
 
@@ -492,17 +496,26 @@
   (test-equal?)
   (print-line "equal ok")
   (test-numbers)
+  (test-numbers-extra)
   (print-line "numbers ok")
   (test-booleans)
   (print-line "booleans ok")
   (test-pairs-and-lists)
+  (print-line "paris and list ok")
   (test-symbols)
+  (print-line "symbols ok")
   (test-characters)
+  (print-line "characters ok")
   (test-vectors)
+  (print-line "vectors ok")
   (test-control-features)
+  (print-line "control features ok")
   (test-memq?)
+  (print-line "memq ok")
   (test-assq)
+  (print-line "assq ok")
   (test-call/cc)
+  (print-line "call/cc ok")
   (test-match)
   (print-line "tests ok")
   )

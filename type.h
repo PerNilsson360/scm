@@ -28,7 +28,6 @@
 #define PAIR                 1
 #define SYMBOL               2
 #define RATIONAL             4
-#define INTEGER              3
 #define REAL                 5
 #define COMPLEX              6
 #define CHAR                 7

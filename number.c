@@ -159,7 +159,7 @@ is_number(const TYPE* number)
 int
 is_integer(const TYPE* number)
 {
-	return IS_TAGGED_POINTER_OF_TYPE(number,  INTEGER);
+	return IS_TAGGED_POINTER_OF_TYPE(number,  INTEGER_TYPE_TAG);
 }
 
 int
