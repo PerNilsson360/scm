@@ -58,29 +58,22 @@ _find(TYPE* list,
       TYPE** result,
       int (*equal)(const TYPE* left, const TYPE* right))
 {
-    /* @todo remove recursion on this function */
     int found = FALSE;
-    
-    if (IS_NIL(list))
-    {
-        *result = nil();
-    }
-    else 
+
+    while (!IS_NIL(list) && !found)
     {
         TYPE* first = car(list);
-
         if (equal(car(first), key))
         {
             *result = cdr(first);
+            found = TRUE;
         }
         else
         {
-            return _find(cdr(list), key, result, equal);
+            list = cdr(list);
         }
-        
-        found = TRUE;
     }
-
+    
     return found;
 }
 
