@@ -47,7 +47,7 @@ _get_height(const TYPE* exp, int display_height)
     }
     else
     {
-        result = car(cdr(height))->d.i;
+        result = as_integer(car(cdr(height)));
     }
     
     return result;
@@ -66,7 +66,7 @@ _get_width(const TYPE* exp, int display_width)
     }
     else
     {
-        result = car(cdr(width))->d.i;
+        result = as_integer(car(cdr(width)));
     }
     
     return result;
@@ -1056,9 +1056,7 @@ gr_set_foreground(const TYPE* exp)
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: could not find colour");
     
-    XSetForeground(display, 
-                   gc, 
-                   c->d.i);
+    XSetForeground(display, gc, as_integer(c));
 }
 
 void
@@ -1195,8 +1193,8 @@ gr_fill_rect(const TYPE* width, const TYPE* height) {
 								gc,
 								point_x,
 								point_y,
-								width->d.i,
-								height->d.i);
+								as_integer(width),
+								as_integer(height));
 	if (status == 0)
 	{
 		char buff[256];
@@ -1233,10 +1231,10 @@ gr_fill_arc(const TYPE* width,
 						  gc,
 						  point_x, 
 						  point_y, 
-						  width->d.i, 
-						  height->d.i, 
-						  angle1->d.i, 
-						  angle2->d.i);
+						  as_integer(width), 
+						  as_integer(height), 
+						  as_integer(angle1), 
+						  as_integer(angle2));
 	if (status == 0)
 	{
 		char buff[256];
@@ -1251,7 +1249,7 @@ void gr_fill_polygon(const TYPE* points)
                  TYPE_ERROR,
                  "GR_FILL_POLYGON: points must be a vector");
     
-    int n_points = points->d.v->length->d.i;
+    int n_points = as_integer(points->d.v->length);
     XPoint* ps = mloc(sizeof(XPoint) * n_points);
     for (int i = 0; i < n_points; i++) {
         TYPE* point = vector_ref(points, i);
@@ -1266,8 +1264,8 @@ void gr_fill_polygon(const TYPE* points)
         assert_throw(is_integer(x),
                      TYPE_ERROR,
                      "GR_FILL_POLYGON: y must be an integer");
-        ps[i].x = x->d.i;
-        ps[i].y = y->d.i;
+        ps[i].x = as_integer(x);
+        ps[i].y = as_integer(y);
         fprintf(stderr, "point %d %d ", ps[i].x, ps[i].y);
     }
 

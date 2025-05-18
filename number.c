@@ -6,6 +6,7 @@
 
 #include <gc.h>
 
+#include "io.h"
 #include "type.h"
 #include "str.h"
 #include "symbol.h"
@@ -677,7 +678,7 @@ number_hash(const TYPE* number)
 
 int as_integer(const TYPE* number)
 {
-    /* TODO: looks fishy with casr to unsigned here */
+    /* TODO: looks fishy with cast to unsigned here */
 	if (is_real(number)) {
 		return (unsigned int) number->d.d;
 	}
