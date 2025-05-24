@@ -284,6 +284,11 @@
   ;; (expect '(equal? ((modulo -13 -4) -1)
   (expect '(equal? (remainder -13 -4) -1))
   (expect '(equal? (remainder -13 -4.0) -1.0))
+  ;; (expect '(equal? (gcd 32 -36) 4))
+  ;; (expect '(equal? (gcd) 0))
+  ;; (expect '(equal? (lcm 32 -36) 288))
+  ;; (expect '(equal? (lcm 32.0 -36) 288.0))
+  ;; (expect '(equal? (lcm) 1))
   ;; TODO: more page 23
   )
 
