@@ -14,6 +14,28 @@
 #include "symbol.h"
 #include "error.h"
 
+TYPE* _else_keyword_symbol_;
+TYPE* _define_keyword_symbol_;
+TYPE* _unquote_keyword_symbol_;
+TYPE* _unquote_splicing_keyword_symbol_;
+TYPE* _quote_keyword_symbol_;
+TYPE* _lambda_keyword_symbol_;
+TYPE* _if_keyword_symbol_;
+TYPE* _set_keyword_symbol_;
+TYPE* _begin_keyword_symbol_;
+TYPE* _cond_keyword_symbol_;
+TYPE* _and_keyword_symbol_;
+TYPE* _or_keyword_symbol_;
+TYPE* _case_keyword_symbol_;
+TYPE* _match_keyword_symbol_;
+TYPE* _let_keyword_symbol_;
+TYPE* _let_star_keyword_symbol_;
+TYPE* _letrec_keyword_symbol_;
+TYPE* _delay_keyword_symbol_;
+TYPE* _stream_cons_keyword_symbol_;
+TYPE* _quasiquote_keyword_symbol_;
+TYPE* _call_cc_keyword_symbol_;
+TYPE* _apply_keyword_symbol_;
 
 static TYPE* symbol_table;
 

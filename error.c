@@ -4,6 +4,9 @@
 #include "common.h"
 #include "error.h"
 
+jmp_buf __c_env__;
+char __error_info__[ERROR_INFO_LENGTH];
+
 void 
 assert_throw(int bool, int code, const char* info)
 {

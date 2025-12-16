@@ -13,8 +13,8 @@
 #define OS_ERROR          7
 #define ERROR_INFO_LENGTH 512
 
-jmp_buf __c_env__;
-char __error_info__[ERROR_INFO_LENGTH];
+extern jmp_buf __c_env__;
+extern char __error_info__[ERROR_INFO_LENGTH];
 void assert_throw(int bool, int code, const char* info);
 void throw_error(int code, const char* info);
 
