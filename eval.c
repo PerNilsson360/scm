@@ -370,7 +370,7 @@ hairy_eval()
     reg.val = nil();
     reg.cont = &&done;
     reg.proc = nil();
-    reg.arg1 = nil();
+    reg.argl = nil();
     reg.unev = nil();
 
 eval_dispatch:
@@ -549,12 +549,12 @@ ev_call_cc_done:
 ev_apply_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
-    reg.arg1 = nil();
+    reg.argl = nil();
     reg.proc = reg.val;
 	if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_apply_operand_loop:
-    save(reg.arg1);
+    save(reg.argl);
     reg.exp = first_operand(reg.unev);
     if (last_operand(reg.unev)) goto ev_apply_last_arg;
     save(reg.env);
@@ -564,33 +564,33 @@ ev_apply_operand_loop:
 ev_apply_accumulate_arg:
     restore(&reg.unev);
     restore(&reg.env);
-    restore(&reg.arg1);
-    reg.arg1 = cons(reg.val, reg.arg1);
+    restore(&reg.argl);
+    reg.argl = cons(reg.val, reg.argl);
     reg.unev = rest_operands(reg.unev);
     goto ev_apply_operand_loop;
 ev_apply_last_arg:
     reg.cont = &&ev_apply_accum_last_arg;
     goto eval_dispatch;
 ev_apply_accum_last_arg:
-    restore(&reg.arg1);
+    restore(&reg.argl);
     if (!is_list(reg.val))
     {
         throw_error(APPLY_ERROR,
                     "APPLY: last argument must be a list");
     }
-    reg.arg1 = append(reverse(reg.arg1), reg.val);
+    reg.argl = append(reverse(reg.argl), reg.val);
     restore(&reg.proc);
     goto apply_dispatch;
     /* application of operator to operands */
 ev_appl_did_operator:
     restore(&reg.unev);
     restore(&reg.env);
-    reg.arg1 = nil();
+    reg.argl = nil();
     reg.proc = reg.val;
     if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_appl_operand_loop:
-    save(reg.arg1);
+    save(reg.argl);
     reg.exp = first_operand(reg.unev);
     if (last_operand(reg.unev)) goto ev_appl_last_arg;
     save(reg.env);
@@ -600,16 +600,16 @@ ev_appl_operand_loop:
 ev_appl_accumulate_arg:
     restore(&reg.unev);
     restore(&reg.env);
-    restore(&reg.arg1);
-    reg.arg1 = cons(reg.val, reg.arg1);
+    restore(&reg.argl);
+    reg.argl = cons(reg.val, reg.argl);
     reg.unev = rest_operands(reg.unev);
     goto ev_appl_operand_loop;
 ev_appl_last_arg:
     reg.cont = &&ev_appl_accum_last_arg;
     goto eval_dispatch;
 ev_appl_accum_last_arg:
-    restore(&reg.arg1);
-    reg.arg1 = reverse(cons(reg.val, reg.arg1));
+    restore(&reg.argl);
+    reg.argl = reverse(cons(reg.val, reg.argl));
     restore(&reg.proc);
     goto apply_dispatch;
 ev_sequence:
@@ -672,27 +672,27 @@ apply_dispatch:
 		throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
 	}
 primitive_apply:
-    reg.val = apply_primitive_procedure(reg.proc, reg.arg1, reg.env);
+    reg.val = apply_primitive_procedure(reg.proc, reg.argl, reg.env);
     restore(&reg.cont);
     goto *reg.cont;
 compound_apply:
 	tmp = procedure_parameters(reg.proc);
-	check_procedure_arg_len(reg.exp, length(reg.arg1), reg.proc);
+	check_procedure_arg_len(reg.exp, length(reg.argl), reg.proc);
     reg.env = extend_environment(tmp,
-                                 reg.arg1,
+                                 reg.argl,
                                  procedure_environment(reg.proc));
     reg.unev = procedure_body(reg.proc);
     goto ev_sequence;
 escape_proc_apply:
-	if (length(reg.arg1) != 1)
+	if (length(reg.argl) != 1)
     {
         display_debug(reg.exp);
         fprintf(stderr, "escape procedure got %d args expected one argument\n",
-                length(reg.arg1));
+                length(reg.argl));
         throw_error(APPLY_ERROR, 
                     "Apply: wrong number of arguments in escape procedure application");
     }
-	tmp = car(reg.arg1);
+	tmp = car(reg.argl);
 	assign_stack(&(((TYPE*)reg.proc)->d.e->stack));
 	copy_regs(&reg, &(((TYPE*)reg.proc)->d.e->regs));
 	reg.val = tmp;

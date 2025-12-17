@@ -196,7 +196,7 @@ struct REGS {
 	void* val;
 	void* cont;
 	void* proc;
-	void* arg1;
+	void* argl;
 	void* unev;
 };
 typedef struct REGS  REGS;
