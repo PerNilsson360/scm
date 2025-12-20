@@ -145,7 +145,7 @@ string_ref(const TYPE* sexp, const TYPE* k)
                  TYPE_ERROR,
                  "STRING_REF: 0 >= k < string_length(sexp) does not hold");
 
-    return mk_char(sexp->d.s[k->d.i]);
+    return mk_char(sexp->d.s[as_integer(k)]);
 }
 
 void 
@@ -168,7 +168,7 @@ string_set(const TYPE* sexp, const TYPE* k, const TYPE* character)
                  TYPE_ERROR,
                  "STRING_SET: cgharacter must be a char");
 
-    sexp->d.s[k->d.i] = character->d.i;
+    sexp->d.s[as_integer(k)] = character->d.i;
 }
 
 TYPE* 

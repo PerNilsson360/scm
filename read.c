@@ -365,6 +365,10 @@ character(FILE* file)
     {
         token.scm_type = mk_char(0x09);
     }
+    else if (strncmp(token.data, "newline", strlen("newline")) == 0)
+    {
+        token.scm_type = mk_char(0x0A);
+    }
     else if (strncmp(token.data, "cr", strlen("cr")) == 0)
     {
         token.scm_type = mk_char(0x0A);
@@ -1248,23 +1252,21 @@ peek_char_from_port(const TYPE* port)
     return peek_char_from_file(file);
 }
 
-void write_char_to_port(const TYPE* port, const TYPE* c)
+void write_char_to_port(const TYPE* c, const TYPE* port)
 {
-	assert_throw(is_true(is_output_port(port)),
-				 TYPE_ERROR,
-				 "WRITE_CHAR_TO_PORT: port is not an output port");
-	assert_throw(is_char(c),
-				 TYPE_ERROR,
-				 "WRITE_CHAR_TO_PORT: char is not a char");
-  
-	FILE* file = port->d.po->file;
-	int cc = c->d.i;
-	int result = fputc(cc, file);
-  
-	if (result == EOF)
-	{
-		assert_throw(FALSE,
-					 OS_ERROR,
-					 "WRITE_CHAR_TO_PORT: could not write to port");
-	}
+    assert_throw(is_true(is_output_port(port)),
+		 TYPE_ERROR,
+		 "WRITE_CHAR_TO_PORT: port is not an output port");
+    assert_throw(is_char(c),
+		 TYPE_ERROR,
+		 "WRITE_CHAR_TO_PORT: char is not a char");
+    FILE* file = port->d.po->file;
+    int cc = c->d.i;
+    int result = fputc(cc, file);
+    if (result == EOF)
+    {
+	assert_throw(FALSE,
+		     OS_ERROR,
+		     "WRITE_CHAR_TO_PORT: could not write to port");
+    }
 }
