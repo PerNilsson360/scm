@@ -1,4 +1,4 @@
-#!/home/per/git/scm/scheme
+#!../src/scheme
 
 (define (print-line s) (display s) (newline))
 

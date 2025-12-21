@@ -704,7 +704,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-
 clean-local:
 	-rm *~
 

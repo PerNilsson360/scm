@@ -7,6 +7,5 @@ scheme_SOURCES = parser.y lexer.l number.c symbol.c char.c str.c vector.c proced
 	hash_table.c stack.c socket.c graphics.c blob.c unix.c read.c \
 	elab.c syntax.c prelude.c scheme.c
 scheme_LDADD = -L/usr/local/lib -lX11 -L/usr/lib  -lm -ldl -lgc -lpthread
-
 clean-local:
 	-rm *~
