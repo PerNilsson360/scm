@@ -12,7 +12,7 @@ IS			(u|U|l|L)*
 #include "symbol.h"
 #include "port.h"
 
-#include "y.tab.h"
+#include "parser.h"
 
 void count();
 void comment();
