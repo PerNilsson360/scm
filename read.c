@@ -1152,7 +1152,6 @@ datum(FILE* file)
     return result;
 }
 
-static 
 TYPE* 
 read_from_file(FILE* file)
 {

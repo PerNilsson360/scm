@@ -1,11 +1,11 @@
 CC = gcc
-CFLAGS = -O4 -Winline -Wl,-defsym,_DYNAMIC=0 # -pedantic -Werror -v 
+CFLAGS = -g -Winline -Wl,-defsym,_DYNAMIC=0 # -pedantic -Werror -v 
 
 OBJECTS = \
 	number.o symbol.o char.o str.o vector.o procedure.o type.o \
 	port.o util.o io.o eval.o env.o error.o primitive_procedure.o \
 	hash_table.o stack.o socket.o graphics.o blob.o unix.o read.o \
-	elab.o syntax.o lex.yy.o y.tab.o
+	elab.o syntax.o prelude.o lex.yy.o y.tab.o
 
 LIBS = -L/usr/local/lib -lX11 -L/usr/lib  -lm -ldl -lgc -lpthread
 INC = -I/usr/local/include
@@ -36,7 +36,10 @@ clean :
 	rm *~
 
 tags :
-	find . -name "*.[chCH]" -print | etags -	
+	find . -name "*.[chCH]" -print > tag_files.txt
+	etags -L tag_files.txt
+	rm tag_files.txt
+
 
 check-syntax :	
 	$(CC) $(CFLAGS) $(CHK_SOURCES) -c $(CHK_SOURCES)

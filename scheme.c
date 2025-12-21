@@ -20,21 +20,18 @@
 #include "char.h"
 #include "elab.h"
 #include "graphics.h"
+#include "util.h"
 
 static 
 void
 populate_initial_environment(int argc, char** argv, TYPE* env)
 {
     TYPE* sexp;
-    TYPE* port;
-
-    const char* prelude = "/home/per/git/scm/prelude.scm";
-    port = open_input_file(mk_string_with_length(prelude,
-						 strlen(prelude)));
- 
+    extern const char* prelude;
+    FILE* file = fmemopen((void*)prelude, strlen(prelude), "r");
     do
     {
-        sexp = read_from_port(port);
+        sexp = read_from_file(file);
         
         if (!is_eof_object(sexp))
         {
@@ -44,10 +41,10 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
         }
     }
     while (!is_eof_object(sexp));
-
-    close_input_port(port);
+    fclose(file);
 }
 
+static
 void
 interactive(TYPE* env)
 {
@@ -70,14 +67,28 @@ interactive(TYPE* env)
     }
 }
 
+static
+TYPE*
+mk_command_line_list(int argc, char**argv) {
+  TYPE* result = nil();
+  for (int i = 0; i < argc; i++)
+  {
+      result = cons(mk_string_with_length(argv[i], strlen(argv[i])), result);
+  }
+  return reverse(result);
+}
+
+static
 void
 script_mode(int argc, char** argv, TYPE* env)
 {
     TYPE* sexp;
     const char* file_name = argv[1];
+    TYPE* command_line = mk_command_line_list(argc, argv);
+    define_variable(mk_symbol("command-line"), command_line, env);
+    
     TYPE* port = open_input_file(mk_string_with_length(file_name,
 						       strlen(file_name)));
-
     TYPE* hash = mk_char('#');
     TYPE* newline = mk_char('\n');
     TYPE* c = peek_char_from_port(port);
@@ -85,22 +96,22 @@ script_mode(int argc, char** argv, TYPE* env)
     /* if the first line has # we assume it is a "#!/..." line */
     if (is_char_equal(c, hash))
     {
-		do
-		{
-			c = read_char_from_port(port);
-		}
-		while (!is_eof_object(c) && !is_char_equal(c, newline));
+	do
+	{
+	    c = read_char_from_port(port);
+	}
+	while (!is_eof_object(c) && !is_char_equal(c, newline));
     }
     
     do
     {
         stack_init();
         sexp = read_from_port(port);
-		if (is_eof_object(sexp))
-		{
-			break;
-		}
-		sexp = xlat(sexp);
+	if (is_eof_object(sexp))
+	{
+	    break;
+	}
+	sexp = xlat(sexp);
         eval(sexp, env);
     }
     while(TRUE);

@@ -37,6 +37,35 @@ mk_port(FILE* file, int read_port)
     return result;
 }
 
+static
+TYPE* 
+_mk_port(FILE* file, int read_port)
+{
+    TYPE* result = mloc(sizeof(TYPE));
+    
+    if (result == NULL)
+    {
+        fprintf(stderr, "MK_PORT: could not allocate memory for type");
+        exit(1);
+    }
+
+    result->d.po = mloc(sizeof(PORT_DATA));
+
+    if (result->d.po == NULL)
+    {
+        fprintf(stderr, "MK_PORT: could not allocate memory for PORT_DATA");
+        exit(1);
+    }
+
+    result->type = PORT;
+
+    result->d.po->read_port = read_port;
+    result->d.po->file = file;
+
+    return result;
+}
+
+
 TYPE* 
 is_port(const TYPE* obj)
 {
@@ -94,7 +123,7 @@ open_output_file(const TYPE* filename)
                      "OPEN_OUTPUT_FILE: could not open file");
      }
 
-     return mk_port(file, FALSE);
+     return _mk_port(file, FALSE);
 }
 
 void 

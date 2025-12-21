@@ -4,6 +4,7 @@
 #include "type.h"
 
 TYPE* scm_read();
+TYPE* read_from_file(FILE* file);
 TYPE* read_from_port(const TYPE* port);
 TYPE* read_char();
 TYPE* read_char_from_port(const TYPE* port);
