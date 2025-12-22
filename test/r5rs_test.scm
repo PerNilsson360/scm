@@ -8,15 +8,15 @@
 
 (define fact
   (lambda (n)
-	(if (= n 0)
-		1
-		(* n (fact (- n 1))))))
+    (if (= n 0)
+        1
+        (* n (fact (- n 1))))))
 
 (define reverse-subtract (lambda (x y) (- y x)))
 
 (define add4
   (let ((x 4))
-	(lambda (y) (+ x y))))
+    (lambda (y) (+ x y))))
 
 (define (test-simple-examples)
   (expect '(equal? (* 5 8) 40))
@@ -27,7 +27,7 @@
   (expect '(equal? ((lambda (x) (+ x x )) 4) 8))
   (expect '(equal? (reverse-subtract 7 10) 3))
   (expect '(equal? (add4 6) 10))
-  ; (expect '(equal? ((lambda x x) '(3 4 5 6)) '(3 4 5 6))) 
+					; (expect '(equal? ((lambda x x) '(3 4 5 6)) '(3 4 5 6))) 
   (expect '(equal? ((lambda (x y . z) z) 3 4 5 6) '(5 6)))
   )
 
@@ -53,19 +53,19 @@
   (expect '(equal? (+ x 1) 3))
   (expect '(equal? (begin (set! x 4) (+ x 1)) 5))
   )
-		  
+
 ;; 4.2.1
 (define (test-cond)
   (expect '(equal? (cond ((> 3 2) 'greater)
-			 ((< 3 2) 'less))
-		   'greater))
+                         ((< 3 2) 'less))
+                   'greater))
   (expect '(equal? (cond ((> 3 3) 'greater)
-			 ((< 3 3) 'less)
-			 (else 'equal))
-		   'equal))
+                         ((< 3 3) 'less)
+                         (else 'equal))
+                   'equal))
   ;; (expect (equal? (cond ((assv 'b '((a 1) (b 2))) => cadr)
-  ;; 			(else #f))
-  ;; 		  2))
+  ;;                    (else #f))
+  ;;              2))
   ;; not in r5rs
   (expect '(equal? (let ((a 1)) (cond ((= a 1) (set! a 2) (set! a 3))) a) 3))
   )
@@ -73,19 +73,19 @@
 ;; 4.2.1
 (define (test-case)
   (expect '(equal?
-			(case (* 2 3)
-			  ((2 3 5 7) 'prime)
-			  ((1 4 6 8 9) 'composite))
-			'composite))
+            (case (* 2 3)
+              ((2 3 5 7) 'prime)
+              ((1 4 6 8 9) 'composite))
+            'composite))
   ;; (expect (case (car '(c d)) how to test unspecified
-  ;; 	   ((a) 'a)
-  ;; 	   ((b) 'b)) unspecifed)
+  ;;       ((a) 'a)
+  ;;       ((b) 'b)) unspecifed)
   (expect '(equal?
-			(case (car '(c d))
-			  ((a e i o u) 'vowel)
-			  ((w y) 'semivowel)
-			  (else 'consonant))
-			'consonant))
+            (case (car '(c d))
+              ((a e i o u) 'vowel)
+              ((w y) 'semivowel)
+              (else 'consonant))
+            'consonant))
   )
 
 ;; 4.2.1
@@ -103,51 +103,51 @@
   (expect '(or (= 2 2) (< 2 1)))
   (expect '(not (or #f #f #f)))
   (expect '(equal? (or (memq 'b '(a b c))
-		       (/ 3 0)) 
-		   '(b c)))
-  (expect '(or #f (or #f #t)))			; not in spec
+                       (/ 3 0)) 
+                   '(b c)))
+  (expect '(or #f (or #f #t)))                  ; not in spec
   )
 
 
 ;; 4.2.2
 (define (test-let)
   (expect '(= (let ((x 2) (y 3))
-		(* x y))
-	      6))
+                (* x y))
+              6))
   (expect '(= (let ((x 2) (y 3))
-		(let ((x 7)
-		      (z (+ x y)))
-		  (* z x)))
-	      35))
+                (let ((x 7)
+                      (z (+ x y)))
+                  (* z x)))
+              35))
   (expect '(= (let ((x 2) (y 3))
-		(let* ((x 7)
-		       (z (+ x y)))
-		  (* z x)))
-	      70))
+                (let* ((x 7)
+                       (z (+ x y)))
+                  (* z x)))
+              70))
   (expect '(letrec ((even?
-		     (lambda (n)
-		       (if (zero? n)
-			   #t
-			   (odd? (- n 1)))))
-		    (odd?
-		     (lambda (n)
-		       (if (zero? n)
-			   #f
-			   (even? (- n 1))))))
-	     (even? 88)))
+                     (lambda (n)
+                       (if (zero? n)
+                           #t
+                           (odd? (- n 1)))))
+                    (odd?
+                     (lambda (n)
+                       (if (zero? n)
+                           #f
+                           (even? (- n 1))))))
+             (even? 88)))
   (expect '(equal? (let loop ((numbers '(3 -2 1 6 -5))
-			      (nonneg '())
-			      (neg '()))
-		     (cond ((null? numbers) (list nonneg neg))
-			   ((>= (car numbers) 0)
-			    (loop (cdr numbers)
-				  (cons (car numbers) nonneg)
-				  neg))
-			   ((< (car numbers) 0)
-			    (loop (cdr numbers)
-				  nonneg
-				  (cons (car numbers) neg)))))
-		   '((6 1 3) (-5 -2))))
+                              (nonneg '())
+                              (neg '()))
+                     (cond ((null? numbers) (list nonneg neg))
+                           ((>= (car numbers) 0)
+                            (loop (cdr numbers)
+                                  (cons (car numbers) nonneg)
+                                  neg))
+                           ((< (car numbers) 0)
+                            (loop (cdr numbers)
+                                  nonneg
+                                  (cons (car numbers) neg)))))
+                   '((6 1 3) (-5 -2))))
   (expect '(let ((a (or #f (or #t)))) a))
   (expect '(let () #t))
   )
@@ -155,32 +155,32 @@
 ;; 4.2.4
 (define (test-iteration)
   (expect '(equal?
-			(let loop ((numbers '(3 -2 1 6 -5))
-					   (nonneg '())
-					   (neg '()))
-			  (cond ((null? numbers) (list nonneg neg))
-					((>= (car numbers) 0)
-					 (loop (cdr numbers)
-						   (cons (car numbers) nonneg)
-						   neg))
-					((< (car numbers) 0)
-					 (loop (cdr numbers)
-						   nonneg
-						   (cons (car numbers) neg)))))
-			'((6 1 3)(-5 -2))))
+            (let loop ((numbers '(3 -2 1 6 -5))
+                       (nonneg '())
+                       (neg '()))
+              (cond ((null? numbers) (list nonneg neg))
+                    ((>= (car numbers) 0)
+                     (loop (cdr numbers)
+                           (cons (car numbers) nonneg)
+                           neg))
+                    ((< (car numbers) 0)
+                     (loop (cdr numbers)
+                           nonneg
+                           (cons (car numbers) neg)))))
+            '((6 1 3)(-5 -2))))
   )
 
 ;; 4.2.6
 (define (test-quasiquote)
   (expect '(equal? `(list ,(+ 1 2) 4) '(list 3 4)))
   (expect '(equal? (let ((name 'a)) `(list ,name ',name)) 
-				   '(list a (quote a))))
+                   '(list a (quote a))))
   (expect '(equal? `(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)
-  				   '(a 3 4 5 6 b)))
+                   '(a 3 4 5 6 b)))
   (expect '(equal? `((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))
-  				   '((foo 7) . cons)))
-  ;(expect '(equal? `(a `(b ,(+ 1 2) ,(foo ,(+ 1 3) d) e) f)
-  ;                 (a `(b,(+ 1 2) ,(foo ,4 d) e) f)))
+                   '((foo 7) . cons)))
+					;(expect '(equal? `(a `(b ,(+ 1 2) ,(foo ,(+ 1 3) d) e) f)
+					;                 (a `(b,(+ 1 2) ,(foo ,4 d) e) f)))
   )
 
 (define (test-quote)
@@ -196,28 +196,28 @@
 ;; 5.2.2
 (define (test-internal-defintions)
   (expect '(equal? (let ((x 5))
-					 (define foo (lambda (y) (bar x y)))
-					 (define bar (lambda (a b) (+ (* a b) a)))(test-iteration)
-					 (foo (+ x 3)))
-				   45))
+                     (define foo (lambda (y) (bar x y)))
+                     (define bar (lambda (a b) (+ (* a b) a)))(test-iteration)
+                     (foo (+ x 3)))
+                   45))
   (expect '(equal? (let ((x 5))
-					 (letrec ((foo (lambda (y) (bar x y)))
-							  (bar (lambda (a b) (+ (* a b) a))))
-					   (foo (+ x 3))))
-				   45))
+                     (letrec ((foo (lambda (y) (bar x y)))
+                              (bar (lambda (a b) (+ (* a b) a))))
+                       (foo (+ x 3))))
+                   45))
   )
 
 ;; 6.1
 
 (define gen-counter
   (lambda ()
-	(let ((n 0))
-	  (lambda () (set! n (+ n 1)) n))))
+    (let ((n 0))
+      (lambda () (set! n (+ n 1)) n))))
 
 (define gen-loser
   (lambda ()
-	(let ((n 0))
-	  (lambda () (set! n (+ n 1)) 27))))
+    (let ((n 0))
+      (lambda () (set! n (+ n 1)) 27))))
 
 (define (test-eqv?)
   (expect '(not (eqv? 1 "")))
@@ -320,7 +320,7 @@
   (expect '(equal? y '(a b c)))
   (expect '(equal? (begin (set-cdr! x-6-3-2 4) x-6-3-2) '(a . 4)))
   (expect '(equal? (list? y) #f))
-  ; todo loopin (expect '(equal? (begin (set-cdr! x-6-3-2 x-6-3-2)) (list? x-6-3-2)))
+					; todo loopin (expect '(equal? (begin (set-cdr! x-6-3-2 x-6-3-2)) (list? x-6-3-2)))
   (expect '(pair? '(a . b)))
   (expect '(pair? '(a b c)))
   (expect '(not (pair? '())))
@@ -334,7 +334,7 @@
   (expect '(list? '(a b c)))
   (expect '(list? '()))
   (expect '(not (list? '(a .b))))
-  ; todo crash (expect '(not (let ((x (list 'a))) (set-cdr! x x) (list? x))))
+					; todo crash (expect '(not (let ((x (list 'a))) (set-cdr! x x) (list? x))))
   (expect '(equal? (list 'a (+ 3 4) 'c) '(a 7 c)))
   (expect '(equal? (length '(a b c)) 3))
   (expect '(equal? (length '(a (b) (c d e))) 3))
@@ -356,19 +356,19 @@
   (expect '(not (symbol? '())))
   (expect '(not (symbol? #f)))
   (expect '(equal? (symbol->string 'flying-fish) "flying-fish"))
-  ; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
+					; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
   (expect '(equal? (symbol->string (string->symbol "Malvina")) "Malvina"))
-  ; todo does not even parse (expect '(eq? 'mISSISSIppi 'mississippi))
+					; todo does not even parse (expect '(eq? 'mISSISSIppi 'mississippi))
   )
 
 ;; 6.3.4 Characters
 (define (test-characters)
-  ; todo (expect '(char=? #\A #\B))
-  ; (expect '(char<? #\a #\b))
-  ;(expect '(char<? #\0 #\9))
-  ;(expect '(char-ci=? #\A #\a))
+  (expect '(char<? #\A #\B))
+  (expect '(char<? #\a #\b))
+  (expect '(char<? #\0 #\9))
+  (expect '(char-ci=? #\A #\a))
+  (expect (<= (char->integer #\a) (char->integer #\a)))
   ;; todo need more testcase
-  (display "todo test characters") (newline)
   )
 
 ;; 6.3.5 Strings
@@ -383,11 +383,11 @@
 
 (define compose
   (lambda (f g)
-	(lambda args
-	  (f (apply g args)))))
+    (lambda args
+      (f (apply g args)))))
 
 (define a-stream (letrec ((next (lambda (n) (cons n (delay (next (+ n 1)))))))
-						  (next 0)))
+                   (next 0)))
 (define head car)
 (define tail (lambda (stream) (force (cdr stream))))
 
@@ -397,17 +397,17 @@
   (expect '(procedure? (lambda (x) (* x x))))
   (expect '(not(procedure? '(lambda (x) (* x x)))))
   (expect '(equal? (apply + (list 3 4)) 7))
-  (expect '(equal? (apply + 1 (list 1 1)) 3))	 ; not in r5rs 
+  (expect '(equal? (apply + 1 (list 1 1)) 3))    ; not in r5rs 
   (expect '(equal? (apply (lambda () 1) '()) 1)) ; 0 arguments
-  ; TODO lambda no paren on arg bug (expect '(equal? ((compose sqrt *) 12 75) 30))
+					; TODO lambda no paren on arg bug (expect '(equal? ((compose sqrt *) 12 75) 30))
   (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))
   (expect '(equal? (map (lambda (n) (expt n n)) '(1 2 3 4 5)) '(1 4 27 256 3125)))
   (expect '(equal? (map + '(1 2 3) '(4 5 6)) '(5 7 9)))
   (expect '(equal? (let ((v (make-vector 5)))
-					 (for-each (lambda (i) (vector-set! v i (* i i)))
-							   '(0 1 2 3 4))
-					 v)
-				   #(0 1 4 9 16)))
+                     (for-each (lambda (i) (vector-set! v i (* i i)))
+                               '(0 1 2 3 4))
+                     v)
+                   #(0 1 4 9 16)))
   (expect '(equal? (force (delay (+ 1 2))) 3))
   (expect '(equal? (let ((p (delay (+ 1 2)))) (list (force p) (force p))) '(3 3)))
   (expect '(equal? (head (tail (tail a-stream))) 2))
@@ -419,7 +419,7 @@
   (expect '(equal? (memq 'a '(b c d)) #f))
   (expect '(equal? (memq (list 'a) '(b (a) c)) #f))
   (expect '(equal? (member (list 'a) '(b (a) c)) '((a) c)))
-					; (expect (equal? (memq 101 ’(100 101 102)) unspecified
+                                        ; (expect (equal? (memq 101 ’(100 101 102)) unspecified
   (expect '(equal? (memv 101 '(100 101 102)) '(101 102)))
   )
 
@@ -436,27 +436,27 @@
 
 (define list-length
   (lambda (obj)
-	(call-with-current-continuation
-	 (lambda (return)
-	   (letrec ((r (lambda (obj)
-					 (cond ((null? obj) 0)
-						   ((pair? obj)
-							(+ (r (cdr obj)) 1))
-						   (else (return #f))))))
-		 (r obj))))))
+    (call-with-current-continuation
+     (lambda (return)
+       (letrec ((r (lambda (obj)
+                     (cond ((null? obj) 0)
+                           ((pair? obj)
+                            (+ (r (cdr obj)) 1))
+                           (else (return #f))))))
+         (r obj))))))
 
 (define (test-call/cc)
   (expect '(equal? (call-with-current-continuation
-					(lambda (exit)
-					  (for-each (lambda (x)
-								  (if (negative? x)
-									  (exit x)))
-								'(54 0 37 -3 245 19))))
-				   -3))
+                    (lambda (exit)
+                      (for-each (lambda (x)
+                                  (if (negative? x)
+                                      (exit x)))
+                                '(54 0 37 -3 245 19))))
+                   -3))
   (expect '(equal? (list-length '(1 2 3 4))
-				   4))
+                   4))
   (expect '(equal? (list-length '(a b . c))
-				   #f))
+                   #f))
   )
 
 ;; Non standard features

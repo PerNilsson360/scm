@@ -1,4 +1,4 @@
-#!/home/per-nilsson/git/scm/scheme
+#!scheme
 
 (if (not (= (length command-line) 3))
     (begin (display "usage: mk-prelude-file <prelude>")

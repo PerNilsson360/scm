@@ -22,6 +22,8 @@
 #include "graphics.h"
 #include "util.h"
 
+static int script_has_run;
+
 static 
 void
 populate_initial_environment(int argc, char** argv, TYPE* env)
@@ -69,7 +71,8 @@ interactive(TYPE* env)
 
 static
 TYPE*
-mk_command_line_list(int argc, char**argv) {
+mk_command_line_list(int argc, char**argv)
+{
   TYPE* result = nil();
   for (int i = 0; i < argc; i++)
   {
@@ -122,7 +125,7 @@ main(int argc, char** argv)
 {   
     TYPE* env;
     TYPE* environment_symbol;
-    int script_has_run = FALSE;
+    script_has_run = FALSE;
     GC_INIT();
     
     init_symbol_table();

@@ -109,13 +109,33 @@
                         (inner (cdr list) (insert (car list) result))))))
     (inner list '())))
 
+(define (char<? l r) (< (char->integer l) (char->integer r)))
+(define (char>? l r) (> (char->integer l) (char->integer r)))
+(define (char<=? l r) (<= (char->integer l) (char->integer r)))
+(define (char>=? l r) (>= (char->integer l) (char->integer r)))
+
+(define (char-ci=? l r)
+  (= (char->integer (char-upcase l))
+     (char->integer (char-upcase r))))
+
+(define (char-ci<? l r)
+  (< (char->integer (char-upcase l))
+     (char->integer (char-upcase l)r)))
+
+(define (char-ci>? l r)
+  (> (char->integer (char-upcase l))
+     (char->integer (char-upcase l)r)))
+
+(define (char-ci<=? l r)
+    (<= (char->integer (char-upcase l))
+     (char->integer (char-upcase l)r)))
+
+(define (char-ci>=? l r)
+  (>= (char->integer (char-upcase l))
+      (char->integer (char-upcase l)r)))
+
 (define (char-alphabetic? c)
-  (case c
-    ((#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m
-      #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z
-      #\A #\B #\C #\D #\E #\F #\G #\H #\I #\J #\K #\L #\M
-      #\N #\O #\P #\Q #\R #\S #\T #\U #\V #\W #\X #\Y #\Z) #t)
-    (else #f)))
+  (or (char-lowercase? c) (char-uppercase? c)))
 
 (define (char-numeric? c)
   (case c
@@ -126,6 +146,28 @@
   (case c
     ((#\space #\ht #\cr #\lf) #t)
     (else #f)))
+
+(define (char-uppercase? c)
+    (case c
+      ((#\A #\B #\C #\D #\E #\F #\G #\H #\I #\J #\K #\L #\M
+        #\N #\O #\P #\Q #\R #\S #\T #\U #\V #\W #\X #\Y #\Z) #t)
+      (else #f)))
+
+(define (char-lowercase? c)
+  (case c
+    ((#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m
+      #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z) #t)
+    (else #f)))
+
+(define (char-downcase c)
+  (if (char-uppercase? c)
+      (integer->char (+ (char->integer c) 32))
+      c))
+
+(define (char-upcase c)
+  (if (char-lowercase? c)
+      (integer->char (- (char->integer c) 32))
+      c))
 
 (define (inc x) (+ x 1))
 (define (dec x) (- x 1))

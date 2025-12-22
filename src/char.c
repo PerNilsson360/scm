@@ -65,5 +65,5 @@ TYPE* integer_to_char(const TYPE* sexp)
 	       TYPE_ERROR,
 	       "CHAR_TO_INTEGER: argument > 255");
   
-  return mk_char((char) sexp->d.i);
+  return mk_char(as_integer(sexp));
 }
