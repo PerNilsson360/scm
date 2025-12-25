@@ -87,6 +87,18 @@
                  (inner port)))))
   (inner (open-input-file file-name)))
 
+(define (max x . y)
+  (define (m x y) (if (> x y) x y))
+  (if (null? y)
+      x
+      (apply max (cons (m x (car y)) (cdr y)))))
+
+(define (min x . y)
+  (define (m x y) (if (< x y) x y))
+  (if (null? y)
+      x
+      (apply min (cons (m x (car y)) (cdr y)))))
+
 (define (abs a) (if (> a 0) a (* a -1)))
 
 (define (fib n)

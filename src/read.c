@@ -1281,7 +1281,7 @@ void write_char_to_port(const TYPE* c, const TYPE* port)
                  TYPE_ERROR,
                  "WRITE_CHAR_TO_PORT: char is not a char");
     FILE* file = port->d.po->file;
-    int cc = c->d.i;
+    int cc = GET_INTEGER_FROM_TAG(c);
     int result = fputc(cc, file);
     if (result == EOF)
     {

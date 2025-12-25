@@ -18,6 +18,8 @@
   (let ((x 4))
     (lambda (y) (+ x y))))
 
+(equal? ((lambda x x) 3 4 5 6) '(3 4 5 6))
+
 (define (test-simple-examples)
   (expect '(equal? (* 5 8) 40))
   (expect '(equal? (fact 5) 120))
@@ -27,7 +29,7 @@
   (expect '(equal? ((lambda (x) (+ x x )) 4) 8))
   (expect '(equal? (reverse-subtract 7 10) 3))
   (expect '(equal? (add4 6) 10))
-					; (expect '(equal? ((lambda x x) '(3 4 5 6)) '(3 4 5 6))) 
+  (expect '(equal? ((lambda x x) 3 4 5 6) '(3 4 5 6)))
   (expect '(equal? ((lambda (x y . z) z) 3 4 5 6) '(5 6)))
   )
 
@@ -208,7 +210,6 @@
   )
 
 ;; 6.1
-
 (define gen-counter
   (lambda ()
     (let ((n 0))
@@ -269,10 +270,10 @@
   ;; (expect '(rational? 6/3))
   ;; (expect '(integer? 3+0i))
   ;; TODO:
-  ;; (expect '(integer? 3.0))
+  (expect '(integer? 3.0))
   ;; (expect '(integer? 8/4))
-  ;; (expect '(equal? (max 3 4) 4))
-  ;; (expect '(equal? (max 3.9 4) 4.0))
+  (expect '(equal? (max 3 4) 4))
+  (expect '(equal? (max 3.9 4) 4))	; todo should be 4.0
   (expect '(equal? (- 3 4) -1))
   (expect '(equal? (- 3 4 5) -6))
   (expect '(equal? (- 3) -3))
