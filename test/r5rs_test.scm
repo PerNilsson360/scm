@@ -290,18 +290,29 @@
   ;; (expect '(equal? (lcm 32 -36) 288))
   ;; (expect '(equal? (lcm 32.0 -36) 288.0))
   ;; (expect '(equal? (lcm) 1))
-  ;; TODO: more page 23
-  ;; not in spec
-  (expect (odd? 11))
-  (expect (odd? -11))
+  ;; (expect '(equal? (floor -4.3) -5.0))
+  ;; (expect '(equal? (ceiling -4.3) -4.0))
+  ;; (expect '(equal? (truncate -4.3) -4.0))
+  (expect '(equal? (round -4.3) -4.0))
+  ;; (expect '(equal? (floor 3.5) 3.0))
+  ;; (expect '(equal? (ceiling 3.5) 4.0))
+  ;; (expect '(equal? (truncate 3.5) 4.0))
+  (expect '(equal? (round 3.5) 4.0))
+  ;;(expect '(equal? (round 7/2) 4))
+  (expect '(equal? (round 7) 7))
   )
 
 (define (test-numbers-extra)
   (expect '(integer? 1))
+  (expect (odd? 11))
+  (expect (odd? -11))
   )
 
 ;; 6.2.6
-;; TODO:
+(define (test-numerical-input-output)
+  (expect '(equal? (string->number "100") 100))
+  (expect '(equal? (string->number "100" 16) 256))
+  )
 
 ;; 6.3.1
 (define (test-booleans)

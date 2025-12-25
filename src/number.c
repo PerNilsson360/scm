@@ -110,14 +110,20 @@ mk_number(const char* symbol, unsigned int length, int positive, int radix)
     return mk_number_from_int(positive ? number : (- number));
 }
 
+static
+TYPE*
+mk_real_from_double(double d)
+{
+    TYPE* result = mk_unasigned_number(REAL);
+    result->d.d = d;
+    return result;
+}
+
 TYPE*
 mk_real(const char* symbol, int positive)
 {
-    TYPE* result = mk_unasigned_number(REAL);
     double d = strtod(symbol, NULL);
-    result->d.d = positive ? d : -d;
-        
-    return result;
+    return mk_real_from_double(positive ? d : -d);
 }
 
 TYPE* 
@@ -632,7 +638,9 @@ round_number(const TYPE* number)
   
     if (is_real(number))
     {
-	return mk_number_from_int((int) (number->d.d + 0.5));
+	double d = number->d.d;
+	d += d >= 0 ?  0.5 : -0.5;
+	return mk_real_from_double((int) (d));
     }
     else
     {
@@ -694,7 +702,8 @@ number_hash(const TYPE* number)
 int as_integer(const TYPE* number)
 {
     /* TODO: looks fishy with cast to unsigned here */
-    if (is_real(number)) {
+    if (is_real(number))
+    {
 	return (unsigned int) number->d.d;
     }
     else
