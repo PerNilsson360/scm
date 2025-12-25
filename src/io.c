@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -64,9 +85,9 @@ display_inside_list(const TYPE* sexp, FILE* file)
             display_symbol(sexp, file);
             break;
 
-		case RATIONAL:
-		case REAL:
-		case COMPLEX:
+	case RATIONAL:
+	case REAL:
+	case COMPLEX:
             display_number(sexp, file);
             break;
         case CHAR:
@@ -107,53 +128,53 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case BOUND_VAR:
             display_bound_var(sexp, file);
             break;
-		case ESCAPE_PROC:
-			fprintf(file, "escape-proc");
-			break;
-		case IF_TYPE:
-			fprintf(file, "(if ");
-			display(IF_PREDICATE(sexp));
-			fprintf(file, " ");
-			display(IF_CONSEQUENT(sexp));
-			fprintf(file, " ");
-			display(IF_ALTERNATIVE(sexp));
-			fprintf(file, ")");
-			break;
-		case LAMBDA:
-			fprintf(file, "(lambda ");
-			display(LAMBDA_PARAMETERS(sexp));
-			fprintf(file, " ");
-			display(LAMBDA_BODY(sexp));
-			fprintf(file, ")");
-			break;
-		case MATCH:
-			fprintf(file, "(match ");
-			display(MATCH_KEY(sexp));
-			fprintf(file, " ");
-			display(MATCH_CLAUSES(sexp));
-			fprintf(file, ")");
-			break;
-		case QUOTE:
-			fprintf(file, "(quote ");
-			display(QUOTATION_VALUE(sexp));
-			fprintf(file, ")");
-			break;
-		case DEFINITION:
-			fprintf(file, "(define ");
-			display(DEFINITION_VARIABLE(sexp));
-			fprintf(file, " ");
-			display(DEFINITION_VALUE(sexp));
-			fprintf(file, ")");
-			break;
-		case BEGIN_TYPE:
-			fprintf(file, "(begin ");
-			display_pair(BEGIN_ACTIONS(sexp), file);
-			fprintf(file, ")");
-			break;
+	case ESCAPE_PROC:
+	    fprintf(file, "escape-proc");
+	    break;
+	case IF_TYPE:
+	    fprintf(file, "(if ");
+	    display(IF_PREDICATE(sexp));
+	    fprintf(file, " ");
+	    display(IF_CONSEQUENT(sexp));
+	    fprintf(file, " ");
+	    display(IF_ALTERNATIVE(sexp));
+	    fprintf(file, ")");
+	    break;
+	case LAMBDA:
+	    fprintf(file, "(lambda ");
+	    display(LAMBDA_PARAMETERS(sexp));
+	    fprintf(file, " ");
+	    display(LAMBDA_BODY(sexp));
+	    fprintf(file, ")");
+	    break;
+	case MATCH:
+	    fprintf(file, "(match ");
+	    display(MATCH_KEY(sexp));
+	    fprintf(file, " ");
+	    display(MATCH_CLAUSES(sexp));
+	    fprintf(file, ")");
+	    break;
+	case QUOTE:
+	    fprintf(file, "(quote ");
+	    display(QUOTATION_VALUE(sexp));
+	    fprintf(file, ")");
+	    break;
+	case DEFINITION:
+	    fprintf(file, "(define ");
+	    display(DEFINITION_VARIABLE(sexp));
+	    fprintf(file, " ");
+	    display(DEFINITION_VALUE(sexp));
+	    fprintf(file, ")");
+	    break;
+	case BEGIN_TYPE:
+	    fprintf(file, "(begin ");
+	    display_pair(BEGIN_ACTIONS(sexp), file);
+	    fprintf(file, ")");
+	    break;
         default:
             fprintf(stderr, "type %d\n", sexp->type);
-			/*assert(FALSE && 
-			  "DISPLAY_INSIDE_LIST: not a valid type");*/
+	    /*assert(FALSE && 
+	      "DISPLAY_INSIDE_LIST: not a valid type");*/
         }
     }
 }
@@ -191,13 +212,13 @@ display_symbol(const TYPE* sexp, FILE* file)
 static void
 display_number(const TYPE* sexp, FILE* file)
 {
-	if (is_real(sexp)) {
-		fprintf(file, "%f", sexp->d.d);
-	}
-	else
-	{
-		fprintf(file, "%d", as_integer(sexp));
-	}
+    if (is_real(sexp)) {
+	fprintf(file, "%f", sexp->d.d);
+    }
+    else
+    {
+	fprintf(file, "%d", as_integer(sexp));
+    }
 }
 
 static void 
@@ -271,7 +292,7 @@ display_bound_var(const TYPE* sexp, FILE* file)
             ":%u:%u:%d>", 
             sexp->d.b->frame_index,
             sexp->d.b->var_index,
-	    sexp->d.b->is_inproper_list);
+            sexp->d.b->is_inproper_list);
 }
 
 static void 

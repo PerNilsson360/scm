@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
@@ -38,7 +59,7 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
         if (!is_eof_object(sexp))
         {
             stack_init();
-			sexp = xlat(sexp);
+	    sexp = xlat(sexp);
             eval(sexp, env);
         }
     }
@@ -51,7 +72,7 @@ void
 interactive(TYPE* env)
 {
     TYPE* sexp;
-	
+        
     while (TRUE)
     {
         fprintf(stdout, ">");
@@ -64,7 +85,7 @@ interactive(TYPE* env)
         
         stack_init();
         sexp = scm_read();
-		sexp = xlat(sexp);
+	sexp = xlat(sexp);
         display(eval(sexp, env));
     }
 }
@@ -73,12 +94,12 @@ static
 TYPE*
 mk_command_line_list(int argc, char**argv)
 {
-  TYPE* result = nil();
-  for (int i = 0; i < argc; i++)
-  {
-      result = cons(mk_string_with_length(argv[i], strlen(argv[i])), result);
-  }
-  return reverse(result);
+    TYPE* result = nil();
+    for (int i = 0; i < argc; i++)
+    {
+	result = cons(mk_string_with_length(argv[i], strlen(argv[i])), result);
+    }
+    return reverse(result);
 }
 
 static
@@ -91,7 +112,7 @@ script_mode(int argc, char** argv, TYPE* env)
     define_variable(mk_symbol("command-line"), command_line, env);
     
     TYPE* port = open_input_file(mk_string_with_length(file_name,
-						       strlen(file_name)));
+                                                       strlen(file_name)));
     TYPE* hash = mk_char('#');
     TYPE* newline = mk_char('\n');
     TYPE* c = peek_char_from_port(port);
@@ -99,22 +120,22 @@ script_mode(int argc, char** argv, TYPE* env)
     /* if the first line has # we assume it is a "#!/..." line */
     if (is_char_equal(c, hash))
     {
-	do
-	{
-	    c = read_char_from_port(port);
-	}
-	while (!is_eof_object(c) && !is_char_equal(c, newline));
+        do
+        {
+            c = read_char_from_port(port);
+        }
+        while (!is_eof_object(c) && !is_char_equal(c, newline));
     }
     
     do
     {
         stack_init();
         sexp = read_from_port(port);
-	if (is_eof_object(sexp))
-	{
-	    break;
-	}
-	sexp = xlat(sexp);
+        if (is_eof_object(sexp))
+        {
+            break;
+        }
+        sexp = xlat(sexp);
         eval(sexp, env);
     }
     while(TRUE);
@@ -144,8 +165,8 @@ main(int argc, char** argv)
     switch(status)
     {
     case SETJMP_INIT:
-	/* first time in setjmp */
-	break;
+        /* first time in setjmp */
+        break;
     case NO_ERROR:
     case PARSE_ERROR:
     case EVAL_ERROR:
@@ -161,17 +182,17 @@ main(int argc, char** argv)
     
     if (argc < 2)
     {
-	interactive(env);
+        interactive(env);
     }
     else
     {
-	if (script_has_run)
-	{
-	    fprintf(stderr, "MAIN: error in script\n");
-	    return 1;
-	}
-	script_has_run = TRUE;
-	script_mode(argc, argv, env);
+        if (script_has_run)
+        {
+            fprintf(stderr, "MAIN: error in script\n");
+            return 1;
+        }
+        script_has_run = TRUE;
+        script_mode(argc, argv, env);
     }
     
     return 0;

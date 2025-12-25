@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -377,7 +398,7 @@ string_to_list(const TYPE* sexp)
     
     for (int i = as_integer(string_length(sexp)) - 1; i >= 0; i--)
     {
-	result = cons(mk_char(sexp->d.s[i]), result);
+        result = cons(mk_char(sexp->d.s[i]), result);
     }
     
     return result;
@@ -387,37 +408,37 @@ TYPE*
 list_to_string(const TYPE* sexp)
 {
     assert_throw(is_list(sexp),
-		 TYPE_ERROR,
-		 "LIST_TO_STRING: argument is not a list");
+                 TYPE_ERROR,
+                 "LIST_TO_STRING: argument is not a list");
 
     TYPE* result;
     
     if (IS_NIL(sexp))
     {
-	result = (TYPE*)sexp;
+        result = (TYPE*)sexp;
     }
     else
     {
-	int i = 0;
-	char buffer[MAX_IDENTIFIER_LENGTH];
-	const TYPE* list = sexp;
-	do
-	{
-	    const TYPE* c = car(list);
-	    
-	    assert_throw(is_char(c),
-			 TYPE_ERROR,
-			 "LIST_TO_STRING: argument must be a char list");
-	    assert_throw(i < MAX_IDENTIFIER_LENGTH - 1,
-			 CONSTRAINT_ERROR,
-			 "LIST_TO_STRING: exceded max identifier length");
+        int i = 0;
+        char buffer[MAX_IDENTIFIER_LENGTH];
+        const TYPE* list = sexp;
+        do
+        {
+            const TYPE* c = car(list);
+            
+            assert_throw(is_char(c),
+                         TYPE_ERROR,
+                         "LIST_TO_STRING: argument must be a char list");
+            assert_throw(i < MAX_IDENTIFIER_LENGTH - 1,
+                         CONSTRAINT_ERROR,
+                         "LIST_TO_STRING: exceded max identifier length");
 
-	    buffer[i++] = c->d.i;
-	    list = cdr(list);
-	} while (!IS_NIL(list));
-	
-	buffer[i] = '\0';
-	result = mk_string_with_length(buffer, i);
+            buffer[i++] = c->d.i;
+            list = cdr(list);
+        } while (!IS_NIL(list));
+        
+        buffer[i] = '\0';
+        result = mk_string_with_length(buffer, i);
     }
 }
 
@@ -432,9 +453,9 @@ string_to_number(const TYPE* sexp, const TYPE* radix)
     
     if (errno != 0)
     {
-	perror("STRING_TO_NUMBER:");
-	throw_error(CONSTRAINT_ERROR,
-		    "STRING_TO_NUMBER:Failed to parse number");
+        perror("STRING_TO_NUMBER:");
+        throw_error(CONSTRAINT_ERROR,
+                    "STRING_TO_NUMBER:Failed to parse number");
     }
 
     return mk_number_from_int(i);

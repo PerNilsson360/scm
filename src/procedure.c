@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -53,15 +74,15 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     }
     
     result->type = PROCEDURE;
-	result->d.pr = mloc(sizeof(PROCEDURE_DATA));
+    result->d.pr = mloc(sizeof(PROCEDURE_DATA));
 
     if (result->d.pr == NULL)
     {
         fprintf(stderr, "MK_PROCEDURE: could not allocate memory for data");
         exit(1);
     }
-	
-	result->d.pr->parameters = parameters;
+        
+    result->d.pr->parameters = parameters;
     int is_var_args =  is_improper_list(parameters);
     result->d.pr->is_var_args = is_var_args;
     if (is_var_args)
@@ -72,8 +93,8 @@ mk_procedure(TYPE* parameters, TYPE* body, TYPE* env)
     {
         result->d.pr->param_len = length(parameters);
     }
-	result->d.pr->body = body;
-	result->d.pr->env = env;
+    result->d.pr->body = body;
+    result->d.pr->env = env;
 
     return result;
 }
@@ -107,7 +128,7 @@ procedure_parameters(TYPE* procedure)
         throw_error(TYPE_ERROR,
                     "PROCEDURE_PARAMETERS: procedure must be a procedure");
     }
-	
+        
     return procedure->d.pr->parameters;
 }
 

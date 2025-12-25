@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -85,18 +106,18 @@ init_symbol_table()
     _delay_keyword_symbol_ = mk_symbol("delay");
     _stream_cons_keyword_symbol_ = mk_symbol("stream-cons");
     _quasiquote_keyword_symbol_ = mk_symbol("quasiquote");
-	_call_cc_keyword_symbol_ = mk_symbol("call-with-current-continuation");
-	_apply_keyword_symbol_ = mk_symbol("apply");
+    _call_cc_keyword_symbol_ = mk_symbol("call-with-current-continuation");
+    _apply_keyword_symbol_ = mk_symbol("apply");
 }
 
 TYPE* 
 mk_symbol(const char* symbol)
 {
     const TYPE lookup_symbol =
-    {
-	.type = SYMBOL,
-	.d.s = (char*) symbol
-    };
+	{
+	    .type = SYMBOL,
+	    .d.s = (char*) symbol
+	};
     
     TYPE* result;
     TYPE* symbol_in_table;
@@ -189,7 +210,7 @@ is_reserved_symbol(const TYPE* symbol)
         is_eq(_delay_keyword_symbol_, symbol) ||
         is_eq(_stream_cons_keyword_symbol_, symbol) ||
         is_eq(_quasiquote_keyword_symbol_, symbol) ||
-		is_eq(_call_cc_keyword_symbol_, symbol))
+	is_eq(_call_cc_keyword_symbol_, symbol))
     {
         result = TRUE;
     }

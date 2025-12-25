@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 
@@ -224,7 +245,7 @@ static int
 pattern_match(const TYPE* data, const TYPE* pattern, TYPE** vars, TYPE** vals)
 {
     int result = FALSE;
-	
+        
     if (is_pattern_var(pattern))
     {
         if (is_wildcard_pattern(pattern))
@@ -306,7 +327,7 @@ sexp_apply_procedure(const TYPE* exp)
 static TYPE*
 sexp_apply_arguments(const TYPE* exp)
 {
-	return cdr(cdr(exp));
+    return cdr(cdr(exp));
 }
 
 static int 
@@ -329,35 +350,35 @@ check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* proc)
     int len = param_len(proc);
     if (is_var_arg(proc))
     {
-		if (arg_len < len)
+	if (arg_len < len)
         {     /* len is min length */
-			display_debug(proc_name);
-			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
-					arg_len,
-					len);
-			throw_error(APPLY_ERROR, 
-						"Apply: wrong number of arguments in application");
-		}
+	    display_debug(proc_name);
+	    fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
+		    arg_len,
+		    len);
+	    throw_error(APPLY_ERROR, 
+			"Apply: wrong number of arguments in application");
+	}
     }
     else
     {
 
-		if (arg_len != len)
+	if (arg_len != len)
         {
-			display_debug(proc_name);
-			fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
-					arg_len,
-					len);
-			throw_error(APPLY_ERROR, 
-						"Apply: wrong number of arguments in application");
-		}
+	    display_debug(proc_name);
+	    fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
+		    arg_len,
+		    len);
+	    throw_error(APPLY_ERROR, 
+			"Apply: wrong number of arguments in application");
+	}
     }
 }
 
 static int
 is_sexp_call_cc(const TYPE* exp)
 {
-	return is_tagged_list(exp, _call_cc_keyword_symbol_);
+    return is_tagged_list(exp, _call_cc_keyword_symbol_);
 }
 
 void
@@ -365,8 +386,8 @@ hairy_eval()
 {
     TYPE* vars;                 /* used in match */
     TYPE* vals;                 /* used in match */
-	TYPE* tmp;
-	
+    TYPE* tmp;
+        
     reg.val = nil();
     reg.cont = &&done;
     reg.proc = nil();
@@ -384,120 +405,120 @@ eval_dispatch:
     if (IS_TYPE_TAGGED_POINTER(reg.exp)) {
         /* All non struct types are self evaluating i.e. values */
         reg.val = reg.exp;
-		goto *reg.cont;
+	goto *reg.cont;
     }
     
-	switch (((TYPE*)reg.exp)->type) {
-	case RATIONAL:
-	case REAL:
-	case COMPLEX:
-	case CHAR:
-	case STRING:
-	case IMMUTABLE_STRING:
-	case VECTOR:
-	case NONE:
-	case ESCAPE_PROC:
-		/* Self evalutating expressions */
-		reg.val = reg.exp;
-		goto *reg.cont;
-	case QUOTE:
-		reg.val = QUOTATION_VALUE(reg.exp);
-		goto *reg.cont;
-	case SYMBOL:
-		reg.val = lookup_unbound_var(reg.exp);
-		goto *reg.cont;
-	case BOUND_VAR:
-		reg.val = lookup_variable_value(reg.exp, reg.env);
-		goto *reg.cont;
-	case ASSIGNMENT:
-		reg.unev = ASSIGNMENT_VARIABLE(reg.exp);
-		save(reg.unev);
-		reg.exp = ASSIGNMENT_VALUE(reg.exp);
-		save(reg.env);
-		save(reg.cont);
-		reg.cont = &&ev_assignment_1;
-		goto eval_dispatch;
-	case DEFINITION:
-		reg.unev = DEFINITION_VARIABLE(reg.exp);
-		save(reg.unev);
-		reg.exp = DEFINITION_VALUE(reg.exp);
-		save(reg.env);
-		save(reg.cont);
-		reg.cont = &&ev_definition_1;
-		goto eval_dispatch;
-	case IF_TYPE:
-		save(reg.exp);
-		save(reg.env);
-		save(reg.cont);
-		reg.cont = &&ev_if_decide;
-		reg.exp = IF_PREDICATE(reg.exp);
-		goto eval_dispatch;
-	case LAMBDA:
-		reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),
-							   LAMBDA_BODY(reg.exp),
-							   reg.env);
-		goto *reg.cont;
-	case BEGIN_TYPE:
-		reg.unev = BEGIN_ACTIONS(reg.exp);
-		save(reg.cont);
-		goto ev_sequence;
-	case MATCH:
-		save(reg.exp);
-		save(reg.cont);
-		reg.unev = MATCH_CLAUSES(reg.exp);
-		save(reg.unev);
-		reg.exp = MATCH_KEY(reg.exp);
-		reg.cont = &&ev_match_key_evaluated;
-		goto eval_dispatch;
-	case DELAY:
-		reg.val = mk_procedure(nil(), DELAY_ACTIONS(reg.exp), reg.env);
-		goto *reg.cont;
-	case CALL_CC:
-		save(reg.cont);
-		reg.exp = mk_list(2, ESCAPE_PROCEDURE(reg.exp), mk_escape_proc(get_stack(), &reg));
-		reg.cont = &&ev_call_cc_done;
-		goto eval_dispatch;
-	case APPLY:
-		reg.unev = APPLY_ARGUMENTS(reg.exp);
-		if (IS_NIL(reg.unev)) {
-			throw_error(APPLY_ERROR,
-						"APPLY: needs at least one argument");
-		}
-		if (!is_pair(reg.unev))
-		{
-			display_debug(reg.unev);
-			throw_error(APPLY_ERROR,
-						"APPLY: malformed arguments in application");
-		}
-		reg.exp = APPLY_PROCEDURE(reg.exp);
-		save(reg.cont);
-		save(reg.exp);
-		save(reg.env);
-		save(reg.unev);
-		reg.cont = &&ev_apply_did_operator;
-		goto eval_dispatch;
-	case PAIR:
-		reg.unev = operands(reg.exp);
-		if (!IS_NIL(reg.unev) && !is_pair(reg.unev))
-		{
-			display_debug(reg.unev);
-			throw_error(APPLY_ERROR,
-						"APPLICATION: malformed arguments in application");
-		}
-		reg.exp = operator(reg.exp);
-		save(reg.cont);
-		save(reg.exp);
-		save(reg.env);
-		save(reg.unev);
-		reg.cont = &&ev_appl_did_operator;
-		goto eval_dispatch;
-	default:
-		// TODO:
-		//if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
-		display_debug(reg.exp);
-		throw_error(APPLY_ERROR, "EVAL: not a valid expression");
-		break;
+    switch (((TYPE*)reg.exp)->type) {
+    case RATIONAL:
+    case REAL:
+    case COMPLEX:
+    case CHAR:
+    case STRING:
+    case IMMUTABLE_STRING:
+    case VECTOR:
+    case NONE:
+    case ESCAPE_PROC:
+	/* Self evalutating expressions */
+	reg.val = reg.exp;
+	goto *reg.cont;
+    case QUOTE:
+	reg.val = QUOTATION_VALUE(reg.exp);
+	goto *reg.cont;
+    case SYMBOL:
+	reg.val = lookup_unbound_var(reg.exp);
+	goto *reg.cont;
+    case BOUND_VAR:
+	reg.val = lookup_variable_value(reg.exp, reg.env);
+	goto *reg.cont;
+    case ASSIGNMENT:
+	reg.unev = ASSIGNMENT_VARIABLE(reg.exp);
+	save(reg.unev);
+	reg.exp = ASSIGNMENT_VALUE(reg.exp);
+	save(reg.env);
+	save(reg.cont);
+	reg.cont = &&ev_assignment_1;
+	goto eval_dispatch;
+    case DEFINITION:
+	reg.unev = DEFINITION_VARIABLE(reg.exp);
+	save(reg.unev);
+	reg.exp = DEFINITION_VALUE(reg.exp);
+	save(reg.env);
+	save(reg.cont);
+	reg.cont = &&ev_definition_1;
+	goto eval_dispatch;
+    case IF_TYPE:
+	save(reg.exp);
+	save(reg.env);
+	save(reg.cont);
+	reg.cont = &&ev_if_decide;
+	reg.exp = IF_PREDICATE(reg.exp);
+	goto eval_dispatch;
+    case LAMBDA:
+	reg.val = mk_procedure(LAMBDA_PARAMETERS(reg.exp),
+			       LAMBDA_BODY(reg.exp),
+			       reg.env);
+	goto *reg.cont;
+    case BEGIN_TYPE:
+	reg.unev = BEGIN_ACTIONS(reg.exp);
+	save(reg.cont);
+	goto ev_sequence;
+    case MATCH:
+	save(reg.exp);
+	save(reg.cont);
+	reg.unev = MATCH_CLAUSES(reg.exp);
+	save(reg.unev);
+	reg.exp = MATCH_KEY(reg.exp);
+	reg.cont = &&ev_match_key_evaluated;
+	goto eval_dispatch;
+    case DELAY:
+	reg.val = mk_procedure(nil(), DELAY_ACTIONS(reg.exp), reg.env);
+	goto *reg.cont;
+    case CALL_CC:
+	save(reg.cont);
+	reg.exp = mk_list(2, ESCAPE_PROCEDURE(reg.exp), mk_escape_proc(get_stack(), &reg));
+	reg.cont = &&ev_call_cc_done;
+	goto eval_dispatch;
+    case APPLY:
+	reg.unev = APPLY_ARGUMENTS(reg.exp);
+	if (IS_NIL(reg.unev)) {
+	    throw_error(APPLY_ERROR,
+			"APPLY: needs at least one argument");
 	}
+	if (!is_pair(reg.unev))
+	{
+	    display_debug(reg.unev);
+	    throw_error(APPLY_ERROR,
+			"APPLY: malformed arguments in application");
+	}
+	reg.exp = APPLY_PROCEDURE(reg.exp);
+	save(reg.cont);
+	save(reg.exp);
+	save(reg.env);
+	save(reg.unev);
+	reg.cont = &&ev_apply_did_operator;
+	goto eval_dispatch;
+    case PAIR:
+	reg.unev = operands(reg.exp);
+	if (!IS_NIL(reg.unev) && !is_pair(reg.unev))
+	{
+	    display_debug(reg.unev);
+	    throw_error(APPLY_ERROR,
+			"APPLICATION: malformed arguments in application");
+	}
+	reg.exp = operator(reg.exp);
+	save(reg.cont);
+	save(reg.exp);
+	save(reg.env);
+	save(reg.unev);
+	reg.cont = &&ev_appl_did_operator;
+	goto eval_dispatch;
+    default:
+	// TODO:
+	//if (is_stream_cons(reg.exp)){goto ev_stream_cons;}
+	display_debug(reg.exp);
+	throw_error(APPLY_ERROR, "EVAL: not a valid expression");
+	break;
+    }
 ev_match_key_evaluated:
     restore(&reg.unev);
     save(reg.env);
@@ -525,7 +546,7 @@ ev_match_done:
     restore(&reg.exp);
     goto *reg.cont;
 ev_stream_cons:
-	/* TODO this does not work */
+    /* TODO this does not work */
     save(reg.unev);
     reg.unev = operands(reg.exp);
     if (length(reg.unev) != 2)
@@ -543,7 +564,7 @@ ev_stream_cons_done:
     restore(&reg.unev);
     goto *reg.cont;
 ev_call_cc_done:
-	restore(&reg.cont);
+    restore(&reg.cont);
     goto *reg.cont;
     /* special form apply */
 ev_apply_did_operator:
@@ -551,7 +572,7 @@ ev_apply_did_operator:
     restore(&reg.env);
     reg.argl = nil();
     reg.proc = reg.val;
-	if (no_operands(reg.unev)) goto apply_dispatch;
+    if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_apply_operand_loop:
     save(reg.argl);
@@ -653,38 +674,38 @@ ev_definition_1:
     goto *reg.cont;
     /* Apply */
 apply_dispatch:
-	restore(&reg.exp); // the name of the procedure for error reporting
-	if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PRIMITIVE_PROCEDURE))
+    restore(&reg.exp); // the name of the procedure for error reporting
+    if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PRIMITIVE_PROCEDURE))
     {
-		goto primitive_apply;
+	goto primitive_apply;
     }
-	else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PROCEDURE))
+    else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, PROCEDURE))
     {
-		goto compound_apply;
+	goto compound_apply;
     }
-	else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, ESCAPE_PROC))
+    else if (IS_POINTER_TO_STRUCT_OF_TYPE(reg.proc, ESCAPE_PROC))
     {
-		goto escape_proc_apply;
+	goto escape_proc_apply;
     }
     else {
-		display_debug(reg.exp);
-		display_debug(reg.proc);
-		throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
-	}
+	display_debug(reg.exp);
+	display_debug(reg.proc);
+	throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
+    }
 primitive_apply:
     reg.val = apply_primitive_procedure(reg.proc, reg.argl, reg.env);
     restore(&reg.cont);
     goto *reg.cont;
 compound_apply:
-	tmp = procedure_parameters(reg.proc);
-	check_procedure_arg_len(reg.exp, length(reg.argl), reg.proc);
+    tmp = procedure_parameters(reg.proc);
+    check_procedure_arg_len(reg.exp, length(reg.argl), reg.proc);
     reg.env = extend_environment(tmp,
                                  reg.argl,
                                  procedure_environment(reg.proc));
     reg.unev = procedure_body(reg.proc);
     goto ev_sequence;
 escape_proc_apply:
-	if (length(reg.argl) != 1)
+    if (length(reg.argl) != 1)
     {
         display_debug(reg.exp);
         fprintf(stderr, "escape procedure got %d args expected one argument\n",
@@ -692,11 +713,11 @@ escape_proc_apply:
         throw_error(APPLY_ERROR, 
                     "Apply: wrong number of arguments in escape procedure application");
     }
-	tmp = car(reg.argl);
-	assign_stack(&(((TYPE*)reg.proc)->d.e->stack));
-	copy_regs(&reg, &(((TYPE*)reg.proc)->d.e->regs));
-	reg.val = tmp;
-	restore(&reg.cont);
+    tmp = car(reg.argl);
+    assign_stack(&(((TYPE*)reg.proc)->d.e->stack));
+    copy_regs(&reg, &(((TYPE*)reg.proc)->d.e->regs));
+    reg.val = tmp;
+    restore(&reg.cont);
     goto *reg.cont;
 done:
     ;
@@ -897,9 +918,9 @@ match_clauses_to_name_free(TYPE* clauses,
 
         result = cons(cons(pattern,
                            mk_begin(exp_to_name_free_exp(body,
-														 match_body_context))),
+							 match_body_context))),
                       match_clauses_to_name_free(cdr(clauses),
-												 context));
+						 context));
     }
     
     return result;
@@ -909,38 +930,38 @@ static
 TYPE*
 scan_internal_defs(TYPE* exps)
 {
-	TYPE* result = nil();
-	int found_non_definition = 0;
-	while (!IS_NIL(exps))
+    TYPE* result = nil();
+    int found_non_definition = 0;
+    while (!IS_NIL(exps))
+    {
+	TYPE* exp = car(exps);
+	if (is_sexp_definition(exp))
 	{
-		TYPE* exp = car(exps);
-		if (is_sexp_definition(exp))
-		{
-			if (found_non_definition)
-			{
-				throw_error(PARSE_ERROR, 
-							"EVAL: internal definition must come first in a body");
-			}
-			TYPE* var = sexp_definition_variable(exp);
-			result = cons(var, result);
-		} else {
-			found_non_definition = 1;
-		}
-		exps = cdr(exps);
+	    if (found_non_definition)
+	    {
+		throw_error(PARSE_ERROR, 
+			    "EVAL: internal definition must come first in a body");
+	    }
+	    TYPE* var = sexp_definition_variable(exp);
+	    result = cons(var, result);
+	} else {
+	    found_non_definition = 1;
 	}
+	exps = cdr(exps);
+    }
 
-	return reverse(result);
+    return reverse(result);
 }
 
 static
 void
 add_defs_to_context(TYPE* defs, TYPE* ctx)
 {
-	while (!IS_NIL(defs))
-	{
-		add_definition_to_context(car(defs), ctx);
-		defs = cdr(defs);
-	}
+    while (!IS_NIL(defs))
+    {
+	add_definition_to_context(car(defs), ctx);
+	defs = cdr(defs);
+    }
 }
 
 static 
@@ -957,68 +978,68 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     {
         result = mk_quoted(sexp_quotation_value(exp));
     }
-	else if (IS_SEXP_ASSIGNMENT(exp)) {
-		result = mk_assignment(exp_to_name_free_exp(SEXP_ASSIGNMENT_VARIABLE(exp), context),
-							   exp_to_name_free_exp(SEXP_ASSIGNMENT_VALUE(exp), context));
-	}
-	else if (is_sexp_if(exp))
-	{
-		result = mk_if(exp_to_name_free_exp(if_sexp_predicate(exp), context),
-					   exp_to_name_free_exp(if_sexp_consequent(exp), context),
-					   exp_to_name_free_exp(if_sexp_alternative(exp), context));
-	}
-	else if (is_sexp_definition(exp))
+    else if (IS_SEXP_ASSIGNMENT(exp)) {
+	result = mk_assignment(exp_to_name_free_exp(SEXP_ASSIGNMENT_VARIABLE(exp), context),
+			       exp_to_name_free_exp(SEXP_ASSIGNMENT_VALUE(exp), context));
+    }
+    else if (is_sexp_if(exp))
+    {
+	result = mk_if(exp_to_name_free_exp(if_sexp_predicate(exp), context),
+		       exp_to_name_free_exp(if_sexp_consequent(exp), context),
+		       exp_to_name_free_exp(if_sexp_alternative(exp), context));
+    }
+    else if (is_sexp_definition(exp))
     {
         TYPE* var = sexp_definition_variable(exp);
-		TYPE* val = sexp_definition_value(exp);
+	TYPE* val = sexp_definition_value(exp);
         result = mk_definition(var,
                                exp_to_name_free_exp(val, context));
     }
     else if (is_sexp_lambda(exp))
     {
         TYPE* vars = lambda_sexp_parameters(exp);
-		TYPE* ctx = extend_context(vars, context);
-		TYPE* body = lambda_sexp_body(exp);
-		TYPE* defs = scan_internal_defs(body);
-		add_defs_to_context(defs, ctx);
+	TYPE* ctx = extend_context(vars, context);
+	TYPE* body = lambda_sexp_body(exp);
+	TYPE* defs = scan_internal_defs(body);
+	add_defs_to_context(defs, ctx);
         result = mk_lambda(vars, 
                            exp_to_name_free_exp(body, ctx));
     }
-	else if (is_sexp_begin(exp))
-	{
-		result = mk_begin(exp_to_name_free_exp(
-							  sexp_begin_actions(exp), context));
-	}
+    else if (is_sexp_begin(exp))
+    {
+	result = mk_begin(exp_to_name_free_exp(
+			      sexp_begin_actions(exp), context));
+    }
     else if (is_sexp_match(exp))
     {
-		/* TODO: fix better checking? */
-		if (length(exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
+	/* TODO: fix better checking? */
+	if (length(exp) < 2) throw_error(EVAL_ERROR, "MATCH: key is missing.");
         TYPE* key = sexp_match_key(exp);
-        TYPE* clauses = sexp_match_clauses(exp);		
+        TYPE* clauses = sexp_match_clauses(exp);                
         result = mk_match(exp_to_name_free_exp(key, context), 
                           match_clauses_to_name_free(clauses, context));
     }
-	else if (is_sexp_delay(exp))
-	{
-		assert_throw(length(exp) == 2,
-					 PARSE_ERROR,
-					 "DELAY: must have exactly one argument");
-		TYPE* ctx = extend_context(nil(), context);
-		result = mk_delay(exp_to_name_free_exp(operands(exp), ctx));
-	}
-	else if (is_sexp_call_cc(exp))
-	{
-		assert_throw(length(exp) == 2,
-					 PARSE_ERROR,
-					 "CALL_CC: must have exactly one argument");
-		result = mk_call_cc(exp_to_name_free_exp(car(operands(exp)), context));
-	
-	}
-	else if (is_sexp_apply(exp))
-	{
-		return mk_apply(exp_to_name_free_exp(sexp_apply_procedure(exp), context),
-						exp_to_name_free_exp(sexp_apply_arguments(exp), context));
-	}
+    else if (is_sexp_delay(exp))
+    {
+	assert_throw(length(exp) == 2,
+		     PARSE_ERROR,
+		     "DELAY: must have exactly one argument");
+	TYPE* ctx = extend_context(nil(), context);
+	result = mk_delay(exp_to_name_free_exp(operands(exp), ctx));
+    }
+    else if (is_sexp_call_cc(exp))
+    {
+	assert_throw(length(exp) == 2,
+		     PARSE_ERROR,
+		     "CALL_CC: must have exactly one argument");
+	result = mk_call_cc(exp_to_name_free_exp(car(operands(exp)), context));
+        
+    }
+    else if (is_sexp_apply(exp))
+    {
+	return mk_apply(exp_to_name_free_exp(sexp_apply_procedure(exp), context),
+			exp_to_name_free_exp(sexp_apply_arguments(exp), context));
+    }
     else if (is_pair(exp))
     {
         TYPE* hd = exp_to_name_free_exp(car(exp), context);
@@ -1040,12 +1061,12 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
 TYPE*
 eval(TYPE* exp, TYPE* env)
 {
-	reg.exp = exp_to_name_free_exp(exp, nil());
+    reg.exp = exp_to_name_free_exp(exp, nil());
     reg.env = env;
     hairy_eval();
-	if (_debug_) {
-		stack_print_statistics();
-	}
+    if (_debug_) {
+	stack_print_statistics();
+    }
     return reg.val;
 }
 

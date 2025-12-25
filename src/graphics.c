@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -880,10 +901,10 @@ gr_open(const TYPE* exp)
                               BlackPixel(display, screen_number), 
                               WhitePixel(display, screen_number));
 
-	XWindowAttributes attrib;
-	int status = XGetWindowAttributes(display, win, & attrib);
-	fprintf(stderr, "status %d depth %d\n", status, attrib.depth);
-	
+    XWindowAttributes attrib;
+    int status = XGetWindowAttributes(display, win, & attrib);
+    fprintf(stderr, "status %d depth %d\n", status, attrib.depth);
+        
     if ((size_hints = XAllocSizeHints()) == NULL) 
     {
         fprintf(stderr, "GR-OPEN: can not get mem for sizehints");
@@ -951,7 +972,7 @@ gr_open(const TYPE* exp)
                    &gc_values);
 
     XMapWindow(display, win);
-	pixmap = XCreatePixmap(display, win, width, height, 24);
+    pixmap = XCreatePixmap(display, win, width, height, 24);
     XFlush(display);
 }
 
@@ -959,7 +980,7 @@ void
 gr_close()
 {
     XCloseDisplay(display);
-	display = 0;
+    display = 0;
 }
 
 void 
@@ -1062,51 +1083,51 @@ gr_set_foreground(const TYPE* exp)
 void
 gr_draw_point()
 {
-	int rc = XDrawPoint(display, pixmap, gc, point_x, point_y);
+    int rc = XDrawPoint(display, pixmap, gc, point_x, point_y);
 
-	if (rc == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, rc, buff, 256);
-		fprintf(stderr, "GR_DRAW_point: error %s.\n", buff);
-	}
+    if (rc == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, rc, buff, 256);
+	fprintf(stderr, "GR_DRAW_point: error %s.\n", buff);
+    }
 }
 
 void
 gr_draw_line(const TYPE* x1, const TYPE* y1, const TYPE* x2, const TYPE* y2)
 {
-	assert_throw(is_number(x1), 
+    assert_throw(is_number(x1), 
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: x1 is not an integer");
-	assert_throw(is_number(y1), 
-				 TYPE_ERROR,
+    assert_throw(is_number(y1), 
+		 TYPE_ERROR,
                  "GR_SET_FOREGROUND: y1 is not an integer");
-	assert_throw(is_number (x2), 
+    assert_throw(is_number (x2), 
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: x2 is not an integer");
-	assert_throw(is_number(y2), 
+    assert_throw(is_number(y2), 
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: y1 is not an integer");
 
-	if (display == 0) {
-		fprintf(stderr, "GR_DRAW_LINE: need to call gr-open.\n");
-		return;
-	}
-	
-	int rc = XDrawLine(display,
-					   pixmap,
-					   gc,
-					   as_integer(x1),
-					   as_integer(y1),
-					   as_integer(x2),
-					   as_integer(y2));
-	
-	if (rc == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, rc, buff, 256);
-		fprintf(stderr, "GR_DRAW_LINE: error %s.\n", buff);
-	}
+    if (display == 0) {
+	fprintf(stderr, "GR_DRAW_LINE: need to call gr-open.\n");
+	return;
+    }
+        
+    int rc = XDrawLine(display,
+		       pixmap,
+		       gc,
+		       as_integer(x1),
+		       as_integer(y1),
+		       as_integer(x2),
+		       as_integer(y2));
+        
+    if (rc == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, rc, buff, 256);
+	fprintf(stderr, "GR_DRAW_LINE: error %s.\n", buff);
+    }
 }
 
 TYPE* 
@@ -1140,10 +1161,10 @@ x_next_event()
         result = cons(mk_symbol("button-press"),
                       cons(window, 
                            cons(mk_number_from_int(event.xbutton.x),
-                           cons(mk_number_from_int(event.xbutton.y),
-                                cons(mk_number_from_int(event.xbutton.state),
-                                     cons(mk_number_from_int(event.xbutton.button),
-                                          nil()))))));
+				cons(mk_number_from_int(event.xbutton.y),
+				     cons(mk_number_from_int(event.xbutton.state),
+					  cons(mk_number_from_int(event.xbutton.button),
+					       nil()))))));
         break;
     case KeyPress:
     {
@@ -1180,35 +1201,35 @@ x_next_event()
 
 void
 gr_fill_rect(const TYPE* width, const TYPE* height) {
-	assert_throw(is_integer(width), 
-				 TYPE_ERROR,
+    assert_throw(is_integer(width), 
+		 TYPE_ERROR,
                  "GR_FILL_RECTANGLE: width must be an integer");
-	
-	assert_throw(is_integer(height), 
-				 TYPE_ERROR,
+        
+    assert_throw(is_integer(height), 
+		 TYPE_ERROR,
                  "GR_FILL_RECTANGLE: height must be an integer");
-	
-	int status = XFillRectangle(display,
-								pixmap,
-								gc,
-								point_x,
-								point_y,
-								as_integer(width),
-								as_integer(height));
-	if (status == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, status, buff, 256);
-		fprintf(stderr, "GR_FILL_RECT: error %s.\n", buff);
-	}
+        
+    int status = XFillRectangle(display,
+				pixmap,
+				gc,
+				point_x,
+				point_y,
+				as_integer(width),
+				as_integer(height));
+    if (status == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, status, buff, 256);
+	fprintf(stderr, "GR_FILL_RECT: error %s.\n", buff);
+    }
 }
 
 
 void 
 gr_fill_arc(const TYPE* width, 
-			const TYPE* height, 
-			const TYPE* angle1, 
-			const TYPE* angle2)
+	    const TYPE* height, 
+	    const TYPE* angle1, 
+	    const TYPE* angle2)
 {
     assert_throw(is_integer(width), 
                  TYPE_ERROR,
@@ -1227,20 +1248,20 @@ gr_fill_arc(const TYPE* width,
                  "GR_FILL_ARC: angle2 is a integer");
 
     int status = XFillArc(display, 
-						  pixmap,
-						  gc,
-						  point_x, 
-						  point_y, 
-						  as_integer(width), 
-						  as_integer(height), 
-						  as_integer(angle1), 
-						  as_integer(angle2));
-	if (status == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, status, buff, 256);
-		fprintf(stderr, "GR_FILL_ARC: error %s.\n", buff);
-	}
+			  pixmap,
+			  gc,
+			  point_x, 
+			  point_y, 
+			  as_integer(width), 
+			  as_integer(height), 
+			  as_integer(angle1), 
+			  as_integer(angle2));
+    if (status == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, status, buff, 256);
+	fprintf(stderr, "GR_FILL_ARC: error %s.\n", buff);
+    }
 }
 
 void gr_fill_polygon(const TYPE* points)
@@ -1278,12 +1299,12 @@ void gr_fill_polygon(const TYPE* points)
                               n_points,
                               Convex,
                               CoordModeOrigin);
-	if (status == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, status, buff, 256);
-		fprintf(stderr, "GR_FILL_POLYGON: error %s.\n", buff);
-	}
+    if (status == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, status, buff, 256);
+	fprintf(stderr, "GR_FILL_POLYGON: error %s.\n", buff);
+    }
 }
 
 void
@@ -1297,12 +1318,12 @@ gr_swap_buffers()
 {
     int status = XCopyArea(display, pixmap, win, gc, 0, 0, width, height, 0,0);
 
-	if (status == 0)
-	{
-		char buff[256];
-		XGetErrorText(display, status, buff, 256);
-		fprintf(stderr, "GR_SWAP_BUFFERS: error %s.\n", buff);
-	}
+    if (status == 0)
+    {
+	char buff[256];
+	XGetErrorText(display, status, buff, 256);
+	fprintf(stderr, "GR_SWAP_BUFFERS: error %s.\n", buff);
+    }
     
     XSync(display, False);
 }

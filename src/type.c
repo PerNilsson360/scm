@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -83,17 +104,17 @@ static
 TYPE* 
 mk_cell_data(int type, const TYPE* sexp)
 {
-	TYPE* result = mloc(sizeof(TYPE));
-	   
+    TYPE* result = mloc(sizeof(TYPE));
+           
     if (result == NULL)
     {
         fprintf(stderr, "MK_CELL_DATA: could not allocate memory for type");
         exit(1);
     }
 
-	result->type = type;
-	result->d.t = (TYPE*)sexp;
-	
+    result->type = type;
+    result->d.t = (TYPE*)sexp;
+        
     return result;
 }
 
@@ -122,13 +143,13 @@ mk_pair_data(int type, const TYPE* car, const TYPE* cdr)
     result->d.p->cdr = (TYPE*) cdr;
 
     return result; 
-	
+        
 }
 
 TYPE* 
 cons(const TYPE* car, const TYPE* cdr)
 {
-	return mk_pair_data(PAIR, car, cdr);
+    return mk_pair_data(PAIR, car, cdr);
 }
 
 TYPE* 
@@ -139,7 +160,7 @@ car(const TYPE* list)
         display_debug(list);
         printf("not a pair\n");
         /*assert_throw(FALSE, TYPE_ERROR, "CAR: not a pair");*/
-		assert(0);  
+	assert(0);  
     }
 
     return list->d.p->car;
@@ -266,7 +287,7 @@ mk_list(int count, ...)
 
     for (i = 0; i < count; i++)
     {
-		result = cons(va_arg(ap, TYPE*), result);
+	result = cons(va_arg(ap, TYPE*), result);
     }
     
     va_end(ap);
@@ -297,7 +318,7 @@ length(const TYPE* pair)
 int
 is_procedure(const TYPE* proc)
 {
-	return
+    return
         IS_POINTER_TO_STRUCT(proc) &&
         (proc->type == PROCEDURE || proc->type == PRIMITIVE_PROCEDURE);
 }
@@ -313,7 +334,7 @@ is_eqv(const TYPE* left, const TYPE* right)
         case RATIONAL:
         case REAL:
         case COMPLEX:
-		return is_number_equal(left, right);
+	    return is_number_equal(left, right);
         case CHAR:
             return is_char_equal(left, right);
         case SYMBOL:
@@ -334,14 +355,14 @@ is_equal(const TYPE* left, const TYPE* right)
     {
         result = is_equal(car(left), car(right)) && is_equal(cdr(left), cdr(right));
     }
-	else if (is_string(left) && is_string(right))
-	{
-		result = is_true(string_eq(left, right));
-	}
-	else if (is_vector(left) && is_vector(right))
-	{
-		result = vector_eq(left, right);
-	}
+    else if (is_string(left) && is_string(right))
+    {
+	result = is_true(string_eq(left, right));
+    }
+    else if (is_vector(left) && is_vector(right))
+    {
+	result = vector_eq(left, right);
+    }
     else
     {
         result = is_eqv(left, right);
@@ -353,13 +374,13 @@ is_equal(const TYPE* left, const TYPE* right)
 TYPE* 
 mk_sexp_quoted(const TYPE* sexp)
 {
-	return cons(_quote_keyword_symbol_, cons(sexp, nil()));
+    return cons(_quote_keyword_symbol_, cons(sexp, nil()));
 }
 
 TYPE* 
 mk_quoted(const TYPE* sexp)
 {
-	return mk_cell_data(QUOTE, sexp);
+    return mk_cell_data(QUOTE, sexp);
 }
 
 int 
@@ -428,42 +449,42 @@ mk_eof()
 TYPE*
 mk_assignment(TYPE* parameters, TYPE* body)
 {
-	return mk_pair_data(ASSIGNMENT, parameters, body);
+    return mk_pair_data(ASSIGNMENT, parameters, body);
 }
 
 TYPE*
 mk_definition(TYPE* var, TYPE* value)
 {
-	return mk_pair_data(DEFINITION, var, value);
+    return mk_pair_data(DEFINITION, var, value);
 }
 
 TYPE*
 mk_lambda(TYPE* parameters, TYPE* body)
 {
-	return mk_pair_data(LAMBDA, parameters, body);
+    return mk_pair_data(LAMBDA, parameters, body);
 }
 
 TYPE*
 mk_begin(TYPE* actions)
 {
-	return mk_cell_data(BEGIN_TYPE, actions);
+    return mk_cell_data(BEGIN_TYPE, actions);
 }
 
 TYPE*
 mk_match(TYPE* key, TYPE* clauses)
 {
-	return mk_pair_data(MATCH, key, clauses);
+    return mk_pair_data(MATCH, key, clauses);
 }
 
 TYPE*
 mk_delay(TYPE* actions)
 {
-	return mk_cell_data(DELAY, actions);
+    return mk_cell_data(DELAY, actions);
 }
 
 TYPE* mk_call_cc(TYPE* escape_procedure)
 {
-	return mk_cell_data(CALL_CC, escape_procedure);
+    return mk_cell_data(CALL_CC, escape_procedure);
 }
 
 TYPE* mk_apply(TYPE* procedure, TYPE* arguments)
@@ -477,7 +498,7 @@ TYPE* mk_apply(TYPE* procedure, TYPE* arguments)
     }
     
     result->type = APPLY;
-	result->d.a = mloc(sizeof(APPLY_DATA));
+    result->d.a = mloc(sizeof(APPLY_DATA));
 
     if (result->d.a == NULL)
     {
@@ -489,13 +510,13 @@ TYPE* mk_apply(TYPE* procedure, TYPE* arguments)
     result->d.a->args = arguments;
     result->d.a->arg_len = length(arguments);
     
-	return result;
+    return result;
 }
 
 TYPE*
 mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
 {
-	TYPE* result = mloc(sizeof(TYPE));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -504,52 +525,52 @@ mk_if(TYPE* predicate, TYPE* consequent, TYPE* alternative)
     }
     
     result->type = IF_TYPE;
-	result->d.ifd = mloc(sizeof(IF_DATA));
+    result->d.ifd = mloc(sizeof(IF_DATA));
 
     if (result->d.ifd == NULL)
     {
         fprintf(stderr, "MK_IF: could not allocate memory for data");
         exit(1);
     }
-	
-	result->d.ifd->predicate = predicate;
-	result->d.ifd->consequent = consequent;
-	result->d.ifd->alternative = alternative;
-	
+        
+    result->d.ifd->predicate = predicate;
+    result->d.ifd->consequent = consequent;
+    result->d.ifd->alternative = alternative;
+        
     return result;
 }
 
 int
 is_escape_proc(const TYPE* sexp)
 {
-	return sexp->type == ESCAPE_PROC;
+    return sexp->type == ESCAPE_PROC;
 }
 
 TYPE*
 mk_escape_proc(const STACK* stack, const REGS* regs)
 {
-	TYPE* result = mloc(sizeof(TYPE));
-	   
+    TYPE* result = mloc(sizeof(TYPE));
+           
     if (result == NULL)
     {
         fprintf(stderr, "MK_ESCAPE_PROC: could not allocate memory for type");
         exit(1);
     }
 
-	result->type = ESCAPE_PROC;
-	result->d.e = mloc(sizeof(ESCAPE_PROC_DATA));
-	
-	if (result->d.e == NULL)
+    result->type = ESCAPE_PROC;
+    result->d.e = mloc(sizeof(ESCAPE_PROC_DATA));
+        
+    if (result->d.e == NULL)
     {
         fprintf(stderr, "MK_ESCAPE_PROC: could not allocate memory for escape proc data");
         exit(1);
     }
 
-	copy_stack(&(result->d.e->stack), stack);
-	memcpy(&(result->d.e->regs), regs, sizeof(REGS));
-	return result;
+    copy_stack(&(result->d.e->stack), stack);
+    memcpy(&(result->d.e->regs), regs, sizeof(REGS));
+    return result;
 }
 
 void copy_regs(REGS* dest, const REGS* src) {
-	memcpy(dest, src, sizeof(REGS));
+    memcpy(dest, src, sizeof(REGS));
 }

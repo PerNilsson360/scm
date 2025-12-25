@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -93,16 +114,16 @@ open_input_file(const TYPE* filename)
                  TYPE_ERROR, 
                  "OPEN_INPUT_FILE: filename is not a string");
 
-     file = fopen((char*) filename->d.s, "r");
+    file = fopen((char*) filename->d.s, "r");
 
-     if (file == NULL)
-     {
-		 fprintf(stderr, "filename: %s\n", filename->d.s);
-         throw_error(OS_ERROR, 
-                     "OPEN_INPUT_FILE: could not open file");
-     }
+    if (file == NULL)
+    {
+	fprintf(stderr, "filename: %s\n", filename->d.s);
+	throw_error(OS_ERROR, 
+		    "OPEN_INPUT_FILE: could not open file");
+    }
 
-     return mk_port(file, TRUE);
+    return mk_port(file, TRUE);
 }
 
 TYPE* 
@@ -114,16 +135,16 @@ open_output_file(const TYPE* filename)
                  TYPE_ERROR, 
                  "OPEN_INPUT_FILE: filename is not a string");
 
-     file = fopen(filename->d.s, "w");
+    file = fopen(filename->d.s, "w");
 
-     if (file == NULL)
-     {
-		 fprintf(stderr, "filename: %s\n", filename->d.s);
-         throw_error(OS_ERROR, 
-                     "OPEN_OUTPUT_FILE: could not open file");
-     }
+    if (file == NULL)
+    {
+	fprintf(stderr, "filename: %s\n", filename->d.s);
+	throw_error(OS_ERROR, 
+		    "OPEN_OUTPUT_FILE: could not open file");
+    }
 
-     return _mk_port(file, FALSE);
+    return _mk_port(file, FALSE);
 }
 
 void 

@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -17,7 +38,7 @@
 TYPE* 
 mk_env(TYPE* vars, TYPE* vals, TYPE* previous_frame)
 {
-	TYPE* result = mloc(sizeof(TYPE));
+    TYPE* result = mloc(sizeof(TYPE));
     
     if (result == NULL)
     {
@@ -25,19 +46,19 @@ mk_env(TYPE* vars, TYPE* vals, TYPE* previous_frame)
         exit(1);
     }
 
-	result->type = ENVIRONMENT;
-	result->d.en = mloc(sizeof(ENVIRONMENT_DATA));
-	
-	if (result->d.en == NULL)
+    result->type = ENVIRONMENT;
+    result->d.en = mloc(sizeof(ENVIRONMENT_DATA));
+        
+    if (result->d.en == NULL)
     {
         fprintf(stderr, "MK_EMPTY_ENV: could not allocate memory for data");
         exit(1);
     }
-	
-	result->d.en->vars = vars;
-	result->d.en->vals = vals;
-	result->d.en->previous_frame = previous_frame;
-	return result;
+        
+    result->d.en->vars = vars;
+    result->d.en->vals = vals;
+    result->d.en->previous_frame = previous_frame;
+    return result;
 }
 
 static TYPE* global_env = NULL;
@@ -45,12 +66,12 @@ static TYPE* global_env = NULL;
 TYPE*
 get_global_env()
 {
-	if (global_env == NULL)
-	{
-		global_env = mk_env(nil(), nil(), nil());
-	}
-	
-	return global_env;
+    if (global_env == NULL)
+    {
+	global_env = mk_env(nil(), nil(), nil());
+    }
+        
+    return global_env;
 }
 
 TYPE*
@@ -75,8 +96,8 @@ is_env(const TYPE* sexp)
 void
 add_binding_to_frame(TYPE* var, TYPE* val, TYPE* frame)
 {
-	frame->d.en->vars = cons(var, frame->d.en->vars);
-	frame->d.en->vals = cons(val, frame->d.en->vals);
+    frame->d.en->vars = cons(var, frame->d.en->vars);
+    frame->d.en->vals = cons(val, frame->d.en->vals);
 }
 
 static
@@ -85,7 +106,7 @@ get_var_from_frame(unsigned int var_index, int is_inproper_list, TYPE* vals)
 {
     for (;var_index != 0; var_index--)
     {
-		vals = vals->d.p->cdr;
+	vals = vals->d.p->cdr;
     }
 
     return is_inproper_list ? vals : vals->d.p->car;
@@ -102,12 +123,12 @@ get_var(unsigned int frame_index,
 
     for (;frame_index != 0; frame_index--)
     {
-    	env = env->d.en->previous_frame;
+        env = env->d.en->previous_frame;
     }
 
     result = get_var_from_frame(var_index,
-								is_inproper_list,
-								env->d.en->vals);
+				is_inproper_list,
+				env->d.en->vals);
 
     return result;
 }
@@ -115,10 +136,10 @@ get_var(unsigned int frame_index,
 TYPE* 
 lookup_variable_value(TYPE* var, TYPE* env)
 {
-	return get_var(var->d.b->frame_index,
-				   var->d.b->var_index,
-				   var->d.b->is_inproper_list,
-				   env);
+    return get_var(var->d.b->frame_index,
+		   var->d.b->var_index,
+		   var->d.b->is_inproper_list,
+		   env);
 }
 
 void
@@ -147,7 +168,7 @@ set_var(unsigned int frame_index,
 void 
 set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
-	if (is_symbol(var))
+    if (is_symbol(var))
     {
         global_env_define_variable(var, val);
     }

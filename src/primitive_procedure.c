@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -30,94 +51,94 @@ int _debug_ = 0;
 static TYPE* _primitive_procedure_table_;
 
 #define MAKE_VOID_WRAPPER_NO_ARG(c_name)                                \
-static                                                                  \
-TYPE*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
-{                                                                       \
-    assert_throw(length(arguments) == 0,                                \
-                 APPLY_ERROR,                                           \
-                 "wrong # of arguments in " #c_name);                   \
-    c_name();                                                           \
-    return mk_none();                                                   \
-}                                                                       \
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 0,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	c_name();							\
+	return mk_none();						\
+    }									\
 
 
 #define MAKE_WRAPPER_ONE_ARG(c_name)                                    \
-static                                                                  \
-TYPE*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
-{                                                                       \
-    assert_throw(length(arguments) == 1,                                \
-                 APPLY_ERROR,                                           \
-                 "wrong # of arguments in " #c_name);                   \
-    return c_name(car(arguments));                                      \
-}                                                                       \
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 1,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	return c_name(car(arguments));					\
+    }									\
 
-#define MAKE_VOID_WRAPPER_ONE_ARG(c_name)                                    \
-static                                                                  \
-TYPE*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)    \
-{                                                                       \
-    assert_throw(length(arguments) == 1,                                \
-                 APPLY_ERROR,                                           \
-                 "wrong # of arguments in " #c_name);                   \
-    c_name(car(arguments));                                             \
-    return mk_none();                                                   \
-}                                                                       \
+#define MAKE_VOID_WRAPPER_ONE_ARG(c_name)				\
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 1,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	c_name(car(arguments));						\
+	return mk_none();						\
+    }									\
 
-#define MAKE_PREDICATE_WRAPPER_ONE_ARG(c_name)          \
-static                                                  \
-TYPE*                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
-{                                                       \
-    assert_throw(length(arguments) == 1,                \
-                 APPLY_ERROR,                           \
-                 "wrong # of arguments in " #c_name);   \
-    return mk_boolean(c_name(car(arguments)));          \
-}                                                       \
+#define MAKE_PREDICATE_WRAPPER_ONE_ARG(c_name)				\
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 1,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	return mk_boolean(c_name(car(arguments)));			\
+    }									\
 
-#define MAKE_VOID_WRAPPER_TWO_ARG(c_name)                                    \
-static                                                                  \
-TYPE*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
-{                                                                       \
-    assert_throw(length(arguments) == 2,                                \
-                 APPLY_ERROR,                                           \
-                 "wrong # of arguments in " #c_name);                   \
-    c_name(car(arguments), car(cdr(arguments)));			\
-    return mk_none();                                                   \
-}                                                                       \
+#define MAKE_VOID_WRAPPER_TWO_ARG(c_name)				\
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 2,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	c_name(car(arguments), car(cdr(arguments)));			\
+	return mk_none();						\
+    }									\
 
 
-#define MAKE_WRAPPER_TWO_ARGS(c_name)                   \
-static                                                  \
-TYPE*                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
-{                                                       \
-    assert_throw(length(arguments) == 2,                \
-                 APPLY_ERROR,                           \
-                 "wrong # of arguments in " #c_name);   \
-    return c_name(car(arguments), car(cdr(arguments))); \
-}                                                       \
+#define MAKE_WRAPPER_TWO_ARGS(c_name)					\
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 2,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	return c_name(car(arguments), car(cdr(arguments)));		\
+    }									\
 
-#define MAKE_PREDICATE_WRAPPER_TWO_ARGS(c_name)         \
-static                                                  \
-TYPE*                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env)  \
-{                                                       \
-    assert_throw(length(arguments) == 2,                \
-                 APPLY_ERROR,                           \
-                 "wrong # of arguments in " #c_name);   \
-    return mk_boolean(c_name(car(arguments), car(cdr(arguments)))); \
-}                                                       \
+#define MAKE_PREDICATE_WRAPPER_TWO_ARGS(c_name)				\
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	assert_throw(length(arguments) == 2,				\
+		     APPLY_ERROR,					\
+		     "wrong # of arguments in " #c_name);		\
+	return mk_boolean(c_name(car(arguments), car(cdr(arguments)))); \
+    }									\
 
-#define MAKE_WRAPPER(c_name)						\
-static								\
-TYPE*                                                                   \
-_ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
-{                                                                       \
-    return c_name(arguments);						\
-}                                                                       \
+#define MAKE_WRAPPER(c_name)                                            \
+    static								\
+    TYPE*								\
+    _ ## c_name ## _ ## procedure ## _(const TYPE* arguments, const TYPE* env) \
+    {									\
+	return c_name(arguments);					\
+    }									\
 
 
 
@@ -237,7 +258,7 @@ _is_real_procedure_(const TYPE* arguments, const TYPE* env)
                  APPLY_ERROR,
                  "wrong # of arguments in real?");
     
-   return mk_boolean(FALSE); /* not implemented */
+    return mk_boolean(FALSE); /* not implemented */
 }
 
 static 
@@ -361,14 +382,14 @@ static
 TYPE* 
 _plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
-	return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
+    return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
 }
 
 static 
 TYPE* 
 _mul_procedure_(const TYPE* arguments, const TYPE* env)
 {
-  return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE, 10)); 
+    return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE, 10)); 
 }
 
 static 
@@ -415,7 +436,7 @@ static
 TYPE* 
 _modulo_procedure_(const TYPE* arguments, const TYPE* env)
 {
-	assert(FALSE);
+    assert(FALSE);
     return NULL;
 }
 
@@ -441,59 +462,59 @@ static
 TYPE* 
 _sin_procedure_(const TYPE* arguments, const TYPE* env)
 {
-	assert_throw(length(arguments) == 1,
+    assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
                  "wrong # of arguments in sin");
-	
-	const TYPE* n = car(arguments);
-	assert_throw(is_number(n),
+        
+    const TYPE* n = car(arguments);
+    assert_throw(is_number(n),
                  TYPE_ERROR, 
-				 "SIN: n must be a string");
+		 "SIN: n must be a string");
 
-	TYPE* result = mk_unasigned_number(REAL);
-	result->d.d = sin(n->d.d);
-	
-	return result;
+    TYPE* result = mk_unasigned_number(REAL);
+    result->d.d = sin(n->d.d);
+        
+    return result;
 }
 
 static 
 TYPE* 
 _cos_procedure_(const TYPE* arguments, const TYPE* env)
 {
-	assert_throw(length(arguments) == 1,
+    assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
                  "wrong # of arguments in cos");
-	
-	const TYPE* n = car(arguments);
-	assert_throw(is_number(n),
+        
+    const TYPE* n = car(arguments);
+    assert_throw(is_number(n),
                  TYPE_ERROR, 
-				 "COS: n must be a number");
+		 "COS: n must be a number");
 
-	TYPE* result = mk_unasigned_number(REAL);	
-	result->d.d = cos(n->d.d);
-	
-	return result;
+    TYPE* result = mk_unasigned_number(REAL);       
+    result->d.d = cos(n->d.d);
+        
+    return result;
 }
 
 static
 TYPE*
 _sqrt_procedure_(const TYPE* arguments, const TYPE* env)
 {
-	assert_throw(length(arguments) == 1,
+    assert_throw(length(arguments) == 1,
                  APPLY_ERROR,
                  "wrong # of arguments in sqrt");
-	
-	const TYPE* n = car(arguments);
-	assert_throw(is_number(n),
+        
+    const TYPE* n = car(arguments);
+    assert_throw(is_number(n),
                  TYPE_ERROR, 
-				 "SQRT: n must be a number");
+		 "SQRT: n must be a number");
 
-	TYPE* result = mk_unasigned_number(REAL);
-	
-	result->d.d = is_integer(n) ? sqrt(n->d.i) : sqrt(n->d.d);
-	
-	return result;
-	
+    TYPE* result = mk_unasigned_number(REAL);
+        
+    result->d.d = is_integer(n) ? sqrt(n->d.i) : sqrt(n->d.d);
+        
+    return result;
+        
 }
 
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_boolean);
@@ -635,25 +656,25 @@ _string_append_procedure_(const TYPE* arguments, const TYPE* env)
 
 
 MAKE_WRAPPER_ONE_ARG(string_to_list)
-MAKE_WRAPPER_ONE_ARG(list_to_string)
+    MAKE_WRAPPER_ONE_ARG(list_to_string)
 
-static 
-TYPE* 
-_string_to_number_procedure_(const TYPE* arguments, const TYPE* env)
+    static 
+    TYPE* 
+    _string_to_number_procedure_(const TYPE* arguments, const TYPE* env)
 {
     int nargs = length(arguments);
     assert_throw(
-	nargs == 1 ||  nargs == 2,
+        nargs == 1 ||  nargs == 2,
         APPLY_ERROR,
         "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in string->number");
 
     if (nargs == 1)
     {
-	return string_to_number(car(arguments), mk_number_from_int(10));
+        return string_to_number(car(arguments), mk_number_from_int(10));
     }
     else
     {
-	return string_to_number(car(arguments), car(cdr(arguments)));
+        return string_to_number(car(arguments), car(cdr(arguments)));
     }
 }
 
@@ -900,15 +921,15 @@ static
 TYPE* 
 _tcp_socket_send_procedure_(const TYPE* arguments, const TYPE* env) 
 {
-      assert_throw(
-          length(arguments) == 2,
+    assert_throw(
+	length(arguments) == 2,
         APPLY_ERROR,
         "APPLY_PRIMITIVE_PROCEDURE: wrong # "
         "of arguments in tcp-socket-send");
 
-      tcp_socket_send(car(arguments), car(cdr(arguments)));
+    tcp_socket_send(car(arguments), car(cdr(arguments)));
       
-      return mk_none();
+    return mk_none();
 }
 MAKE_VOID_WRAPPER_ONE_ARG(socket_close);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_blob);
@@ -1005,9 +1026,9 @@ _gr_draw_line_procedure_(const TYPE* arguments, const TYPE* env)
         "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in gr-move-to");
 
     gr_draw_line(car(arguments),
-				 car(cdr(arguments)),
-				 car(cdr(cdr(arguments))),
-				 car(cdr(cdr(cdr(arguments)))));
+		 car(cdr(arguments)),
+		 car(cdr(cdr(arguments))),
+		 car(cdr(cdr(cdr(arguments)))));
 
     return mk_none();
 } 
@@ -1066,9 +1087,9 @@ _gr_fill_arc_procedure_(const TYPE* arguments, const TYPE* env)
         "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in gr-fill-arc");
  
     gr_fill_arc(car(arguments),
-				car(cdr(arguments)),
-				car(cdr(cdr(arguments))),
-				car(cdr(cdr(cdr(arguments)))));
+		car(cdr(arguments)),
+		car(cdr(cdr(arguments))),
+		car(cdr(cdr(cdr(arguments)))));
 
     return mk_none();
 }
@@ -1084,7 +1105,7 @@ init_primitive_procedures()
     
     ADD_PROCEDURE(data_eval, eval);
     ADD_PROCEDURE(is_pair, pair?);
-	ADD_PROCEDURE(is_procedure, procedure?);
+    ADD_PROCEDURE(is_procedure, procedure?);
     ADD_PROCEDURE(cons, cons);
     ADD_PROCEDURE(car, car);
     ADD_PROCEDURE(cdr, cdr);
@@ -1100,9 +1121,9 @@ init_primitive_procedures()
     ADD_PROCEDURE(set_car, set-car!);
     ADD_PROCEDURE(set_cdr, set-cdr!);
     ADD_PROCEDURE(IS_NIL, null?);
-	ADD_PROCEDURE(is_list, list?);
+    ADD_PROCEDURE(is_list, list?);
     ADD_PROCEDURE(list, list);
-	ADD_PROCEDURE(length, length);
+    ADD_PROCEDURE(length, length);
     ADD_PROCEDURE(reverse, reverse);
     ADD_PROCEDURE(unzip, unzip);
 
@@ -1119,7 +1140,7 @@ init_primitive_procedures()
 
     /* equivalences */
     ADD_PROCEDURE(is_eq, eq?);
-    ADD_PROCEDURE(is_eqv, eqv?);	
+    ADD_PROCEDURE(is_eqv, eqv?);        
     ADD_PROCEDURE(is_equal, equal?);
     
     /* number */
@@ -1150,13 +1171,13 @@ init_primitive_procedures()
     ADD_PROCEDURE(abs, abs);
     ADD_PROCEDURE(quotient, quotient);
     ADD_PROCEDURE(modulo, modulo);
-	ADD_PROCEDURE(remainder_number, remainder);
+    ADD_PROCEDURE(remainder_number, remainder);
     ADD_PROCEDURE(gcd, gcd);
     ADD_PROCEDURE(lcm, lcm);
-	ADD_PROCEDURE(round_number, round);
-	ADD_PROCEDURE(sin, sin);
-	ADD_PROCEDURE(cos, cos);
-	ADD_PROCEDURE(sqrt, sqrt);
+    ADD_PROCEDURE(round_number, round);
+    ADD_PROCEDURE(sin, sin);
+    ADD_PROCEDURE(cos, cos);
+    ADD_PROCEDURE(sqrt, sqrt);
 
     /* boolean */
     ADD_PROCEDURE(is_boolean, boolean?);
@@ -1201,7 +1222,7 @@ init_primitive_procedures()
     /* io */
     ADD_PROCEDURE(quit, quit);
     ADD_PROCEDURE(read, read);
-	ADD_PROCEDURE(read_sml, read-sml);
+    ADD_PROCEDURE(read_sml, read-sml);
     ADD_PROCEDURE(read_char, read-char);
     ADD_PROCEDURE(peek_char, peek-char);
     ADD_PROCEDURE(write_char_to_port, write-char);
@@ -1247,15 +1268,15 @@ init_primitive_procedures()
     ADD_PROCEDURE(gr_set_font, gr-set-font!);
     ADD_PROCEDURE(gr_set_text_size, gr-set-text!);
     ADD_PROCEDURE(gr_text_size, gr-text-size);
-	ADD_PROCEDURE(gr_draw_point, gr-draw-point);
-	ADD_PROCEDURE(gr_draw_line, gr-draw-line);
+    ADD_PROCEDURE(gr_draw_point, gr-draw-point);
+    ADD_PROCEDURE(gr_draw_line, gr-draw-line);
     ADD_PROCEDURE(gr_set_foreground, gr-set-foreground);
     ADD_PROCEDURE(gr_swap_buffers, gr-swap-buffers);
     ADD_PROCEDURE(x_events_queued, x-events-queued);
     ADD_PROCEDURE(x_next_event, x-next-event);
     ADD_PROCEDURE(x_flush, x-flush);
     ADD_PROCEDURE(gr_fill_arc, gr-fill-arc);
-	ADD_PROCEDURE(gr_fill_rect, gr-fill-rect);
+    ADD_PROCEDURE(gr_fill_rect, gr-fill-rect);
     ADD_PROCEDURE(gr_fill_polygon, gr-fill-polygon);
 }
 
@@ -1276,11 +1297,11 @@ int
 global_env_lookup_var(const TYPE* var, TYPE** val)
 {
     if (!is_symbol(var)) {
-		fprintf(stderr, "GLOBAL_ENV_LOOKUP_VAR: not a symbol");
-		display_debug(var);
+	fprintf(stderr, "GLOBAL_ENV_LOOKUP_VAR: not a symbol");
+	display_debug(var);
         *val = nil();
-		return FALSE;
-	}
+	return FALSE;
+    }
 
     return hash_table_ref(_primitive_procedure_table_, var, val);
 }

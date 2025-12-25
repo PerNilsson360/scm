@@ -1,3 +1,24 @@
+// MIT license
+//
+// Copyright 2025 Per Nilsson
+///
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 #ifndef _TYPE_H_
 #define _TYPE_H_
 
@@ -64,7 +85,7 @@
  * TODO: comparing the string representation looks wrong for struct types.
  */
 #define is_eq(LEFT, RIGHT) (IS_POINTER_TO_STRUCT(LEFT) && IS_POINTER_TO_STRUCT(RIGHT) ? \
-                            (LEFT)->d.s == (RIGHT)->d.s : \
+                            (LEFT)->d.s == (RIGHT)->d.s :		\
                             LEFT == RIGHT)
 
 struct PAIR_DATA;
@@ -82,22 +103,22 @@ struct TYPE
     int type;
     union
     {
-		int                      i;
-		double                   d;
-		char*                    s;
-		struct TYPE*             t;
-		struct ENVIRONMENT_DATA* en;
-		struct PAIR_DATA*        p;
-		struct PROCEDURE_DATA*   pr;
+	int                      i;
+	double                   d;
+	char*                    s;
+	struct TYPE*             t;
+	struct ENVIRONMENT_DATA* en;
+	struct PAIR_DATA*        p;
+	struct PROCEDURE_DATA*   pr;
         struct APPLY_DATA*   a;
-		struct IF_DATA*          ifd;
-		struct VECTOR_DATA*      v;
-		struct BOUND_VAR_DATA*   b;
-		struct PORT_DATA*        po;
-		struct FUNCTION*         f;
-		struct HASH_TABLE_DATA*  h;
-		struct BLOB_DATA*        bl;
-		struct ESCAPE_PROC_DATA* e;
+	struct IF_DATA*          ifd;
+	struct VECTOR_DATA*      v;
+	struct BOUND_VAR_DATA*   b;
+	struct PORT_DATA*        po;
+	struct FUNCTION*         f;
+	struct HASH_TABLE_DATA*  h;
+	struct BLOB_DATA*        bl;
+	struct ESCAPE_PROC_DATA* e;
     } d;
 };
 typedef struct TYPE  TYPE;
@@ -111,18 +132,18 @@ typedef struct PAIR_DATA  PAIR_DATA;
 
 struct PROCEDURE_DATA
 {
-	TYPE* parameters;
+    TYPE* parameters;
     int is_var_args;
     int param_len;
-	TYPE* body;
-	TYPE* env;
+    TYPE* body;
+    TYPE* env;
 
 };
 typedef struct PROCEDURE_DATA  PROCEDURE_DATA;
 
 struct APPLY_DATA
 {
-	TYPE* procedure;
+    TYPE* procedure;
     TYPE* args;
     int arg_len;
 };
@@ -131,17 +152,17 @@ typedef struct APPLY_DATA  APPLY_DATA;
 
 struct IF_DATA
 {
-	TYPE* predicate;
-	TYPE* consequent;
-	TYPE* alternative;
+    TYPE* predicate;
+    TYPE* consequent;
+    TYPE* alternative;
 };
 typedef struct IF_DATA  IF_DATA;
 
 struct ENVIRONMENT_DATA
 {
-	TYPE* vars;
-	TYPE* vals;
-	TYPE* previous_frame;
+    TYPE* vars;
+    TYPE* vals;
+    TYPE* previous_frame;
 };
 typedef struct ENVIRONMENT_DATA ENVIRONMENT_DATA;
 
@@ -193,24 +214,24 @@ typedef struct BLOB_DATA  BLOB_DATA;
 /* registers for scheme VM */
 
 struct REGS {
-	void* exp;
-	void* env;
-	void* val;
-	void* cont;
-	void* proc;
-	void* argl;
-	void* unev;
+    void* exp;
+    void* env;
+    void* val;
+    void* cont;
+    void* proc;
+    void* argl;
+    void* unev;
 };
 typedef struct REGS  REGS;
 
 struct ESCAPE_PROC_DATA {
-	STACK stack;
-	REGS regs;
+    STACK stack;
+    REGS regs;
 };
 typedef struct ESCAPE_PROC_DATA  ESCAPE_PROC_DATA;
-	
+        
 TYPE* mk_escape_proc(const STACK* stack, const REGS* regs);
-	
+        
 TYPE* mk_bound_var(TYPE* symbol, 
                    unsigned int frame_index, 
                    unsigned int var_index,
