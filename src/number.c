@@ -191,19 +191,12 @@ is_real(const TYPE* number)
 }
 
 static
-int
-int_from_tagged_pointer(const TYPE* number) {
-    int i = (intptr_t)number;
-    return (i >> 8);
-}
-
-static
 double
 as_real(const TYPE* number)
 {
     if (is_integer(number))
     {
-	return int_from_tagged_pointer(number);
+	return GET_INTEGER_FROM_TAG(number);
     } else if (is_real(number)) {
 	return number->d.d;
     }
@@ -256,7 +249,7 @@ is_number_lt(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return int_from_tagged_pointer(left) < int_from_tagged_pointer(right);
+	return GET_INTEGER_FROM_TAG(left) < GET_INTEGER_FROM_TAG(right);
     }
 }
 
@@ -276,7 +269,7 @@ is_number_gt(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return int_from_tagged_pointer(left) > int_from_tagged_pointer(right);
+	return GET_INTEGER_FROM_TAG(left) > GET_INTEGER_FROM_TAG(right);
     }
 }
 
@@ -295,7 +288,7 @@ is_number_lt_eq(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return int_from_tagged_pointer(left) <= int_from_tagged_pointer(right);
+	return GET_INTEGER_FROM_TAG(left) <= GET_INTEGER_FROM_TAG(right);
     }
 }
 
@@ -315,7 +308,7 @@ is_number_gt_eq(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return int_from_tagged_pointer(left) >= int_from_tagged_pointer(right);
+	return GET_INTEGER_FROM_TAG(left) >= GET_INTEGER_FROM_TAG(right);
     }
 }
 
@@ -331,7 +324,7 @@ is_number_zero(const TYPE* n)
     }
     else
     {
-	return mk_boolean(int_from_tagged_pointer(n) == 0);
+	return mk_boolean(GET_INTEGER_FROM_TAG(n) == 0);
     }
 }
 
@@ -348,7 +341,7 @@ is_number_positive(const TYPE* n)
     }
     else
     {
-	return mk_boolean(int_from_tagged_pointer(n) > 0);
+	return mk_boolean(GET_INTEGER_FROM_TAG(n) > 0);
     }
 }
 
@@ -365,7 +358,7 @@ is_number_negative(const TYPE* n)
     }
     else
     {
-	return mk_boolean(int_from_tagged_pointer(n) < 0);
+	return mk_boolean(GET_INTEGER_FROM_TAG(n) < 0);
     }
 }
 
@@ -382,7 +375,8 @@ is_number_odd(const TYPE* n)
     }
     else
     {
-	return mk_boolean((int_from_tagged_pointer(n) % 2) == 1);
+	int modulo = GET_INTEGER_FROM_TAG(n) % 2;
+	return mk_boolean(modulo == 1 || modulo == -1);
     }
 }
 
@@ -399,7 +393,7 @@ is_number_even(const TYPE* n)
     }
     else
     {
-	return mk_boolean((int_from_tagged_pointer(n) % 2) == 0);
+	return mk_boolean((GET_INTEGER_FROM_TAG(n) % 2) == 0);
     }
 }
 
@@ -413,7 +407,7 @@ max_number(const TYPE* left, const TYPE* right)
                  TYPE_ERROR,
                  "MAX_NUMBER: right must be a number");
     /* TODO: what about REAL */
-    return (TYPE*) (int_from_tagged_pointer(left) > int_from_tagged_pointer(right) ? left : right);
+    return (TYPE*) (GET_INTEGER_FROM_TAG(left) > GET_INTEGER_FROM_TAG(right) ? left : right);
 }
 
 TYPE* min_number(const TYPE* left, const TYPE* right)
@@ -431,7 +425,7 @@ TYPE* min_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return  (TYPE*) (int_from_tagged_pointer(left) < int_from_tagged_pointer(right) ?
+	return  (TYPE*) (GET_INTEGER_FROM_TAG(left) < GET_INTEGER_FROM_TAG(right) ?
                          left :
                          right);
     }
@@ -456,8 +450,8 @@ add_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-	result = mk_number_from_int (int_from_tagged_pointer(left) +
-                                     int_from_tagged_pointer(right));
+	result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) +
+                                     GET_INTEGER_FROM_TAG(right));
     }
     
     return result;
@@ -482,8 +476,8 @@ mul_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-        result = mk_number_from_int (int_from_tagged_pointer(left) *
-                                     int_from_tagged_pointer(right));
+        result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) *
+                                     GET_INTEGER_FROM_TAG(right));
     }
 
     return result;
@@ -508,8 +502,8 @@ _sub_two_numbers(const TYPE* left, const TYPE* right)
     }
     else
     {
-        result = mk_number_from_int (int_from_tagged_pointer(left) -
-                                     int_from_tagged_pointer(right));
+        result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) -
+                                     GET_INTEGER_FROM_TAG(right));
     }
     
     return result;
@@ -625,7 +619,7 @@ remainder_number(const TYPE* left, const TYPE* right)
     else
     {
 	return mk_number_from_int(
-            (int) fmodf(int_from_tagged_pointer(left), int_from_tagged_pointer(right)));
+            (int) fmodf(GET_INTEGER_FROM_TAG(left), GET_INTEGER_FROM_TAG(right)));
     }
 }
 
@@ -660,7 +654,7 @@ number_to_string(const TYPE* n)
                  "STRING_TO_NUMBER: n must be a string");    
 
     /* TODO: waht about reals */
-    number = int_from_tagged_pointer(n);
+    number = GET_INTEGER_FROM_TAG(n);
 
     if (number == 0)
     {
@@ -705,6 +699,6 @@ int as_integer(const TYPE* number)
     }
     else
     {
-	return int_from_tagged_pointer(number);
+	return GET_INTEGER_FROM_TAG(number);
     }
 }

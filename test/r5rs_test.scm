@@ -291,6 +291,9 @@
   ;; (expect '(equal? (lcm 32.0 -36) 288.0))
   ;; (expect '(equal? (lcm) 1))
   ;; TODO: more page 23
+  ;; not in spec
+  (expect (odd? 11))
+  (expect (odd? -11))
   )
 
 (define (test-numbers-extra)
