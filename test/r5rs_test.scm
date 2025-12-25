@@ -368,7 +368,6 @@
   (expect '(char<? #\0 #\9))
   (expect '(char-ci=? #\A #\a))
   (expect (<= (char->integer #\a) (char->integer #\a)))
-  ;; todo need more testcase
   )
 
 ;; 6.3.5 Strings

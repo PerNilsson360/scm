@@ -211,6 +211,7 @@ MAKE_WRAPPER_ONE_ARG(string_to_symbol);
 MAKE_WRAPPER_ONE_ARG(char_to_integer);
 MAKE_WRAPPER_ONE_ARG(integer_to_char);
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_char);
+MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_char_equal);
 MAKE_WRAPPER_ONE_ARG(number_to_string);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eq);
 MAKE_PREDICATE_WRAPPER_TWO_ARGS(is_eqv);
@@ -1114,6 +1115,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(char_to_integer, char->integer);
     ADD_PROCEDURE(integer_to_char, integer->char);
     ADD_PROCEDURE(is_char, char?);
+    ADD_PROCEDURE(is_char_equal, char=?);
 
     /* equivalences */
     ADD_PROCEDURE(is_eq, eq?);

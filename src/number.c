@@ -38,7 +38,7 @@ TYPE* mk_number_from_int(int n)
     // fprintf(stderr, "mk_number_from_int %d %x", ((unsigned int)n & 0x0000000F), -1);
     // assert_throw((n & 0x0FFFFFFF) <= 0x0EFFFFFF, CONSTRAINT_ERROR, "Integer larger than 54 bits");
 
-    intptr_t result = (n << 8) | INTEGER_TYPE_TAG;
+    intptr_t result = MK_TAGGED_POINTER(n, INTEGER_TYPE_TAG);
     return (TYPE*)result;
 }
 
