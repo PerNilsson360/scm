@@ -9,4 +9,7 @@ AC_CONFIG_FILES([
  src/Makefile
  test/Makefile
  ])
+AC_CHECK_HEADERS([gc.h],[], [AC_MSG_ERROR([required libraries are missing])])
+AC_CHECK_HEADERS([X11/Xlib.h],[], [AC_MSG_ERROR([required libraries are missing])])
+AC_CHECK_HEADERS([X11/Xutil.h],[], [AC_MSG_ERROR([required libraries are missing])])
 AC_OUTPUT
