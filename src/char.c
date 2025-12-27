@@ -59,7 +59,7 @@ char_to_integer(const TYPE* sexp)
     assert_throw(is_char(sexp),
                  TYPE_ERROR,
                  "CHAR_TO_INTEGER: argument must be a char");
-    return (TYPE*)MK_TAGGED_POINTER(GET_INTEGER_FROM_TAG(sexp), INTEGER_TYPE_TAG);
+    return (TYPE*)MK_TAGGED_POINTER(GET_INT_FROM_TYPE_TAGGED_INT(sexp), INTEGER_TYPE_TAG);
 }
 
 TYPE* integer_to_char(const TYPE* sexp)
@@ -67,7 +67,7 @@ TYPE* integer_to_char(const TYPE* sexp)
     assert_throw(is_number(sexp), /* TODO numbers are integers now */
 		 TYPE_ERROR,
 		 "CHAR_TO_INTEGER: argument must be a integer");
-    int i = GET_INTEGER_FROM_TAG(sexp);
+    int i = GET_INT_FROM_TYPE_TAGGED_INT(sexp);
     assert_throw(i >= 0,
 		 TYPE_ERROR,
 		 "CHAR_TO_INTEGER: argument < 0");

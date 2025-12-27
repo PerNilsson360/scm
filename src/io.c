@@ -72,6 +72,10 @@ display_inside_list(const TYPE* sexp, FILE* file)
             break;
         case INTEGER_TYPE_TAG:
             display_number(sexp, file);
+	    break;
+	case CHAR_TYPE_TAG:
+	    display_char(sexp, file);
+	    break;
         }
     }
     else
@@ -84,14 +88,10 @@ display_inside_list(const TYPE* sexp, FILE* file)
         case SYMBOL:
             display_symbol(sexp, file);
             break;
-
 	case RATIONAL:
 	case REAL:
 	case COMPLEX:
             display_number(sexp, file);
-            break;
-        case CHAR:
-            display_char(sexp, file);
             break;
         case VECTOR:
             fprintf(file, "#(");
@@ -224,7 +224,8 @@ display_number(const TYPE* sexp, FILE* file)
 static void 
 display_char(const TYPE* sexp, FILE* file)
 {
-    switch (sexp->d.i)
+    int c = GET_INT_FROM_TYPE_TAGGED_INT(sexp);
+    switch (c)
     {
     case 0x10:
         fprintf(file, " ");
@@ -239,7 +240,7 @@ display_char(const TYPE* sexp, FILE* file)
         fprintf(file, "\n");
         break;
     default:
-        fprintf(file, "%c", (char)sexp->d.i);
+        fprintf(file, "%c", c);
     }
 }
 

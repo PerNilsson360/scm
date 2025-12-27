@@ -583,15 +583,20 @@ string(FILE* file)
 	}
 	if (c == '\\')
 	{
-	    token.data[i++] = c;
-	    c = getc(file);
-	    if (c == '"' || c == '\\')
-	    {
-		token.data[i++] = c;
-	    }
-	    else 
-	    {
-		parse_error(file, "STRING: wrong escapes.");
+	    int cc = getc(file);
+	    switch (cc) {
+	    case '"':
+	    case '\\':
+		token.data[i++] = cc;
+		break;
+	    case 'n': /* '\n' and '\t' is not specified in r5rs */
+		token.data[i++] = '\n';
+		break;
+	    case 't':
+		token.data[i++] = '\t';
+		break;
+	    default:
+		parse_error(file, "STRING: not supported backslash escpape sequence.");
 	    }
 	}
 	else
@@ -1281,7 +1286,7 @@ void write_char_to_port(const TYPE* c, const TYPE* port)
                  TYPE_ERROR,
                  "WRITE_CHAR_TO_PORT: char is not a char");
     FILE* file = port->d.po->file;
-    int cc = GET_INTEGER_FROM_TAG(c);
+    int cc = GET_INT_FROM_TYPE_TAGGED_INT(c);
     int result = fputc(cc, file);
     if (result == EOF)
     {

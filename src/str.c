@@ -75,7 +75,7 @@ mk_string_type(unsigned int size)
 TYPE* 
 mk_string(const TYPE* length, const TYPE* character)
 {
-    int string_length = length->d.i;
+    int string_length = GET_INT_FROM_TYPE_TAGGED_INT(length);
     int i;
 
     assert_throw(is_number(length),
@@ -90,7 +90,7 @@ mk_string(const TYPE* length, const TYPE* character)
 
     for (i = 0; i < string_length; i++)
     {
-        result->d.s[i] = character->d.i;
+        result->d.s[i] = GET_INT_FROM_TYPE_TAGGED_INT(character);
     }
     
     return result;

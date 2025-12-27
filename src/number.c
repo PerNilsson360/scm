@@ -202,7 +202,7 @@ as_real(const TYPE* number)
 {
     if (is_integer(number))
     {
-	return GET_INTEGER_FROM_TAG(number);
+	return GET_INT_FROM_TYPE_TAGGED_INT(number);
     } else if (is_real(number)) {
 	return number->d.d;
     }
@@ -255,7 +255,7 @@ is_number_lt(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return GET_INTEGER_FROM_TAG(left) < GET_INTEGER_FROM_TAG(right);
+	return GET_INT_FROM_TYPE_TAGGED_INT(left) < GET_INT_FROM_TYPE_TAGGED_INT(right);
     }
 }
 
@@ -275,7 +275,7 @@ is_number_gt(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return GET_INTEGER_FROM_TAG(left) > GET_INTEGER_FROM_TAG(right);
+	return GET_INT_FROM_TYPE_TAGGED_INT(left) > GET_INT_FROM_TYPE_TAGGED_INT(right);
     }
 }
 
@@ -294,7 +294,7 @@ is_number_lt_eq(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return GET_INTEGER_FROM_TAG(left) <= GET_INTEGER_FROM_TAG(right);
+	return GET_INT_FROM_TYPE_TAGGED_INT(left) <= GET_INT_FROM_TYPE_TAGGED_INT(right);
     }
 }
 
@@ -314,7 +314,7 @@ is_number_gt_eq(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return GET_INTEGER_FROM_TAG(left) >= GET_INTEGER_FROM_TAG(right);
+	return GET_INT_FROM_TYPE_TAGGED_INT(left) >= GET_INT_FROM_TYPE_TAGGED_INT(right);
     }
 }
 
@@ -330,7 +330,7 @@ is_number_zero(const TYPE* n)
     }
     else
     {
-	return mk_boolean(GET_INTEGER_FROM_TAG(n) == 0);
+	return mk_boolean(GET_INT_FROM_TYPE_TAGGED_INT(n) == 0);
     }
 }
 
@@ -347,7 +347,7 @@ is_number_positive(const TYPE* n)
     }
     else
     {
-	return mk_boolean(GET_INTEGER_FROM_TAG(n) > 0);
+	return mk_boolean(GET_INT_FROM_TYPE_TAGGED_INT(n) > 0);
     }
 }
 
@@ -364,7 +364,7 @@ is_number_negative(const TYPE* n)
     }
     else
     {
-	return mk_boolean(GET_INTEGER_FROM_TAG(n) < 0);
+	return mk_boolean(GET_INT_FROM_TYPE_TAGGED_INT(n) < 0);
     }
 }
 
@@ -381,7 +381,7 @@ is_number_odd(const TYPE* n)
     }
     else
     {
-	int modulo = GET_INTEGER_FROM_TAG(n) % 2;
+	int modulo = GET_INT_FROM_TYPE_TAGGED_INT(n) % 2;
 	return mk_boolean(modulo == 1 || modulo == -1);
     }
 }
@@ -399,7 +399,7 @@ is_number_even(const TYPE* n)
     }
     else
     {
-	return mk_boolean((GET_INTEGER_FROM_TAG(n) % 2) == 0);
+	return mk_boolean((GET_INT_FROM_TYPE_TAGGED_INT(n) % 2) == 0);
     }
 }
 
@@ -413,7 +413,7 @@ max_number(const TYPE* left, const TYPE* right)
                  TYPE_ERROR,
                  "MAX_NUMBER: right must be a number");
     /* TODO: what about REAL */
-    return (TYPE*) (GET_INTEGER_FROM_TAG(left) > GET_INTEGER_FROM_TAG(right) ? left : right);
+    return (TYPE*) (GET_INT_FROM_TYPE_TAGGED_INT(left) > GET_INT_FROM_TYPE_TAGGED_INT(right) ? left : right);
 }
 
 TYPE* min_number(const TYPE* left, const TYPE* right)
@@ -431,7 +431,7 @@ TYPE* min_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-	return  (TYPE*) (GET_INTEGER_FROM_TAG(left) < GET_INTEGER_FROM_TAG(right) ?
+	return  (TYPE*) (GET_INT_FROM_TYPE_TAGGED_INT(left) < GET_INT_FROM_TYPE_TAGGED_INT(right) ?
                          left :
                          right);
     }
@@ -456,8 +456,8 @@ add_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-	result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) +
-                                     GET_INTEGER_FROM_TAG(right));
+	result = mk_number_from_int (GET_INT_FROM_TYPE_TAGGED_INT(left) +
+                                     GET_INT_FROM_TYPE_TAGGED_INT(right));
     }
     
     return result;
@@ -482,8 +482,8 @@ mul_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-        result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) *
-                                     GET_INTEGER_FROM_TAG(right));
+        result = mk_number_from_int (GET_INT_FROM_TYPE_TAGGED_INT(left) *
+                                     GET_INT_FROM_TYPE_TAGGED_INT(right));
     }
 
     return result;
@@ -508,8 +508,8 @@ _sub_two_numbers(const TYPE* left, const TYPE* right)
     }
     else
     {
-        result = mk_number_from_int (GET_INTEGER_FROM_TAG(left) -
-                                     GET_INTEGER_FROM_TAG(right));
+        result = mk_number_from_int (GET_INT_FROM_TYPE_TAGGED_INT(left) -
+                                     GET_INT_FROM_TYPE_TAGGED_INT(right));
     }
     
     return result;
@@ -625,7 +625,7 @@ remainder_number(const TYPE* left, const TYPE* right)
     else
     {
 	return mk_number_from_int(
-            (int) fmodf(GET_INTEGER_FROM_TAG(left), GET_INTEGER_FROM_TAG(right)));
+            (int) fmodf(GET_INT_FROM_TYPE_TAGGED_INT(left), GET_INT_FROM_TYPE_TAGGED_INT(right)));
     }
 }
 
@@ -662,7 +662,7 @@ number_to_string(const TYPE* n)
                  "STRING_TO_NUMBER: n must be a string");    
 
     /* TODO: waht about reals */
-    number = GET_INTEGER_FROM_TAG(n);
+    number = GET_INT_FROM_TYPE_TAGGED_INT(n);
 
     if (number == 0)
     {
@@ -708,6 +708,6 @@ int as_integer(const TYPE* number)
     }
     else
     {
-	return GET_INTEGER_FROM_TAG(number);
+	return GET_INT_FROM_TYPE_TAGGED_INT(number);
     }
 }

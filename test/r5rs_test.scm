@@ -387,6 +387,13 @@
 
 ;; 6.3.5 Strings
 
+(define (test-string-extra)
+  (expect (equal? "\"" (make-string 1 #\")))
+  (expect (equal? "\\" (make-string 1 #\\)))
+  (expect (equal? "\n" (make-string 1 #\newline)))
+  (expect (equal? "\t" (make-string 1 #\ht)))
+  )
+
 ;; 6.3.6 Vectors
 (define (test-vectors)
   (expect '(equal? (vector 'a 'b 'c) #(a b c)))
