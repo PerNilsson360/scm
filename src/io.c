@@ -40,18 +40,27 @@
 #include "blob.h"
 #include "util.h"
 
-static void display_on_file(const TYPE* sexp, FILE* file);
-static void display_pair(const TYPE* sexp, FILE* file);
+static void display_on_file(const TYPE* sexp,
+			    FILE* file,
+			    void (*string_output)(const TYPE*, FILE*));
+static void display_pair(const TYPE* sexp,
+			 FILE* file,
+			 void (*string_output)(const TYPE*, FILE*));
 static void display_symbol(const TYPE* sexp, FILE* file);
 static void display_number(const TYPE* sexp, FILE* file);
 static void display_char(const TYPE* sexp, FILE* file);
 static void display_boolean(const TYPE* sexp, FILE* file);
-static void display_vector(const TYPE* sexp, int i, FILE* file);
+static void display_vector(const TYPE* sexp, int i,
+			   FILE* file,
+			   void (*string_output)(const TYPE*, FILE*));
 static void display_string(const TYPE* string, FILE* file);
+static void write_string(const TYPE* string, FILE* file);
 static void display_bound_var(const TYPE* sexp, FILE* file);
 
 static void
-display_inside_list(const TYPE* sexp, FILE* file)
+display_inside_list(const TYPE* sexp,
+		    FILE* file,
+		    void (*string_output)(const TYPE*, FILE*))
 {
     if (sexp == NULL)
     {
@@ -83,7 +92,7 @@ display_inside_list(const TYPE* sexp, FILE* file)
         switch(sexp->type)
         {
         case PAIR:
-            display_pair(sexp, file);
+            display_pair(sexp, file, string_output);
             break;
         case SYMBOL:
             display_symbol(sexp, file);
@@ -95,17 +104,17 @@ display_inside_list(const TYPE* sexp, FILE* file)
             break;
         case VECTOR:
             fprintf(file, "#(");
-            display_vector(sexp, 0, file);
+            display_vector(sexp, 0, file, string_output);
             fprintf(file, ")");
             break;
         case STRING:
-            display_string(sexp, file);
+            string_output(sexp, file);
             break;
         case BLOB:
             display_blob(sexp, file);
             break;
         case IMMUTABLE_STRING:
-            display_string(sexp, file);
+            string_output(sexp, file);
             break;
         case PROCEDURE:
             fprintf(file, "procedure");
@@ -133,42 +142,42 @@ display_inside_list(const TYPE* sexp, FILE* file)
 	    break;
 	case IF_TYPE:
 	    fprintf(file, "(if ");
-	    display(IF_PREDICATE(sexp));
+	    display_on_file(IF_PREDICATE(sexp), file, string_output);
 	    fprintf(file, " ");
-	    display(IF_CONSEQUENT(sexp));
+	    display_on_file(IF_CONSEQUENT(sexp), file, string_output);
 	    fprintf(file, " ");
-	    display(IF_ALTERNATIVE(sexp));
+	    display_on_file(IF_ALTERNATIVE(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
 	case LAMBDA:
 	    fprintf(file, "(lambda ");
-	    display(LAMBDA_PARAMETERS(sexp));
+	    display_on_file(LAMBDA_PARAMETERS(sexp), file, string_output);
 	    fprintf(file, " ");
-	    display(LAMBDA_BODY(sexp));
+	    display_on_file(LAMBDA_BODY(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
 	case MATCH:
 	    fprintf(file, "(match ");
-	    display(MATCH_KEY(sexp));
+	    display_on_file(MATCH_KEY(sexp), file, string_output);
 	    fprintf(file, " ");
-	    display(MATCH_CLAUSES(sexp));
+	    display_on_file(MATCH_CLAUSES(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
 	case QUOTE:
 	    fprintf(file, "(quote ");
-	    display(QUOTATION_VALUE(sexp));
+	    display_on_file(QUOTATION_VALUE(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
 	case DEFINITION:
 	    fprintf(file, "(define ");
-	    display(DEFINITION_VARIABLE(sexp));
+	    display_on_file(DEFINITION_VARIABLE(sexp), file, string_output);
 	    fprintf(file, " ");
-	    display(DEFINITION_VALUE(sexp));
+	    display_on_file(DEFINITION_VALUE(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
 	case BEGIN_TYPE:
 	    fprintf(file, "(begin ");
-	    display_pair(BEGIN_ACTIONS(sexp), file);
+	    display_pair(BEGIN_ACTIONS(sexp), file, string_output);
 	    fprintf(file, ")");
 	    break;
         default:
@@ -180,15 +189,15 @@ display_inside_list(const TYPE* sexp, FILE* file)
 }
 
 static void
-display_pair(const TYPE* sexp, FILE* file)
+display_pair(const TYPE* sexp, FILE* file, void (*string_output)(const TYPE*, FILE*))
 {
     if (is_pair(sexp->d.p->car))
     {
-        display_on_file(sexp->d.p->car, file);
+        display_on_file(sexp->d.p->car, file, string_output);
     }
     else
     {
-        display_inside_list(sexp->d.p->car, file);
+        display_inside_list(sexp->d.p->car, file, string_output);
     }
 
     if (!is_pair(cdr(sexp)) && !IS_NIL(cdr(sexp)))
@@ -199,7 +208,7 @@ display_pair(const TYPE* sexp, FILE* file)
     if (!IS_NIL(sexp->d.p->cdr))
     {
         fprintf(file, " ");
-        display_inside_list(sexp->d.p->cdr, file);           
+        display_inside_list(sexp->d.p->cdr, file, string_output);
     }
 }
 
@@ -260,7 +269,9 @@ display_boolean(const TYPE* sexp, FILE* file)
 }
 
 static void
-display_vector(const TYPE* sexp, int i, FILE* file)
+display_vector(const TYPE* sexp, int i,
+	       FILE* file,
+	       void (*string_output)(const TYPE*, FILE*))
 {
     assert(is_vector(sexp) && "DISPLAY_VECTOR: Not a vector sexp");
 
@@ -271,16 +282,44 @@ display_vector(const TYPE* sexp, int i, FILE* file)
             fprintf(file, " ");
         }
 
-        display_on_file(sexp->d.v->slots[i], file);
-        display_vector(sexp, ++i, file);
+        display_on_file(sexp->d.v->slots[i], file, string_output);
+        display_vector(sexp, ++i, file, string_output);
     }
 }
 
-static void 
+static void
 display_string(const TYPE* sexp, FILE* file)
 {
     assert(is_string(sexp) && "DISPLAY_STRING: Not a string sexp");
-    fprintf(file, "\"%s\"", sexp->d.s);
+    fprintf(file, "%s", sexp->d.s);
+}
+
+static void
+write_string(const TYPE* sexp, FILE* file)
+{
+    assert(is_string(sexp) && "DISPLAY_STRING: Not a string sexp");
+    const char* s = sexp->d.s;
+    fprintf(file, "\"");
+    for (;*s != '\0'; s++)
+    {
+	switch (*s) {
+	case '"':
+	    fprintf(file, "%c%c", '\\', '\"');
+	    break;
+	case '\\':
+	    fprintf(file, "%c%c", '\\', '\\');
+	    break;
+	case '\n':
+	    fprintf(file, "%c%c", '\\', 'n');
+	    break;
+	case '\t':
+	    fprintf(file, "%c%c", '\\', 't');
+	    break;
+	default:
+	    fprintf(file, "%c", *s);
+	}
+    }
+    fprintf(file, "\"");
 }
 
 static 
@@ -297,7 +336,7 @@ display_bound_var(const TYPE* sexp, FILE* file)
 }
 
 static void 
-display_on_file(const TYPE* sexp, FILE* file)
+display_on_file(const TYPE* sexp, FILE* file, void (*string_output)(const TYPE*, FILE*))
 {
     if (sexp != NULL)
     {
@@ -308,18 +347,18 @@ display_on_file(const TYPE* sexp, FILE* file)
         else if (is_pair(sexp))
         {
             fprintf(file, "(");
-            display_inside_list(sexp, file);
+            display_inside_list(sexp, file, string_output);
             fprintf(file, ")");
         }
         else if (is_vector(sexp))
         {
             fprintf(file, "#(");
-            display_vector(sexp, 0, file);
+            display_vector(sexp, 0, file, string_output);
             fprintf(file, ")");
         }
         else
         {
-            display_inside_list(sexp, file); /* @todo not nessecarily inside list */
+            display_inside_list(sexp, file, string_output); /* @todo not nessecarily inside list */
         }
     }
     else
@@ -335,9 +374,15 @@ display_on_file(const TYPE* sexp, FILE* file)
 }
 
 void 
-display(const TYPE* sexp)
+display(const TYPE* sexp, FILE* file)
 {
-    display_on_file(sexp, stdout);
+    display_on_file(sexp, file, display_string);
+}
+
+void
+write(const TYPE* sexp, FILE* file)
+{
+    display_on_file(sexp, file, write_string);
 }
 
 void
@@ -356,7 +401,7 @@ newline()
 void 
 error(const TYPE* sexp)
 {
-    display(sexp);
+    display(sexp, stderr);
     assert_throw(FALSE,
                  NO_ERROR,
                  "\nApplication code triggered error.");
@@ -366,6 +411,6 @@ void
 display_debug(const TYPE* sexp)
 {
     printf("Object: ");
-    display(sexp);
+    display(sexp, stderr);
     newline();
 }

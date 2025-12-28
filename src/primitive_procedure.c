@@ -868,9 +868,60 @@ _peek_char_procedure_(const TYPE* arguments, const TYPE* env)
 }
 
 MAKE_VOID_WRAPPER_TWO_ARG(write_char_to_port);
-
 MAKE_PREDICATE_WRAPPER_ONE_ARG(is_eof_object);
-MAKE_VOID_WRAPPER_ONE_ARG(display);
+
+static
+TYPE*
+_display_procedure_(const TYPE* arguments, const TYPE* env) {
+    unsigned int len = length(arguments);
+    
+    assert_throw(
+        len == 1 || len== 2,
+        APPLY_ERROR,
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in display.");
+
+    if (len == 1)
+    {
+	display(car(arguments), stdout);
+    }
+    else
+    {
+	TYPE* port = car(cdr(arguments));
+	assert_throw(is_true(is_output_port(port)),
+		     APPLY_ERROR,
+		     "APPLY_PRIMITIVE_PROCEDURE: display, port is not output port.");
+	display(car(arguments), port->d.po->file);
+    }
+    
+    return mk_none();
+}
+
+static
+TYPE*
+_write_procedure_(const TYPE* arguments, const TYPE* env) {
+    unsigned int len = length(arguments);
+    
+    assert_throw(
+        len == 1 || len== 2,
+        APPLY_ERROR,
+        "APPLY_PRIMITIVE_PROCEDURE: wrong # of arguments in write.");
+
+    if (len == 1)
+    {
+	write(car(arguments), stdout);
+    }
+    else
+    {
+	TYPE* port = car(cdr(arguments));
+	assert_throw(is_true(is_output_port(port)),
+		     APPLY_ERROR,
+		     "APPLY_PRIMITIVE_PROCEDURE: write, port is not output port.");
+	write(car(arguments), port->d.po->file);
+    }
+    
+    return mk_none();
+}
+
 MAKE_VOID_WRAPPER_NO_ARG(newline);
 
 static 
@@ -1228,6 +1279,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(write_char_to_port, write-char);
     ADD_PROCEDURE(is_eof_object, eof-object?);
     ADD_PROCEDURE(display, display);
+    ADD_PROCEDURE(write, write);
     ADD_PROCEDURE(newline, newline);
     ADD_PROCEDURE(error, error);
     ADD_PROCEDURE(is_port, port?);

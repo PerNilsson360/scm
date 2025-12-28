@@ -24,7 +24,8 @@
 
 #include "type.h" 
 
-void display(const TYPE* sexp);
+void display(const TYPE* sexp, FILE* file);
+void write(const TYPE* sexp, FILE* file);
 void newline();
 void error(const TYPE* sexp);
 void display_debug(const TYPE* sexp);

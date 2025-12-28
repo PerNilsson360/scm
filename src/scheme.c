@@ -86,7 +86,7 @@ interactive(TYPE* env)
         stack_init();
         sexp = scm_read();
 	sexp = xlat(sexp);
-        display(eval(sexp, env));
+        display(eval(sexp, env), stdout);
     }
 }
 
