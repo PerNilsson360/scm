@@ -76,6 +76,16 @@
         ((equal? a (car li)) li)
         (else (member a (cdr li)))))
 
+(define (call-with-input-file file-name proc)
+  (let ((port (open-input-file file-name)))
+    (proc port)
+    (close-input-port port)))
+
+(define (call-with-output-file file-name proc)
+  (let ((port (open-output-file file-name)))
+    (proc port)
+    (close-output-port port)))
+
 (define (load file-name)
   (define (inner port)
     (let ((sexp (read port)))
@@ -85,7 +95,7 @@
                  (newline)
                  (eval sexp environment) 
                  (inner port)))))
-  (inner (open-input-file file-name)))
+  (call-with-input-file file-name inner))
 
 (define (max x . y)
   (define (m x y) (if (> x y) x y))

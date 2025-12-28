@@ -1,4 +1,4 @@
-#!scheme
+#!/usr/local/bin/scheme
 
 (if (not (= (length command-line) 3))
     (begin (display "usage: mk-prelude-file <prelude>")
