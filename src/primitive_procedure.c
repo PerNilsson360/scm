@@ -511,7 +511,7 @@ _sqrt_procedure_(const TYPE* arguments, const TYPE* env)
 
     TYPE* result = mk_unasigned_number(REAL);
         
-    result->d.d = is_integer(n) ? sqrt(n->d.i) : sqrt(n->d.d);
+    result->d.d = is_integer(n) ? sqrt(as_integer(n)) : sqrt(n->d.d);
         
     return result;
         

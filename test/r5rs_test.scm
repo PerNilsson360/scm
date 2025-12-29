@@ -371,9 +371,12 @@
   (expect '(not (symbol? '())))
   (expect '(not (symbol? #f)))
   (expect '(equal? (symbol->string 'flying-fish) "flying-fish"))
-					; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
+  ;; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
   (expect '(equal? (symbol->string (string->symbol "Malvina")) "Malvina"))
-					; todo does not even parse (expect '(eq? 'mISSISSIppi 'mississippi))
+  ;; (expect '(eq? 'mISSISSIppi 'mississippi))
+  (expect '(eq? 'JollyWog (string->symbol (symbol->string 'JollyWog))))
+  (expect '(string=? "K. Harper. M.D."
+		     (symbol->string (string->symbol "K. Harper. M.D."))))
   )
 
 ;; 6.3.4 Characters
@@ -420,7 +423,7 @@
   (expect '(equal? (apply + (list 3 4)) 7))
   (expect '(equal? (apply + 1 (list 1 1)) 3))    ; not in r5rs 
   (expect '(equal? (apply (lambda () 1) '()) 1)) ; 0 arguments
-					; TODO lambda no paren on arg bug (expect '(equal? ((compose sqrt *) 12 75) 30))
+  (expect '(equal? ((compose sqrt *) 12 75) 30.0)) ; TODO: a bit awkward 30 is false
   (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))
   (expect '(equal? (map (lambda (n) (expt n n)) '(1 2 3 4 5)) '(1 4 27 256 3125)))
   (expect '(equal? (map + '(1 2 3) '(4 5 6)) '(5 7 9)))
@@ -440,7 +443,7 @@
   (expect '(equal? (memq 'a '(b c d)) #f))
   (expect '(equal? (memq (list 'a) '(b (a) c)) #f))
   (expect '(equal? (member (list 'a) '(b (a) c)) '((a) c)))
-                                        ; (expect (equal? (memq 101 ’(100 101 102)) unspecified
+  (expect '(equal? (memq 101 '(100 101 102)) '(101 102))) ; Unspecified in spec
   (expect '(equal? (memv 101 '(100 101 102)) '(101 102)))
   )
 
