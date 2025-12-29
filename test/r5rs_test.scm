@@ -371,7 +371,7 @@
   (expect '(not (symbol? '())))
   (expect '(not (symbol? #f)))
   (expect '(equal? (symbol->string 'flying-fish) "flying-fish"))
-  ;; todo use default lowercase (expect '(equal? (symbol->string 'marting) "martin"))
+  ;; todo use default lowercase (expect '(equal? (symbol->string 'Martin) "martin"))
   (expect '(equal? (symbol->string (string->symbol "Malvina")) "Malvina"))
   ;; (expect '(eq? 'mISSISSIppi 'mississippi))
   (expect '(eq? 'JollyWog (string->symbol (symbol->string 'JollyWog))))
@@ -386,6 +386,7 @@
   (expect '(char<? #\0 #\9))
   (expect '(char-ci=? #\A #\a))
   (expect (<= (char->integer #\a) (char->integer #\a)))
+  (expect (char<=? (integer->char 97) (integer->char 97)))
   )
 
 ;; 6.3.5 Strings
@@ -415,6 +416,16 @@
 (define head car)
 (define tail (lambda (stream) (force (cdr stream))))
 
+(define list-length
+  (lambda (obj)
+    (call-with-current-continuation
+     (lambda (return)
+       (letrec ((r (lambda (obj)
+		     (cond ((null? obj) 0)
+			   ((pair? obj) (+ (r (cdr obj)) 1))
+			   (else (return #f))))))
+	 (r obj))))))
+
 (define (test-control-features)
   (expect '(procedure? car))
   (expect '(not(procedure? 'car)))
@@ -427,6 +438,9 @@
   (expect '(equal? (map cadr '((a b) (d e) (g h))) '(b e h)))
   (expect '(equal? (map (lambda (n) (expt n n)) '(1 2 3 4 5)) '(1 4 27 256 3125)))
   (expect '(equal? (map + '(1 2 3) '(4 5 6)) '(5 7 9)))
+  (expect '(equal? (let ((count 0))
+		     (map (lambda (ignored) (set! count (+ count 1)) count) '(a b)))
+		   '(1 2)))
   (expect '(equal? (let ((v (make-vector 5)))
                      (for-each (lambda (i) (vector-set! v i (* i i)))
                                '(0 1 2 3 4))
@@ -435,6 +449,16 @@
   (expect '(equal? (force (delay (+ 1 2))) 3))
   (expect '(equal? (let ((p (delay (+ 1 2)))) (list (force p) (force p))) '(3 3)))
   (expect '(equal? (head (tail (tail a-stream))) 2))
+  (expect '(equal? (call-with-current-continuation
+		   (lambda (exit)
+		     (for-each (lambda (x)
+				 (if (negative? x)
+				     (exit x)))
+			       '(54 0 37 -3 245 19))
+		     #t))
+		  -3))
+  (expect '(equal? (list-length '(1 2 3 4)) 4))
+  (expect '(equal? (list-length '(a b .c)) #f))
   )
 
 (define (test-memq?)
