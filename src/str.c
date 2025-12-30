@@ -27,12 +27,14 @@
 
 #include <gc.h>
 
+#include "common.h"
 #include "symbol.h"
 #include "error.h"
 #include "util.h"
 #include "number.h"
 #include "string.h"
 #include "char.h"
+#include "read.h"
 
 int
 is_string(const TYPE* sexp)
@@ -445,20 +447,33 @@ list_to_string(const TYPE* sexp)
 TYPE*
 string_to_number(const TYPE* sexp, const TYPE* radix)
 {
-    /* @todo make this function standard complient */
-    char* tail = 0;
-    errno = 0;
-    
-    int i = strtol(sexp->d.s, &tail, as_integer(radix));
-    
-    if (errno != 0)
+    int r = 10;			/* assume decimal */
+    if (radix != NULL)
     {
-        perror("STRING_TO_NUMBER:");
-        throw_error(CONSTRAINT_ERROR,
-                    "STRING_TO_NUMBER:Failed to parse number");
+	r = as_integer(radix); 
     }
-
-    return mk_number_from_int(i);
+    /* radix specifier in the string takes precedance */
+    char* s = sexp->d.s;
+    if (*s == '#')
+    {
+	s++;
+	r = radix_from_char(*s);
+	s++;
+    }
+    TOKEN* token;
+    FILE* file = fmemopen((void*) s, strlen(s), "r");
+    switch(r)
+    {
+    case 10:
+	token = decimal(file);
+	break;
+    default:
+	token = integer(file, r);
+    }
+    if (token->scm_type == NULL) {
+	return mk_boolean(FALSE);
+    }
+    return token->scm_type;
 }
 
 TYPE* 

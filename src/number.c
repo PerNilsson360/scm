@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <errno.h>
 
 #include <gc.h>
 
@@ -63,51 +64,18 @@ TYPE* mk_number_from_int(int n)
     return (TYPE*)result;
 }
 
-static
-int hex_to_number(char c) {
-    int result;
-    switch (c) {
-    case 'a':
-	result = 10;
-	break;
-    case 'b':
-	result = 11;
-	break;
-    case 'c':
-	result = 12;
-	break;
-    case 'd':
-	result = 13;
-	break;
-    case 'e':
-	result = 14;
-	break;
-    case 'f':
-	result = 15;
-	break;
-    default:
-	result = c -'0';
-    }
-    return result;
-}
-
 TYPE* 
-mk_number(const char* symbol, unsigned int length, int positive, int radix)
+mk_number(const char* number, int radix)
 {
-    int number = 0;
-    unsigned int i = 0;
-        
-    for (i = 0; i < length; i++)
-    {
-	number += hex_to_number(symbol[i]);
-      
-	if (i < length - 1)
-	{
-	    number *= radix;
-	}
-    }
+    char* end;
+    errno = 0;
+    long long int n = strtoll(number, &end, radix);
 
-    return mk_number_from_int(positive ? number : (- number));
+    if (errno != 0 ||*end != '\0') {
+	return NULL;
+    }
+    
+    return mk_number_from_int(n);
 }
 
 static
@@ -120,57 +88,15 @@ mk_real_from_double(double d)
 }
 
 TYPE*
-mk_real(const char* symbol, int positive)
+mk_real(const char* symbol)
 {
-    double d = strtod(symbol, NULL);
-    return mk_real_from_double(positive ? d : -d);
-}
-
-TYPE* 
-mk_hex_number(const char* symbol, unsigned int length)
-{
-    int number = 0;
-    unsigned int i = 0;
-        
-    for(i = 0; i < length; i++)
-    {
-        switch (symbol[i]) 
-        {
-        case 'a':
-        case 'A':
-            number += 10;
-            break;
-        case 'b':
-        case 'B':
-            number += 11;
-            break;
-        case 'c':
-        case 'C':
-            number += 12;
-            break;
-        case 'd':
-        case 'D':
-            number += 13;
-            break;
-        case 'e':
-        case 'E':
-            number += 14;
-            break;
-        case 'f':
-        case 'F':
-            number += 15;
-            break;
-        default:
-            number += symbol[i] - '0';
-        }
-
-        if (i < length - 1)
-        {
-            number *= 16;
-        }
+    char* end;
+    errno = 0;
+    double d = strtod(symbol, &end);
+    if (errno != 0 ||*end != '\0') {
+	return NULL;
     }
-
-    return mk_number_from_int(number);
+    return mk_real_from_double(d);
 }
 
 int
@@ -456,8 +382,8 @@ add_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-	result = mk_number_from_int (GET_INT_FROM_TYPE_TAGGED_INT(left) +
-                                     GET_INT_FROM_TYPE_TAGGED_INT(right));
+	result = mk_number_from_int(GET_INT_FROM_TYPE_TAGGED_INT(left) +
+				    GET_INT_FROM_TYPE_TAGGED_INT(right));
     }
     
     return result;
@@ -482,8 +408,8 @@ mul_number(const TYPE* left, const TYPE* right)
     }
     else
     {
-        result = mk_number_from_int (GET_INT_FROM_TYPE_TAGGED_INT(left) *
-                                     GET_INT_FROM_TYPE_TAGGED_INT(right));
+        result = mk_number_from_int(GET_INT_FROM_TYPE_TAGGED_INT(left) *
+				    GET_INT_FROM_TYPE_TAGGED_INT(right));
     }
 
     return result;
@@ -540,7 +466,7 @@ sub_numbers(const TYPE* numbers)
 
     if (length(numbers) == 1)
     {
-	result = _sub_two_numbers(mk_number("0", 1, TRUE, 10), car(numbers));
+	result = _sub_two_numbers(mk_number_from_int(0), car(numbers));
     }
     else
     {
@@ -594,7 +520,7 @@ div_numbers(const TYPE* numbers)
 
     if (length(numbers) == 1)
     {
-	result = _div_two_numbers(mk_number("1", 1, TRUE, 10), car(numbers));
+	result = _div_two_numbers(mk_number_from_int(1), car(numbers));
     }
     else
     {

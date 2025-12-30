@@ -382,14 +382,14 @@ static
 TYPE* 
 _plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&add_number, arguments, mk_number("0", 1, TRUE, 10)); 
+    return fold_right(&add_number, arguments, mk_number_from_int(0)); 
 }
 
 static 
 TYPE* 
 _mul_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&mul_number, arguments, mk_number("1", 1, TRUE, 10)); 
+    return fold_right(&mul_number, arguments, mk_number_from_int(1)); 
 }
 
 static 
@@ -656,11 +656,11 @@ _string_append_procedure_(const TYPE* arguments, const TYPE* env)
 
 
 MAKE_WRAPPER_ONE_ARG(string_to_list)
-    MAKE_WRAPPER_ONE_ARG(list_to_string)
+MAKE_WRAPPER_ONE_ARG(list_to_string)
 
-    static 
-    TYPE* 
-    _string_to_number_procedure_(const TYPE* arguments, const TYPE* env)
+static 
+TYPE* 
+_string_to_number_procedure_(const TYPE* arguments, const TYPE* env)
 {
     int nargs = length(arguments);
     assert_throw(
@@ -670,7 +670,7 @@ MAKE_WRAPPER_ONE_ARG(string_to_list)
 
     if (nargs == 1)
     {
-        return string_to_number(car(arguments), mk_number_from_int(10));
+        return string_to_number(car(arguments), NULL);
     }
     else
     {

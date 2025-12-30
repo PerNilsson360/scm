@@ -57,6 +57,36 @@
   string --> " string-element* "
   string-element -> any character other than " or \ | \" | \\
   number --> num-2 | num-8 | num-10 | num-16
+
+  <num R> --> <prefix R> <complex R>
+  <complex R> --> <real R> | <real R> @ <real R>
+  | <real R> + <ureal R> i | <real R> - <ureal R> i
+  | <real R> + i | <real R> - i
+  | + <ureal R> i | - <ureal R> i | + i | - i
+  <real R> --> <sign> <ureal R>
+  <ureal R> --> <uinteger R>
+  | <uinteger R> / <uinteger R>
+  | <decimal R>
+  <decimal 10> --> <uinteger 10> <suffix>
+  | . <digit 10>+ #* <suffix>
+  | <digit 10>+ . <digit 10>* #* <suffix>
+  | <digit 10>+ #+ . #* <suffix>
+  <uinteger R> --> <digit R>+ #*
+  <prefix R> --> <radix R> <exactness>
+  | <exactness> <radix R>
+  <suffix> --> <empty> 
+  | <exponent marker> <sign> <digit 10>+
+  <exponent marker> --> e | s | f | d | l
+  <sign> --> <empty>  | + |  -
+  <exactness> --> <empty> | #i | #e
+  <radix 2> --> #b
+  <radix 8> --> #o
+  <radix 10> --> <empty> | #d
+  <radix 16> --> #x
+  <digit 2> --> 0 | 1
+  <digit 8> --> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+  <digit 10> --> <digit>
+  <digit 16> --> <digit 10> | a | b | c | d | e | f 
 */
 
 #include <stdio.h>
@@ -75,25 +105,7 @@
 #include "port.h"
 #include "str.h"
 #include "util.h"
-
-enum TOKEN_TYPE
-{
-    T_IDENTIFIER = 257,         /* above ascii range */
-    T_BOOLEAN,
-    T_NUMBER,
-    T_CHARACTER,
-    T_STRING,
-    T_INITIAL_VECTOR,
-    T_UNQUOTE_SPLICING
-};
-
-struct TOKEN
-{
-    int type;
-    char data[MAX_IDENTIFIER_LENGTH];
-    TYPE* scm_type;
-};
-typedef struct TOKEN  TOKEN;
+#include "read.h"
 
 static TOKEN token;
 static TOKEN pushed_token;
@@ -207,7 +219,7 @@ skip_atmospheres(FILE* file)
 
 static
 int
-delimiter(char c)
+is_delimiter(char c)
 {
     int result = FALSE;
     /* 
@@ -230,7 +242,15 @@ delimiter(char c)
     return result;
 }
 
+static
+int
+is_delimiter_or_eof(char c)
+{
+    return is_delimiter(c) || c == EOF;
+}
+
 /* digit 2 -> 0 | 1 */
+static
 int
 is_digit_2(char c) {
     int result = FALSE;
@@ -243,6 +263,7 @@ is_digit_2(char c) {
 }
    
 /* digit 8 -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 */
+static
 int
 is_digit_8(char c) {
     int result = FALSE;
@@ -255,6 +276,7 @@ is_digit_8(char c) {
 }
 
 /* digit 16 -> digit 10 | a | b | c | d | e | f */
+static
 int
 is_digit_16(char c) {
     int result = FALSE;
@@ -371,7 +393,7 @@ character(FILE* file)
 
         token.data[i++] = c;
 	c = getc(file);
-    } while (!delimiter(c) && c != EOF);
+    } while (!is_delimiter_or_eof(c));
 
     ungetc(c, file);
 
@@ -410,17 +432,43 @@ character(FILE* file)
 }
 
 static
-TOKEN*
-binary(FILE* file)
+void
+handle_sign(FILE* file, int* i)
 {
-    int i = 0;
-    token.type = T_NUMBER;
+    /*  <sign> --> <empty>  | + |  - */
     int c = getc(file);
-    if (!is_digit_2(c))
+    switch (c)
     {
-	parse_error(file, "BINARY: need at least one digit");
+    case '+':
+    case '-':
+	token.data[(*i)++] = c;
+	break;
+    default:
+	ungetc(c, file);
+	break;
     }
-    do
+}
+
+int
+radix_from_char(char c)
+{
+    switch (c)
+    {
+    case 'b': return 2;
+    case 'o': return 8;
+    case 'x': return 16;
+    default: return 10;
+    }
+}
+
+TOKEN*
+integer(FILE* file, int radix)
+{
+    
+    int i = 0;
+    handle_sign(file, &i);
+    int c = getc(file);
+    while (!is_delimiter_or_eof(c))
     {
 	if (i == MAX_IDENTIFIER_LENGTH - 1)
 	{
@@ -429,86 +477,40 @@ binary(FILE* file)
 
 	token.data[i++] = c;
 	c = getc(file);
-    } 
-    while (is_digit_2(c));
-    
-    ungetc(c, file);
-
-    token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, TRUE, 2);
-
-    return &token;
-}
-
-static
-TOKEN*
-octal(FILE* file)
-{
-    int i = 0;
-    token.type = T_NUMBER;
-    int c = getc(file);
-  
-    if (!is_digit_8(c))
-    {
-	parse_error(file, "OCTAL: need at least one digit");
     }
-  
-    do
-    {
-	if (i == MAX_IDENTIFIER_LENGTH - 1)
-	{
-	    assert(0 && "Need to handle this in a better way");
-	}
-
-	token.data[i++] = c;
-	c = getc(file);
-    } 
-    while (is_digit_8(c));
-    
     ungetc(c, file);
-
     token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, TRUE, 8);
-
+    token.scm_type = mk_number(token.data, radix);
     return &token;
 }
 
-static
 TOKEN*
-hex(FILE* file)
+_integer(FILE* file, int radix)
 {
-    int i = 0;
-    token.type = T_NUMBER;
-    int c = getc(file);
-  
-    if (!is_digit_16(c))
+    TOKEN* result = integer(file, radix);
+    if (result->scm_type == NULL)
     {
-	parse_error(file, "HEX: need at least one digit");
+	parse_error(file, "INTEGER: invalid integer");
     }
-  
-    do
-    {
-	if (i == MAX_IDENTIFIER_LENGTH - 1)
-	{
-	    assert(0 && "Need to handle this in a better way");
-	}
-
-	token.data[i++] = c;
-	c = getc(file);
-    } 
-    while (is_digit_16(c));
-    
-    ungetc(c, file);
-
-    token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, TRUE, 16);
-
-    return &token;
+    return result;
 }
+
 
 static
 TOKEN*
-decimal_sufix(char c, FILE* file, int i, int positive) {
+exponent_suffix(char c, FILE* file, int i)
+{
+    if (i == MAX_IDENTIFIER_LENGTH - 1)
+    {
+	assert(0 && "Need to handle this in a better way");
+    }
+    
+    token.data[i++] = c;
+    c = getc(file);
+    if (!(c == '-' || c == '+' || isdigit(c))) {
+	parse_error(file, "DECIMAL: invalid exponent suffix.");
+    }
+
     do
     {
         if (i == MAX_IDENTIFIER_LENGTH - 1)
@@ -524,19 +526,15 @@ decimal_sufix(char c, FILE* file, int i, int positive) {
     ungetc(c, file);
 
     token.data[i] = '\0';
-    token.scm_type = mk_real(token.data, positive);
+    token.scm_type = mk_real(token.data);
 
     return &token;
 }
 
-
 static
 TOKEN*
-decimal(char c, FILE* file, int positive)
+decimal_sufix(char c, FILE* file, int i)
 {
-    int i = 0;
-    token.type = T_NUMBER;
-
     do
     {
         if (i == MAX_IDENTIFIER_LENGTH - 1)
@@ -546,18 +544,72 @@ decimal(char c, FILE* file, int positive)
 
         token.data[i++] = c;
         c = getc(file);
-	if (c == '.') {
-	    return decimal_sufix(c, file, i, positive);
+	switch (c)
+	{
+	case 'e': case 's': case 'f': case 'd': case 'l':
+	    return exponent_suffix('e', file, i);
 	}
     } 
     while (isdigit(c));
+
+    ungetc(c, file);
+
+    token.data[i] = '\0';
+    token.scm_type = mk_real(token.data);
+
+    return &token;
+}
+
+TOKEN*
+decimal(FILE* file)
+{
+    int i = 0;
+    token.type = T_NUMBER;
+
+    handle_sign(file, &i);
+    
+    char c;
+    while (TRUE)			/* loop stops at break */
+    {
+	c = getc(file);
+	
+	switch (c)
+	{
+	case '.':
+	    return decimal_sufix(c, file, i);
+	case 'e': case 's': case 'f': case 'd': case 'l':
+	    return exponent_suffix('e', file, i);
+	}
+	
+	if (!isdigit(c)) {
+	    break;
+	}
+
+        if (i == MAX_IDENTIFIER_LENGTH - 1)
+        {
+            assert(0 && "Need to handle this in a better way");
+        }
+        token.data[i++] = c;
+    } 
     
     ungetc(c, file);
 
     token.data[i] = '\0';
-    token.scm_type = mk_number(token.data, i, positive, 10);
+    token.scm_type = mk_number(token.data, 10);
 
     return &token;
+}
+
+static
+TOKEN*
+_decimal(FILE* file)
+{
+    TOKEN* result = decimal(file);
+    if (token.scm_type == NULL)
+    {
+	parse_error(file, "DECIMAL: invalid decimal");
+    }
+    return result;
 }
 
 static
@@ -682,29 +734,20 @@ next_token(FILE* file)
             token.type = T_INITIAL_VECTOR;
             result = &token;
         }
-	else if (cc == 'b')
+	/*
+	  <radix 2> --> #b
+	  <radix 8> --> #o
+	  <radix 10> --> <empty> | #d
+	  <radix 16> --> #x
+
+	 */
+	else if (cc == 'b' || cc == 'o' || cc == 'x')
 	{
-	    result = binary(file);
-	}
-	else if (cc == 'o')
-	{
-	    result = octal(file);
+	    result = _integer(file, radix_from_char(cc));
 	}
 	else if (cc == 'd')
 	{
-	    int cc = getc(file);
-	    if (isdigit(cc))
-	    {
-		result = decimal(cc, file, TRUE);
-	    }
-	    else
-	    {
-		parse_error(file, "NEXT_TOKEN: #d without digits");
-	    }
-	}
-	else if (cc == 'x')
-	{
-	    result = hex(file);
+	    result = _decimal(file);
 	}
 	else
 	{
@@ -716,7 +759,8 @@ next_token(FILE* file)
     */
     else if (isdigit(c))
     {
-	result = decimal(c, file, TRUE);
+	ungetc(c, file);
+	result = _decimal(file);
     }
     /*
       peculiar-identier --> + | - | ...
@@ -727,7 +771,8 @@ next_token(FILE* file)
         int cc = getc(file);
         if (isdigit(cc))
         {
-            result = decimal(cc, file, TRUE);
+	    ungetc(cc, file);
+            result = _decimal(file);
         }
         else
         {
@@ -745,10 +790,11 @@ next_token(FILE* file)
     else if (c == '-')
     {
         int cc = getc(file);
-
         if (isdigit(cc))
         {
-            result = decimal(cc, file, FALSE);
+	    ungetc(cc, file);
+	    ungetc(c, file);
+            result = _decimal(file);
         }
         else
         {
@@ -789,9 +835,9 @@ next_token(FILE* file)
         }
 	if (isdigit(cc))
 	{
-	    token.type = T_NUMBER;
-	    token.data[0] = c;
-	    result = decimal_sufix(cc, file, 1, TRUE); 
+	    ungetc(c, file);
+	    ungetc(cc, file);
+	    result = _decimal(file); 
 	}
         else 
         {

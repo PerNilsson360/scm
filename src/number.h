@@ -26,9 +26,8 @@
 
 TYPE* mk_unasigned_number(int type);
 TYPE* mk_number_from_int(int n);
-TYPE* mk_number(const char* symbol, unsigned int length, int positive, int radix);
-TYPE* mk_real(const char* symbol, int positive);
-TYPE* mk_hex_number(const char* symbol, unsigned int length);
+TYPE* mk_number(const char* number, int radix);
+TYPE* mk_real(const char* number);
 int is_number(const TYPE* number);
 int is_integer(const TYPE* number);
 int is_real(const TYPE* number);

@@ -23,6 +23,30 @@
 #define _READ_H_
 
 #include "type.h"
+#include "util.h"
+
+enum TOKEN_TYPE
+{
+    T_IDENTIFIER = 257,         /* above ascii range */
+    T_BOOLEAN,
+    T_NUMBER,
+    T_CHARACTER,
+    T_STRING,
+    T_INITIAL_VECTOR,
+    T_UNQUOTE_SPLICING
+};
+
+struct TOKEN
+{
+    int type;
+    char data[MAX_IDENTIFIER_LENGTH];
+    TYPE* scm_type;
+};
+typedef struct TOKEN  TOKEN;
+
+int radix_from_char(char c);
+TOKEN* integer(FILE* file, int radix);
+TOKEN* decimal(FILE* file);
 
 TYPE* scm_read();
 TYPE* read_from_file(FILE* file);

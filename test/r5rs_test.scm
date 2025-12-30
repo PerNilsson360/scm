@@ -304,14 +304,21 @@
 
 (define (test-numbers-extra)
   (expect '(integer? 1))
-  (expect (odd? 11))
-  (expect (odd? -11))
+  (expect '(odd? 11))
+  (expect '(odd? -11))
+  (expect '(equal? #b11110000 #xf0))
+  (expect '(equal? 1e-3 0.001))
   )
 
 ;; 6.2.6
 (define (test-numerical-input-output)
   (expect '(equal? (string->number "100") 100))
   (expect '(equal? (string->number "100" 16) 256))
+  (expect '(equal? (string->number "1e2") 100.0)) ; TODO Should be 100
+  )
+
+(define (test-numerical-input-output-extra)
+  (expect '(equal? (string->number "999" 2) #f))
   )
 
 ;; 6.3.1
@@ -551,6 +558,9 @@
   (test-numbers)
   (test-numbers-extra)
   (print-line "numbers ok")
+  (test-numerical-input-output)
+  (test-numerical-input-output-extra)
+  (print-line "numerical input output ok")
   (test-booleans)
   (print-line "booleans ok")
   (test-pairs-and-lists)
