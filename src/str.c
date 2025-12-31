@@ -435,13 +435,15 @@ list_to_string(const TYPE* sexp)
                          CONSTRAINT_ERROR,
                          "LIST_TO_STRING: exceded max identifier length");
 
-            buffer[i++] = c->d.i;
+            buffer[i++] = GET_INT_FROM_TYPE_TAGGED_INT(c);
             list = cdr(list);
         } while (!IS_NIL(list));
         
         buffer[i] = '\0';
         result = mk_string_with_length(buffer, i);
     }
+    
+    return result;
 }
 
 TYPE*

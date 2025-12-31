@@ -426,7 +426,7 @@ character(FILE* file)
     }
     else
     {
-        assert(0 && "Need to handle this in a better way");
+	parse_error(file, "CHARACTER: invalid character sequence.");
     }
     return &token;
 }

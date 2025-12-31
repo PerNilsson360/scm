@@ -18,8 +18,6 @@
   (let ((x 4))
     (lambda (y) (+ x y))))
 
-(equal? ((lambda x x) 3 4 5 6) '(3 4 5 6))
-
 (define (test-simple-examples)
   (expect '(equal? (* 5 8) 40))
   (expect '(equal? (fact 5) 120))
@@ -273,7 +271,7 @@
   (expect '(integer? 3.0))
   ;; (expect '(integer? 8/4))
   (expect '(equal? (max 3 4) 4))
-  (expect '(equal? (max 3.9 4) 4))	; todo should be 4.0
+  (expect '(= (max 3.9 4) 4.0))
   (expect '(equal? (- 3 4) -1))
   (expect '(equal? (- 3 4 5) -6))
   (expect '(equal? (- 3) -3))
@@ -314,7 +312,7 @@
 (define (test-numerical-input-output)
   (expect '(equal? (string->number "100") 100))
   (expect '(equal? (string->number "100" 16) 256))
-  (expect '(equal? (string->number "1e2") 100.0)) ; TODO Should be 100
+  (expect '(= (string->number "1e2") 100))
   )
 
 (define (test-numerical-input-output-extra)
@@ -397,12 +395,13 @@
   )
 
 ;; 6.3.5 Strings
-
 (define (test-string-extra)
   (expect (equal? "\"" (make-string 1 #\")))
   (expect (equal? "\\" (make-string 1 #\\)))
   (expect (equal? "\n" (make-string 1 #\newline)))
   (expect (equal? "\t" (make-string 1 #\ht)))
+  (expect (equal? (string->list "abc") '(#\a #\b #\c)))
+  (expect (equal? (list->string '(#\a #\b #\c)) "abc"))
   )
 
 ;; 6.3.6 Vectors
@@ -569,6 +568,8 @@
   (print-line "symbols ok")
   (test-characters)
   (print-line "characters ok")
+  (test-string-extra)
+  (print-line "strings ok")
   (test-vectors)
   (print-line "vectors ok")
   (test-control-features)
