@@ -110,6 +110,21 @@
 static TOKEN token;
 static TOKEN pushed_token;
 static TOKEN* pushed_token_ptr = NULL;
+static int paren_depth;
+
+static void parse_error(FILE* file, const char* error);
+static TOKEN* next_token(FILE* file);
+
+static
+void
+set_token_char(int i, char c, FILE* file)
+{
+    if (i == MAX_IDENTIFIER_LENGTH - 1)
+    {
+	parse_error(file, "max identifier length exceeded");
+    }
+    token.data[i] = c;
+}
 
 static void
 print_token(TOKEN* token)
@@ -144,9 +159,6 @@ print_token(TOKEN* token)
     };
 }
 
-static TOKEN* next_token(FILE* file);
-static int paren_depth;
-
 static
 void
 skip_until_paren_depth_zero(FILE* file)
@@ -175,6 +187,7 @@ skip_until_paren_depth_zero(FILE* file)
     } 
 }
 
+static
 void
 parse_error(FILE* file, const char* error)
 {
@@ -183,6 +196,7 @@ parse_error(FILE* file, const char* error)
     throw_error(PARSE_ERROR, error);
 }
 
+static
 void
 skip_atmospheres(FILE* file)
 {    
@@ -261,40 +275,6 @@ is_digit_2(char c) {
     }
     return result;
 }
-   
-/* digit 8 -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 */
-static
-int
-is_digit_8(char c) {
-    int result = FALSE;
-    switch (c)
-    {
-    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-	result = TRUE;
-    }
-    return result;
-}
-
-/* digit 16 -> digit 10 | a | b | c | d | e | f */
-static
-int
-is_digit_16(char c) {
-    int result = FALSE;
-    if (isdigit(c))
-    {
-	result = TRUE;
-    }
-    else
-    {
-	switch (c)
-	{
-	case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-	    result = TRUE;
-	}
-    }
-    return result;
-}
-
 
 static
 int
@@ -356,17 +336,12 @@ identifier(int c, FILE* file)
 
     while (subsequent(c))
     {
-        if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
-
-        token.data[i++] = c;
+	set_token_char(i++, c, file);
 	c = getc(file);
     }
 
     ungetc(c, file);
-    token.data[i] = '\0';
+    set_token_char(i, '\0', file);
     token.scm_type = mk_symbol(token.data);
         
     return &token;
@@ -386,18 +361,12 @@ character(FILE* file)
 
     do
     {
-        if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
-
-        token.data[i++] = c;
+	set_token_char(i++, c, file);
 	c = getc(file);
     } while (!is_delimiter_or_eof(c));
 
     ungetc(c, file);
-
-    token.data[i] = '\0';
+    set_token_char(i, '\0', file);
     token.type = T_CHARACTER;
 
     if (strncmp(token.data, "space", strlen("space")) == 0)
@@ -470,20 +439,16 @@ integer(FILE* file, int radix)
     int c = getc(file);
     while (!is_delimiter_or_eof(c))
     {
-	if (i == MAX_IDENTIFIER_LENGTH - 1)
-	{
-	    assert(0 && "Need to handle this in a better way");
-	}
-
-	token.data[i++] = c;
+	set_token_char(i++, c, file);
 	c = getc(file);
     }
     ungetc(c, file);
-    token.data[i] = '\0';
+    set_token_char(i, '\0', file);
     token.scm_type = mk_number(token.data, radix);
     return &token;
 }
 
+static
 TOKEN*
 _integer(FILE* file, int radix)
 {
@@ -500,12 +465,7 @@ static
 TOKEN*
 exponent_suffix(char c, FILE* file, int i)
 {
-    if (i == MAX_IDENTIFIER_LENGTH - 1)
-    {
-	assert(0 && "Need to handle this in a better way");
-    }
-    
-    token.data[i++] = c;
+    set_token_char(i++, c, file);
     c = getc(file);
     if (!(c == '-' || c == '+' || isdigit(c))) {
 	parse_error(file, "DECIMAL: invalid exponent suffix.");
@@ -513,19 +473,13 @@ exponent_suffix(char c, FILE* file, int i)
 
     do
     {
-        if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
-
-        token.data[i++] = c;
+	set_token_char(i++, c, file);
         c = getc(file);
     } 
     while (isdigit(c));
 
     ungetc(c, file);
-
-    token.data[i] = '\0';
+    set_token_char(i, '\0', file);
     token.scm_type = mk_real(token.data);
 
     return &token;
@@ -537,12 +491,7 @@ decimal_sufix(char c, FILE* file, int i)
 {
     do
     {
-        if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
-
-        token.data[i++] = c;
+	set_token_char(i++, c, file);
         c = getc(file);
 	switch (c)
 	{
@@ -553,8 +502,7 @@ decimal_sufix(char c, FILE* file, int i)
     while (isdigit(c));
 
     ungetc(c, file);
-
-    token.data[i] = '\0';
+    set_token_char(i++, '\0', file);
     token.scm_type = mk_real(token.data);
 
     return &token;
@@ -584,17 +532,12 @@ decimal(FILE* file)
 	if (!isdigit(c)) {
 	    break;
 	}
-
-        if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
-        token.data[i++] = c;
+	
+	set_token_char(i++, c, file);
     } 
     
     ungetc(c, file);
-
-    token.data[i] = '\0';
+    set_token_char(i++, '\0', file);
     token.scm_type = mk_number(token.data, 10);
 
     return &token;
@@ -624,10 +567,6 @@ string(FILE* file)
     token.type = T_STRING;
     do
     {
-	if (i == MAX_IDENTIFIER_LENGTH - 1)
-        {
-            assert(0 && "Need to handle this in a better way");
-        }
 	c = getc(file);
 	if (c == '"')
 	{
@@ -639,13 +578,13 @@ string(FILE* file)
 	    switch (cc) {
 	    case '"':
 	    case '\\':
-		token.data[i++] = cc;
+		set_token_char(i++, cc, file);
 		break;
 	    case 'n': /* '\n' and '\t' is not specified in r5rs */
-		token.data[i++] = '\n';
+		set_token_char(i++, '\n', file);
 		break;
 	    case 't':
-		token.data[i++] = '\t';
+		set_token_char(i++, '\t', file);
 		break;
 	    default:
 		parse_error(file, "STRING: not supported backslash escpape sequence.");
@@ -653,11 +592,11 @@ string(FILE* file)
 	}
 	else
 	{
-	    token.data[i++] = c;
+	    set_token_char(i++, c, file);
 	}
     } while(TRUE);
-
-    token.data[i++] = '\0';
+    
+    set_token_char(i++, '\0', file);
     token.scm_type = mk_string_with_length(token.data, i);
     
     return &token;
@@ -830,7 +769,7 @@ next_token(FILE* file)
             }
             else
             {
-                assert(0 && "Need to handle this in a better way");
+		parse_error(file, "missing . in ... sequence");
             }
         }
 	if (isdigit(cc))
