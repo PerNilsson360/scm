@@ -370,10 +370,10 @@ add_number(const TYPE* left, const TYPE* right)
 
     assert_throw(is_number(left),
                  TYPE_ERROR,
-                 "ADD_NUMBER: left must be a number");
+                 "ADD_NUMBER: invalid left arg type: %s", type_tag_to_string(left));
     assert_throw(is_number(right),
                  TYPE_ERROR,
-                 "ADD_NUMBER: right must be a number");
+                 "ADD_NUMBER: invalid right arg type: %s", type_tag_to_string(right));
 
     if (is_atleast_one(REAL, left, right))
     {

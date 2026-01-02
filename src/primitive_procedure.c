@@ -382,14 +382,22 @@ static
 TYPE* 
 _plus_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&add_number, arguments, mk_number_from_int(0)); 
+    const TYPE* first = car(arguments);
+    if (IS_NIL(first)) {
+	return mk_number_from_int(0);
+    }
+    return fold_right(&add_number, cdr(arguments), first); 
 }
 
 static 
 TYPE* 
 _mul_procedure_(const TYPE* arguments, const TYPE* env)
 {
-    return fold_right(&mul_number, arguments, mk_number_from_int(1)); 
+    const TYPE* first = car(arguments);
+    if (IS_NIL(first)) {
+	return mk_number_from_int(1);
+    }
+    return fold_right(&mul_number, cdr(arguments), first); 
 }
 
 static 

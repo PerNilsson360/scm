@@ -123,6 +123,8 @@ struct TYPE
 };
 typedef struct TYPE  TYPE;
 
+const char* type_tag_to_string(const TYPE* type);
+
 struct PAIR_DATA
 {
     TYPE* car;

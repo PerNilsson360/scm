@@ -1,4 +1,4 @@
-#!/home/per/git/scm/scheme
+#!/usr/local/bin/scheme
 ;real	0m4,513s
 ;user	0m6,328s
 ;sys	0m0,408s

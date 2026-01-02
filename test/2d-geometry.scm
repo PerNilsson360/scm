@@ -1,4 +1,4 @@
-(load "/home/per/git/scm/srfi9-records.scm")
+(load "/home/per-nilsson/git/scm/src/srfi9-records.scm")
 
 (define (print-line s) (display s) (newline))
 

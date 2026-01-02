@@ -41,6 +41,102 @@
 #include "util.h"
 #include "syntax.h"
 
+const char*
+type_tag_to_string(const TYPE* type) {
+    if (IS_TYPE_TAGGED_POINTER(type))
+    {
+	switch(GET_TYPE_TAG(type))
+	{
+	case NIL_TYPE_TAG:
+	    return "nil";
+	    break;
+	case BOOLEAN_TYPE_TAG:
+	    return "boolean";
+	    break;
+	case INTEGER_TYPE_TAG:
+	    return "integer";
+	case CHAR_TYPE_TAG:
+	    return "char";
+	default:
+	    return "unkown tagged pointer"; /* should not happen */
+	}
+    }
+    else
+    {
+	switch (type->type)
+	{
+	case NONE:
+	    return "none";
+	case PAIR:
+	    return "pair";
+	case SYMBOL:
+	    return "symbol";
+	case RATIONAL:
+	    return "rational";
+	case REAL:
+	    return "real";	/* TODO should be deciaml */
+	case COMPLEX:
+	    return "complex";
+	case CHAR:
+	    return "char";
+	case VECTOR:
+	    return "vector";
+	case HASH_TABLE:
+	    return "hash-table";
+	case STRING:
+	    return "string";
+	case IMMUTABLE_STRING:
+	    return "immutable-string";
+	case BLOB:
+	    return "blob";
+	case PROCEDURE:
+	    return "procedure";
+	case PORT:
+	    return "port";
+	case ENDOFFILE:
+	    return "eof";
+	case PRIMITIVE_PROCEDURE:
+	    return "primitive-procedure";
+	case ENVIRONMENT:
+	    return "environment";
+	case UDP_SOCKET:
+	    return "udp-socket";
+	case TCP_SOCKET:
+	    return "tcp-socket";
+	case SERVER_SOCKET:
+	    return "server-socket";
+	case BOUND_VAR:
+	    return "bound-var";
+	case ESCAPE_PROC:
+	    return "escape-proc";
+	case IF_TYPE:
+	    return "if";
+	case LAMBDA:
+	    return "if";
+	case QUOTE:
+	    return "quote";
+	case ASSIGNMENT:
+	    return "assignment";
+	case DEFINITION:
+	    return "definition";
+	case BEGIN_TYPE:
+	    return "begin";
+	case NIL:
+	    return "nil";
+	case DELAY:
+	    return "delay";
+	case CALL_CC:
+	    return "call-cc";
+	case MATCH:
+	    return "match";
+	case APPLY:
+	    return "apply";
+	default:
+	    return "unkown type";
+	}
+    }
+}
+
 TYPE* 
 mk_bound_var(TYPE* symbol, 
              unsigned int frame_index, 

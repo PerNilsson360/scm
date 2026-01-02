@@ -36,7 +36,7 @@
 
 extern jmp_buf __c_env__;
 extern char __error_info__[ERROR_INFO_LENGTH];
-void assert_throw(int bool, int code, const char* info);
-void throw_error(int code, const char* info);
+void assert_throw(int bool, int code, const char* format, ...);
+void throw_error(int code, const char* format, ...);
 
 #endif

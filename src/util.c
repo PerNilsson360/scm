@@ -27,58 +27,38 @@
 #include "util.h"
 #include "common.h"
 
-static 
-int 
-_it_bin_pred(const TYPE* list,
-	     const TYPE* first,
-	     int (pred) (const TYPE* left, const TYPE* right))
-{
-    int result;
-
-    if (IS_NIL(list))
-    {
-        result = TRUE;
-    }
-    else if (pred(first, car(list)))
-    {
-        result = _it_bin_pred(cdr(list), car(list), pred);
-    }
-    else
-    {
-        result = FALSE;
-    }
-
-    return result;
-}
-
 TYPE* 
 it_bin_pred(const TYPE* list,
             int (pred) (const TYPE* left, const TYPE* right))
 {
-    TYPE*  result = nil();
-
-    if (IS_NIL(list))
-    {
-        result = mk_boolean(TRUE);
+    
+    int result = TRUE;
+    if (IS_NIL(list)) {
+	return mk_boolean(TRUE);
     }
-    else 
-    {
-        result = mk_boolean(_it_bin_pred(cdr(list), car(list), pred));
+    const TYPE* first = car(list);
+    while (result) {
+	list = cdr(list);
+	if (IS_NIL(list)) {
+	    break;
+	}
+	const TYPE* second = car(list);
+	result = pred(first, second);
+	first = second;
     }
-
-    return result;
+    return mk_boolean(result);
 }
 
 TYPE* 
 fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right), 
            const TYPE* list, 
-           TYPE* identity)
+           const TYPE* identity)
 {
     TYPE* result = nil(); 
 
     if (IS_NIL(list))
     {
-        result = identity;
+        result = (TYPE*)identity;
     }
     else
     {

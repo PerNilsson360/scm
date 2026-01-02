@@ -82,9 +82,7 @@ lookup_unbound_var(TYPE* var) {
     {
         return result;
     }
-    printf("Missing var: ");
-    display(var, stderr);
-    throw_error(EVAL_ERROR, "\nLOOKUP_UNBOUND_VAR: could not find var");
+    throw_error(EVAL_ERROR, "LOOKUP_UNBOUND_VAR: could not find var: %s", var->d.s);
 }
 
 int

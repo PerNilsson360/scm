@@ -30,7 +30,7 @@ TYPE* it_bin_pred(const TYPE* list,
                   int (pred) (const TYPE* left, const TYPE* right));
 TYPE* fold_right(TYPE* (* f) (const TYPE* left, const TYPE* right), 
                  const TYPE* list, 
-                 TYPE* identity);
+                 const TYPE* identity);
 TYPE* map1(TYPE* (*f) (const TYPE* arg), TYPE* list);
 /* makes a pair of lists out of a association list */
 TYPE* unzip(const TYPE* list);

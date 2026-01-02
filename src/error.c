@@ -20,7 +20,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 #include <string.h>
-#include <assert.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "common.h"
 #include "error.h"
@@ -28,18 +29,32 @@
 jmp_buf __c_env__;
 char __error_info__[ERROR_INFO_LENGTH];
 
+static
+void
+format_error(int code, const char* format, va_list args)
+{
+    vsnprintf(__error_info__, ERROR_INFO_LENGTH, format, args);
+}
+
 void 
-assert_throw(int bool, int code, const char* info)
+assert_throw(int bool, int code, const char* format, ...)
 {
     if (!bool)
     {
-        throw_error(code, info);
+	va_list args;
+	va_start(args, format);
+        format_error(code, format, args);
+	va_end(args);
+	longjmp(__c_env__, code);
     }
 }
 
 void 
-throw_error(int code, const char* info)
+throw_error(int code, const char* format, ...)
 {
-    strncpy(__error_info__, info, ERROR_INFO_LENGTH);
+    va_list args;
+    va_start(args, format);
+    format_error(code, format, args);
+    va_end(args);
     longjmp(__c_env__, code);
 }
