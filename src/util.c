@@ -81,30 +81,22 @@ map1(TYPE* (*f) (const TYPE* arg), TYPE* list)
     return result;
 }
 
-static TYPE* 
-_reverse_(const TYPE* list, const TYPE* result)
-{
-    if (IS_NIL(list))
-    {
-        return (TYPE*) result;
-    }
-    else
-    {
-        return _reverse_(cdr(list), cons(car(list), result));
-    }
-}
-
 TYPE* 
 reverse(const TYPE* list)
 {
-    if (IS_NIL(list) || IS_NIL(cdr(list)))
-    {
-        return (TYPE*) list;
+    TYPE* item = (TYPE*)list;
+    if (IS_NIL(item)) {
+	return item;
     }
-    else
-    {
-        return _reverse_(list, nil());
+    TYPE* rest = cdr(list);
+    set_cdr(item, nil());
+    while (!IS_NIL(rest)) {
+	TYPE* next = cdr(rest);
+	set_cdr(rest, item);
+	item = rest;
+	rest = next;
     }
+    return item;
 }
 
 TYPE* 
