@@ -86,15 +86,15 @@ reverse(const TYPE* list)
 {
     TYPE* item = (TYPE*)list;
     if (IS_NIL(item)) {
-	return item;
+        return item;
     }
     TYPE* rest = cdr(list);
     set_cdr(item, nil());
     while (!IS_NIL(rest)) {
-	TYPE* next = cdr(rest);
-	set_cdr(rest, item);
-	item = rest;
-	rest = next;
+        TYPE* next = cdr(rest);
+        set_cdr(rest, item);
+        item = rest;
+        rest = next;
     }
     return item;
 }
@@ -104,12 +104,22 @@ append(const TYPE* left, const TYPE* right)
 {
     if (IS_NIL(left)) 
     {
-        return (TYPE*) right;
+        return (TYPE*)right;
     }
-    else
-    { 
-        return cons(car(left), append(cdr(left), right));
+    if (IS_NIL(right)) {
+        return (TYPE*)left;
     }
+    TYPE* l = (TYPE*)left;
+    while (TRUE)
+    {
+        TYPE* next = cdr(l);
+        if (IS_NIL(next)) {
+            set_cdr(l, right);
+            break;
+        }
+        l = next;
+    }
+    return (TYPE*)left;
 }
 
 TYPE*

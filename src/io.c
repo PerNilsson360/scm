@@ -410,7 +410,6 @@ error(const TYPE* sexp)
 void 
 display_debug(const TYPE* sexp)
 {
-    printf("Object: ");
     display(sexp, stderr);
     newline();
 }
