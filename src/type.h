@@ -35,8 +35,10 @@
 #define BOOLEAN_TYPE_TAG     2
 #define INTEGER_TYPE_TAG     3
 #define CHAR_TYPE_TAG        4
+#define SYMBOL_TYPE_TAG      5
 #define BOOLEAN_TRUE_VALUE   0x10
 
+#define REMOVE_TYPE_TAG(POINTER) (((intptr_t)POINTER) & 0xfffffffffffffff0)
 #define GET_TYPE_TAG(POINTER) (((intptr_t)POINTER) & 0xF)
 #define GET_INT_FROM_TYPE_TAGGED_INT(POINTER) (((intptr_t)POINTER) >> 8)
 #define IS_TAGGED_POINTER_OF_TYPE(POINTER, TAG) (GET_TYPE_TAG(POINTER) == TAG)
@@ -49,7 +51,6 @@
 
 #define NONE                 0
 #define PAIR                 1
-#define SYMBOL               2
 #define RATIONAL             4
 #define REAL                 5
 #define COMPLEX              6

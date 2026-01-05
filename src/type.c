@@ -45,21 +45,25 @@ const char*
 type_tag_to_string(const TYPE* type) {
     if (IS_TYPE_TAGGED_POINTER(type))
     {
-	switch(GET_TYPE_TAG(type))
-	{
-	case NIL_TYPE_TAG:
-	    return "nil";
-	    break;
-	case BOOLEAN_TYPE_TAG:
-	    return "boolean";
-	    break;
-	case INTEGER_TYPE_TAG:
-	    return "integer";
-	case CHAR_TYPE_TAG:
-	    return "char";
-	default:
-	    return "unkown tagged pointer"; /* should not happen */
-	}
+        int type_tag = GET_TYPE_TAG(type);
+        switch(type_tag)
+        {
+        case NIL_TYPE_TAG:
+            return "nil";
+            break;
+        case BOOLEAN_TYPE_TAG:
+            return "boolean";
+            break;
+        case INTEGER_TYPE_TAG:
+            return "integer";
+        case CHAR_TYPE_TAG:
+            return "char";
+        case SYMBOL_TYPE_TAG:
+            return "symbol";
+        default:
+            fprintf(stderr, " unkown tagged pointer %d\n", type_tag);
+            return "unkown tagged pointer"; /* should not happen */
+        }
     }
     else
     {
@@ -69,8 +73,6 @@ type_tag_to_string(const TYPE* type) {
 	    return "none";
 	case PAIR:
 	    return "pair";
-	case SYMBOL:
-	    return "symbol";
 	case RATIONAL:
 	    return "rational";
 	case REAL:
@@ -254,9 +256,9 @@ car(const TYPE* list)
     if (!IS_POINTER_TO_STRUCT_OF_TYPE(list, PAIR))
     {
         display_debug(list);
-        printf("not a pair\n");
+        fprintf(stderr, "not a pair type: %s.\n", type_tag_to_string(list));
         /*assert_throw(FALSE, TYPE_ERROR, "CAR: not a pair");*/
-	assert(0);  
+        assert(0);  
     }
 
     return list->d.p->car;
@@ -433,8 +435,6 @@ is_eqv(const TYPE* left, const TYPE* right)
 	    return is_number_equal(left, right);
         case CHAR:
             return is_char_equal(left, right);
-        case SYMBOL:
-            return left->d.s == right->d.s;
         default:
             return left == right;
         }

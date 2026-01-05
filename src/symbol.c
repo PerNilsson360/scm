@@ -64,23 +64,21 @@ static
 int
 _symbol_equal_(const TYPE* left, const TYPE* right)
 {
-    return strcmp(right->d.s, left->d.s) == 0;
+    const char* l = (const char*)REMOVE_TYPE_TAG(left);
+    const char* r = (const char*)REMOVE_TYPE_TAG(right);
+    return strcmp(l, r) == 0;
 }
 
 static
 unsigned int
 _symbol_hash_(const TYPE* symbol)
 {
-    char* s;
-    unsigned int result = 0;
-
-    s = symbol->d.s;
-
+    unsigned int result = 0;    
+    const char* s = (const char*)REMOVE_TYPE_TAG(symbol);
     for (; *s != 0; s++)
     {
         result = result * 127 + *s;
     }
-
     return result;
 }
 
@@ -89,12 +87,11 @@ unsigned int
 symbol_hash(const TYPE* symbol)
 {
     /*
-      lower bits are the same so shift them away
-      TODO 8 seems to be good but meaybe there is a better way to do this.
+      Lower bits are the same so shift them away.
+      TODO: 8 seems to be good but meaybe there is a better way to do this.
      */
     return ((unsigned int) ((intptr_t)symbol)) >> 8;
 }
-    
 
 void
 init_symbol_table()
@@ -127,50 +124,30 @@ init_symbol_table()
 TYPE* 
 mk_symbol(const char* symbol)
 {
-    const TYPE lookup_symbol =
-	{
-	    .type = SYMBOL,
-	    .d.s = (char*) symbol
-	};
-    
-    TYPE* result;
-    TYPE* symbol_in_table;
-
     /* special handling for nil since hash_table is using it */
     if (strcmp(symbol, "'()") == 0)
     {
         return nil();
     }
 
-    int found = hash_table_ref(symbol_table, &lookup_symbol, &symbol_in_table);
+    TYPE* result;
+    TYPE* tmp = mloc(sizeof(char) * strlen(symbol));
+    
+    if (tmp == NULL)
+    {
+        fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
+        exit(1);
+    }
+    
+    strcpy((char*)tmp, symbol);
+    tmp = (TYPE*)(((intptr_t)tmp) | SYMBOL_TYPE_TAG);
 
+    int found = hash_table_ref(symbol_table, tmp, &result);
 
     if (!found)
     {
-        result = mloc(sizeof(TYPE));
-        
-        if (result == NULL)
-        {
-            fprintf(stderr, "MK_SYMBOL: could not allocate memory for type");
-            exit(1);
-        }
-        
-        result->type = SYMBOL;
-        result->d.s = mloc(sizeof(char) * strlen(symbol));
-        
-        if (result->d.s == NULL)
-        {
-            fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
-            exit(1);
-        }
-    
-        strcpy(result->d.s, symbol);
-        
-        hash_table_set(symbol_table, result, result);
-    }
-    else
-    {
-        result = symbol_in_table;
+        hash_table_set(symbol_table, tmp, tmp);
+        result = tmp;
     }
 
     return result;
@@ -202,32 +179,26 @@ nil()
 int 
 is_reserved_symbol(const TYPE* symbol)
 {
-    int result = FALSE;
-
-    if (is_eq(_else_keyword_symbol_, symbol) ||
-        is_eq(_define_keyword_symbol_, symbol) ||
-        is_eq(_unquote_keyword_symbol_, symbol) ||
-        is_eq(_unquote_splicing_keyword_symbol_, symbol) ||
-        is_eq(_quote_keyword_symbol_, symbol) ||
-        is_eq(_lambda_keyword_symbol_, symbol) ||
-        is_eq(_if_keyword_symbol_, symbol) ||
-        is_eq(_set_keyword_symbol_, symbol) ||
-        is_eq(_begin_keyword_symbol_, symbol) ||
-        is_eq(_cond_keyword_symbol_, symbol) ||
-        is_eq(_and_keyword_symbol_, symbol) ||
-        is_eq(_or_keyword_symbol_, symbol) ||
-        is_eq(_case_keyword_symbol_, symbol) ||
-        is_eq(_match_keyword_symbol_, symbol) ||
-        is_eq(_let_keyword_symbol_, symbol) ||
-        is_eq(_let_star_keyword_symbol_, symbol) ||
-        is_eq(_letrec_keyword_symbol_, symbol) ||
-        is_eq(_delay_keyword_symbol_, symbol) ||
-        is_eq(_stream_cons_keyword_symbol_, symbol) ||
-        is_eq(_quasiquote_keyword_symbol_, symbol) ||
-	is_eq(_call_cc_keyword_symbol_, symbol))
-    {
-        result = TRUE;
-    }
-    
-    return result;
+    return
+        is_symbol_eq(_else_keyword_symbol_, symbol) ||
+        is_symbol_eq(_define_keyword_symbol_, symbol) ||
+        is_symbol_eq(_unquote_keyword_symbol_, symbol) ||
+        is_symbol_eq(_unquote_splicing_keyword_symbol_, symbol) ||
+        is_symbol_eq(_quote_keyword_symbol_, symbol) ||
+        is_symbol_eq(_lambda_keyword_symbol_, symbol) ||
+        is_symbol_eq(_if_keyword_symbol_, symbol) ||
+        is_symbol_eq(_set_keyword_symbol_, symbol) ||
+        is_symbol_eq(_begin_keyword_symbol_, symbol) ||
+        is_symbol_eq(_cond_keyword_symbol_, symbol) ||
+        is_symbol_eq(_and_keyword_symbol_, symbol) ||
+        is_symbol_eq(_or_keyword_symbol_, symbol) ||
+        is_symbol_eq(_case_keyword_symbol_, symbol) ||
+        is_symbol_eq(_match_keyword_symbol_, symbol) ||
+        is_symbol_eq(_let_keyword_symbol_, symbol) ||
+        is_symbol_eq(_let_star_keyword_symbol_, symbol) ||
+        is_symbol_eq(_letrec_keyword_symbol_, symbol) ||
+        is_symbol_eq(_delay_keyword_symbol_, symbol) ||
+        is_symbol_eq(_stream_cons_keyword_symbol_, symbol) ||
+        is_symbol_eq(_quasiquote_keyword_symbol_, symbol) ||
+        is_symbol_eq(_call_cc_keyword_symbol_, symbol);
 }

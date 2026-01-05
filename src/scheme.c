@@ -59,7 +59,7 @@ populate_initial_environment(int argc, char** argv, TYPE* env)
         if (!is_eof_object(sexp))
         {
             stack_init();
-	    sexp = xlat(sexp);
+            sexp = xlat(sexp);
             eval(sexp, env);
         }
     }

@@ -1066,7 +1066,7 @@ gr_text_size(const TYPE* exp)
 void 
 gr_set_foreground(const TYPE* exp)
 {
-    assert_throw(is_symbol(exp), 
+    assert_throw(IS_SYMBOL(exp), 
                  TYPE_ERROR,
                  "GR_SET_FOREGROUND: expects a symbol");
     unsigned long colour;

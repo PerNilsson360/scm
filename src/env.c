@@ -166,7 +166,7 @@ set_var(unsigned int frame_index,
 void 
 set_variable_value(TYPE* var, TYPE* val, TYPE* env)
 {
-    if (is_symbol(var))
+    if (IS_SYMBOL(var))
     {
         global_env_define_variable(var, val);
     }
@@ -188,7 +188,7 @@ extend_environment(TYPE* vars, TYPE* vals, TYPE* env)
 void
 define_scan(TYPE* var, TYPE* val, TYPE* vars, TYPE* vals, TYPE* frame)
 {
-    if (is_symbol(vars) || IS_NIL(vars))
+    if (IS_SYMBOL(vars) || IS_NIL(vars))
     {
         add_binding_to_frame(var, val, frame);
     }

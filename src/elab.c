@@ -164,7 +164,7 @@ static
 int
 is_named_let(const TYPE* exp)
 {
-    return is_tagged_list(exp, mk_symbol("let")) && is_symbol(cadr(exp));
+    return is_tagged_list(exp, _let_keyword_symbol_) && IS_SYMBOL(cadr(exp));
 }
 
 static
@@ -316,12 +316,12 @@ is_define(const TYPE*  exp)
 {
     int result = FALSE;
     
-    if (is_tagged_list(exp, mk_symbol("define")))
+    if (is_tagged_list(exp, _define_keyword_symbol_))
     {
 	TYPE* arg = cdr(exp);
 	if (!IS_NIL(arg))
 	{
-	    result = !is_symbol(car(arg));
+	    result = !IS_SYMBOL(car(arg));
 	}
     }
     
@@ -446,7 +446,7 @@ static
 int
 is_else_clause(const TYPE* clause)
 {
-    return is_eq(case_clause_datum(clause), _else_keyword_symbol_);
+    return is_symbol_eq(case_clause_datum(clause), _else_keyword_symbol_);
 }
 
 static
@@ -546,7 +546,7 @@ quasiquote_to_list(const TYPE* exp)
     {
 	result = unquote_value(exp);
     }
-    else if (is_symbol(exp))
+    else if (IS_SYMBOL(exp))
     {
 	result = mk_list(2, _quote_keyword_symbol_, exp);
     }

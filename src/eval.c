@@ -224,13 +224,14 @@ add_var_if_consistent(const TYPE* var,
 static int
 is_pattern_var(const TYPE* var)
 {
-    return (is_symbol(var) && (var->d.s[0] == '?'));
+    const char* s = (const char*) REMOVE_TYPE_TAG(var);
+    return (IS_SYMBOL(var) && (s[0] == '?'));
 }
 
 static TYPE*
 name_from_pattern_var(const TYPE* var)
 {
-    const char* s = var->d.s;
+    const char* s = (const char*) REMOVE_TYPE_TAG(var);
     s++;
     return mk_symbol(s);
 }
@@ -238,7 +239,8 @@ name_from_pattern_var(const TYPE* var)
 static int
 is_wildcard_pattern(const TYPE* pattern)
 {
-    return strlen(pattern->d.s) == 1 && pattern->d.s[0] == '?'; 
+    const char* s = (const char*) REMOVE_TYPE_TAG(pattern);
+    return strlen(s) == 1 && s[0] == '?'; 
 }
 
 static int
@@ -402,10 +404,20 @@ eval_dispatch:
         fflush(NULL);
     }
 
+    
     if (IS_TYPE_TAGGED_POINTER(reg.exp)) {
-        /* All non struct types are self evaluating i.e. values */
-        reg.val = reg.exp;
-	goto *reg.cont;
+        int type_tag = GET_TYPE_TAG(reg.exp);
+        switch(type_tag)
+        {
+        case SYMBOL_TYPE_TAG:
+            reg.val = lookup_unbound_var(reg.exp);
+            goto *reg.cont;
+            break;
+        default:
+            /* All other non struct types are self evaluating i.e. values */
+            reg.val = reg.exp;
+            goto *reg.cont;
+        }
     }
     
     switch (((TYPE*)reg.exp)->type) {
@@ -423,9 +435,6 @@ eval_dispatch:
 	goto *reg.cont;
     case QUOTE:
 	reg.val = QUOTATION_VALUE(reg.exp);
-	goto *reg.cont;
-    case SYMBOL:
-	reg.val = lookup_unbound_var(reg.exp);
 	goto *reg.cont;
     case BOUND_VAR:
 	reg.val = lookup_variable_value(reg.exp, reg.env);
@@ -740,9 +749,9 @@ symbol_exist_in_improper_list(const TYPE* symbol, const TYPE* list)
     {
         result = FALSE;
     }
-    else if (is_symbol(list))
+    else if (IS_SYMBOL(list))
     {
-        if (is_eq(symbol, list))
+        if (is_symbol_eq(symbol, list))
         {
             result = TRUE;
         }
@@ -751,7 +760,7 @@ symbol_exist_in_improper_list(const TYPE* symbol, const TYPE* list)
             result = FALSE;
         }
     }
-    else if (is_eq(symbol, car(list)))
+    else if (is_symbol_eq(symbol, car(list)))
     {
         result = TRUE;
     }
@@ -786,7 +795,7 @@ get_var_index(const TYPE* var,
     {
         result= -1;
     } 
-    else if (is_symbol(vars)) /* var # args case */
+    else if (IS_SYMBOL(vars)) /* var # args case */
     {
         if (is_eq(var, vars)) 
         {
@@ -848,7 +857,7 @@ get_vars_from_match(TYPE* pattern)
 {
     TYPE* result = nil();
 
-    if (is_symbol(pattern))
+    if (IS_SYMBOL(pattern))
     {
         if (is_pattern_var(pattern) && !is_wildcard_pattern(pattern))
         {
@@ -1046,7 +1055,7 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
         TYPE* tl = exp_to_name_free_exp(cdr(exp), context);
         result = cons(hd, tl);
     } 
-    else if (is_symbol(exp))
+    else if (IS_SYMBOL(exp))
     {
         result = symbol_to_bound_var(exp, context, 0);
     }

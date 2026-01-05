@@ -226,7 +226,7 @@ _length_procedure_(const TYPE* arguments, const TYPE* env)
 MAKE_WRAPPER_ONE_ARG(reverse);
 MAKE_WRAPPER_ONE_ARG(unzip);
 
-MAKE_PREDICATE_WRAPPER_ONE_ARG(is_symbol);
+MAKE_PREDICATE_WRAPPER_ONE_ARG(IS_SYMBOL);
 MAKE_WRAPPER_ONE_ARG(symbol_to_string);
 MAKE_WRAPPER_ONE_ARG(string_to_symbol);
 MAKE_WRAPPER_ONE_ARG(char_to_integer);
@@ -1186,7 +1186,7 @@ init_primitive_procedures()
     ADD_PROCEDURE(unzip, unzip);
 
     /* symbols */
-    ADD_PROCEDURE(is_symbol, symbol?);
+    ADD_PROCEDURE(IS_SYMBOL, symbol?);
     ADD_PROCEDURE(symbol_to_string, symbol->string);
     ADD_PROCEDURE(string_to_symbol, string->symbol);
 
@@ -1355,11 +1355,11 @@ is_primitive_procedure(const TYPE* procedure)
 int
 global_env_lookup_var(const TYPE* var, TYPE** val)
 {
-    if (!is_symbol(var)) {
-	fprintf(stderr, "GLOBAL_ENV_LOOKUP_VAR: not a symbol");
-	display_debug(var);
+    if (!IS_SYMBOL(var)) {
+        fprintf(stderr, "GLOBAL_ENV_LOOKUP_VAR: not a symbol");
+        display_debug(var);
         *val = nil();
-	return FALSE;
+        return FALSE;
     }
 
     return hash_table_ref(_primitive_procedure_table_, var, val);

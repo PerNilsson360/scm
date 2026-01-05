@@ -491,7 +491,7 @@ symbol_to_string(const TYPE* symbol)
 {
     TYPE* result;
 
-    assert_throw(is_symbol(symbol),
+    assert_throw(IS_SYMBOL(symbol),
                  TYPE_ERROR,
                  "SYMBOL_TO_STRING: wrong argument type must be symbol");
 
@@ -503,7 +503,7 @@ symbol_to_string(const TYPE* symbol)
         exit(1);
     }
 
-    result->d.s = symbol->d.s;
+    result->d.s = (char*)REMOVE_TYPE_TAG(symbol);
     result->type = IMMUTABLE_STRING;
 
     return result;
