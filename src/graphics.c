@@ -109,7 +109,7 @@ _get_window_name(const TYPE* exp)
 
 void
 gr_init() {
-    _colour_table_ = mk_hash_table(_symbol_equal_, _symbol_hash_);
+    _colour_table_ = mk_hash_table(is_symbol_eq, symbol_hash);
     hash_table_set(_colour_table_, mk_symbol("indian-red"), mk_number_from_int(0xb0171f)); 
     hash_table_set(_colour_table_, mk_symbol("crimson"), mk_number_from_int(0xdc143c)); 
     hash_table_set(_colour_table_, mk_symbol("lightpink"), mk_number_from_int(0xffb6c1)); 

@@ -89,8 +89,8 @@ unsigned int
 symbol_hash(const TYPE* symbol)
 {
     /*
-      lower bits are the same so shift them away
-      TODO 8 seems to be good but meaybe there is a better way to do this.
+      Lower bits are the same so shift them away.
+      TODO: 8 seems to be good but meaybe there is a better way to do this.
      */
     return ((unsigned int) ((intptr_t)symbol)) >> 8;
 }

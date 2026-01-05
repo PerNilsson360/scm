@@ -1,0 +1,2594 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 12.87      1.97     1.97       58     0.03     0.22  hairy_eval
+ 11.43      3.72     1.75 760498976     0.00     0.00  save
+ 10.29      5.30     1.58 760498976     0.00     0.00  restore
+  6.73      6.33     1.03 519808999     0.00     0.00  car
+  6.01      7.25     0.92 710018448     0.00     0.00  cdr
+  4.64      7.96     0.71 477160054     0.00     0.00  assert_throw
+  2.32      8.31     0.36 79523378     0.00     0.00  reverse
+  2.22      8.65     0.34 140600067     0.00     0.00  cons
+  2.12      8.98     0.33 318114044     0.00     0.00  mloc
+  2.09      9.30     0.32 79533811     0.00     0.00  get_index
+  2.06      9.61     0.32 79533214     0.00     0.00  _symbol_hash_
+  1.96      9.91     0.30 140591387     0.00     0.00  set_cdr
+  1.89     10.20     0.29 140600224     0.00     0.00  mk_pair_data
+  1.83     10.48     0.28 79529815     0.00     0.00  _find
+  1.70     10.74     0.26 79531817     0.00     0.00  vector_ref
+  1.50     10.97     0.23 79523043     0.00     0.00  lookup_unbound_var
+  1.47     11.20     0.23 140591087     0.00     0.00  last_operand
+  1.31     11.40     0.20 232867458     0.00     0.00  nil
+  1.24     11.59     0.19 79529815     0.00     0.00  hash_table_ref
+  1.18     11.77     0.18 140591087     0.00     0.00  first_operand
+  1.08     11.93     0.17 122135684     0.00     0.00  is_number
+  1.05     12.09     0.16 55365342     0.00     0.00  length
+  0.88     12.23     0.14 18454959     0.00     0.00  _sub_two_numbers
+  0.88     12.36     0.14 79523043     0.00     0.00  global_env_lookup_var
+  0.88     12.50     0.14 61068025     0.00     0.00  apply_primitive_procedure
+  0.78     12.62     0.12 51840589     0.00     0.00  get_var
+  0.78     12.74     0.12 79534488     0.00     0.00  is_real
+  0.75     12.85     0.12       53     0.00     0.00  stack_init
+  0.72     12.96     0.11 79523066     0.00     0.00  operands
+  0.69     13.07     0.11 61067842     0.00     0.00  is_atleast_one
+  0.65     13.17     0.10 51840589     0.00     0.00  lookup_variable_value
+  0.65     13.27     0.10 33385376     0.00     0.00  it_bin_pred
+  0.65     13.37     0.10 33385356     0.00     0.00  is_number_equal
+  0.62     13.46     0.10 79523070     0.00     0.00  no_operands
+  0.59     13.55     0.09 79534425     0.00     0.00  as_integer
+  0.59     13.64     0.09 79523069     0.00     0.00  is_symbol_eq
+  0.52     13.72     0.08 51840589     0.00     0.00  get_var_from_frame
+  0.52     13.80     0.08 18455045     0.00     0.00  check_procedure_arg_len
+  0.52     13.88     0.08  9227497     0.00     0.00  fold_right
+  0.49     13.96     0.08 18454959     0.00     0.00  _sub_numbers
+  0.46     14.03     0.07 61068017     0.00     0.00  rest_operands
+  0.46     14.10     0.07 18455045     0.00     0.00  procedure_environment
+  0.42     14.16     0.07  9227464     0.00     0.00  add_number
+  0.39     14.22     0.06 79533812     0.00     0.00  is_vector
+  0.39     14.28     0.06 18455054     0.00     0.00  mk_env
+  0.36     14.34     0.06 27683215     0.00     0.00  mk_number_from_int
+  0.33     14.39     0.05                             format_error
+  0.33     14.44     0.05 33385344     0.00     0.00  _equal_procedure_
+  0.33     14.49     0.05 18455045     0.00     0.00  param_len
+  0.33     14.54     0.05 18454959     0.00     0.00  _minus_procedure_
+  0.29     14.58     0.05 18455118     0.00     0.00  is_last_exp
+  0.29     14.63     0.05 18454959     0.00     0.00  sub_numbers
+  0.26     14.67     0.04 79523066     0.00     0.00  operator
+  0.26     14.71     0.04 55365135     0.00     0.00  is_compound_procedure
+  0.26     14.75     0.04 33385423     0.00     0.00  is_true
+  0.26     14.79     0.04 18455053     0.00     0.00  extend_environment
+  0.26     14.83     0.04     4778     0.00     0.00  mk_symbol
+  0.23     14.86     0.04       21     0.00     0.00  nstrcpy
+  0.20     14.89     0.03 18455045     0.00     0.00  is_var_arg
+  0.20     14.92     0.03 18455045     0.00     0.00  procedure_parameters
+  0.20     14.95     0.03 18454928     0.00     0.00  type_tag_to_string
+  0.20     14.98     0.03  9227464     0.00     0.00  _plus_procedure_
+  0.20     15.01     0.03                             _is_inexact_procedure_
+  0.20     15.04     0.03                             vector_length
+  0.16     15.07     0.03       62     0.00     0.00  as_real
+  0.13     15.09     0.02 33385441     0.00     0.00  mk_boolean
+  0.13     15.11     0.02 18455045     0.00     0.00  procedure_body
+  0.13     15.13     0.02        8     0.00     0.00  _remove
+  0.13     15.15     0.02        4     0.01     0.01  is_list
+  0.13     15.17     0.02        2     0.01     0.01  string_to_symbol
+  0.13     15.19     0.02        2     0.01     0.01  symbol_to_string
+  0.10     15.20     0.02 18455118     0.00     0.00  first_exp
+  0.10     15.22     0.02        8     0.00     0.00  append
+  0.10     15.23     0.02        2     0.01     0.01  mk_real
+  0.07     15.24     0.01       37     0.00     0.00  sexp_quotation_value
+  0.07     15.25     0.01        6     0.00     0.00  data_eval
+  0.07     15.26     0.01        4     0.00     0.00  mk_hash_table
+  0.07     15.27     0.01                             is_primitive_procedure
+  0.07     15.28     0.01                             is_stream_cons
+  0.07     15.29     0.01                             not
+  0.03     15.30     0.01     6929     0.00     0.00  _symbol_equal_
+  0.03     15.30     0.01       33     0.00     0.00  mk_unasigned_number
+  0.03     15.31     0.01       31     0.00     0.00  mul_number
+  0.03     15.31     0.01                             min_number
+  0.00     15.31     0.00    25832     0.00     0.00  is_tagged_list
+  0.00     15.31     0.00     5904     0.00     0.00  initial
+  0.00     15.31     0.00     4403     0.00     0.00  set_token_char
+  0.00     15.31     0.00     4177     0.00     0.00  next_token
+  0.00     15.31     0.00     3808     0.00     0.00  subsequent
+  0.00     15.31     0.00     3583     0.00     0.00  is_sexp_quoted
+  0.00     15.31     0.00     2098     0.00     0.00  skip_atmospheres
+  0.00     15.31     0.00     2079     0.00     0.00  unget_token
+  0.00     15.31     0.00     1994     0.00     0.00  hash_table_set
+  0.00     15.31     0.00     1994     0.00     0.00  vector_set
+  0.00     15.31     0.00     1885     0.00     0.00  is_sexp_definition
+  0.00     15.31     0.00     1835     0.00     0.00  is_sexp_if
+  0.00     15.31     0.00     1725     0.00     0.00  xlat
+  0.00     15.31     0.00     1714     0.00     0.00  is_sexp_lambda
+  0.00     15.31     0.00     1629     0.00     0.00  is_sexp_begin
+  0.00     15.31     0.00     1627     0.00     0.00  is_sexp_match
+  0.00     15.31     0.00     1625     0.00     0.00  is_sexp_apply
+  0.00     15.31     0.00     1625     0.00     0.00  is_sexp_call_cc
+  0.00     15.31     0.00     1625     0.00     0.00  is_sexp_delay
+  0.00     15.31     0.00     1549     0.00     0.00  datum
+  0.00     15.31     0.00     1549     0.00     0.00  simple_datum
+  0.00     15.31     0.00      825     0.00     0.00  identifier
+  0.00     15.31     0.00      800     0.00     0.00  get_var_index
+  0.00     15.31     0.00      713     0.00     0.00  is_or
+  0.00     15.31     0.00      711     0.00     0.00  is_and
+  0.00     15.31     0.00      711     0.00     0.00  is_named_let
+  0.00     15.31     0.00      708     0.00     0.00  is_let
+  0.00     15.31     0.00      692     0.00     0.00  is_let_star
+  0.00     15.31     0.00      692     0.00     0.00  is_letrec
+  0.00     15.31     0.00      688     0.00     0.00  is_define
+  0.00     15.31     0.00      625     0.00     0.00  is_cond
+  0.00     15.31     0.00      609     0.00     0.00  is_case
+  0.00     15.31     0.00      605     0.00     0.00  is_quasiquote
+  0.00     15.31     0.00      603     0.00     0.00  xlat_sequence
+  0.00     15.31     0.00      597     0.00     0.00  number_hash
+  0.00     15.31     0.00      582     0.00     0.00  compound_datum
+  0.00     15.31     0.00      582     0.00     0.00  parse_list
+  0.00     15.31     0.00      579     0.00     0.00  symbol_to_bound_var
+  0.00     15.31     0.00      540     0.00     0.00  datum_plus
+  0.00     15.31     0.00      286     0.00     0.00  mk_bound_var
+  0.00     15.31     0.00      153     0.00     0.00  mk_primitive_procedure
+  0.00     15.31     0.00      152     0.00     0.00  mk_list
+  0.00     15.31     0.00      131     0.00     0.00  cond_predicate
+  0.00     15.31     0.00      114     0.00     0.00  is_eof_object
+  0.00     15.31     0.00      110     0.00     0.00  _cons_procedure_
+  0.00     15.31     0.00       87     0.00     0.00  cddr
+  0.00     15.31     0.00       87     0.00     0.00  extend_context
+  0.00     15.31     0.00       85     0.00     0.00  add_defs_to_context
+  0.00     15.31     0.00       85     0.00     0.00  lambda_sexp_body
+  0.00     15.31     0.00       85     0.00     0.00  lambda_sexp_parameters
+  0.00     15.31     0.00       85     0.00     0.00  mk_lambda
+  0.00     15.31     0.00       85     0.00     0.00  scan_internal_defs
+  0.00     15.31     0.00       78     0.00     0.00  mk_char
+  0.00     15.31     0.00       76     0.00     0.00  is_improper_list
+  0.00     15.31     0.00       76     0.00     0.00  mk_procedure
+  0.00     15.31     0.00       73     0.00     0.00  is_delimiter
+  0.00     15.31     0.00       73     0.00     0.00  is_delimiter_or_eof
+  0.00     15.31     0.00       73     0.00     0.00  sexp_definition_variable
+  0.00     15.31     0.00       70     0.00     0.00  cadr
+  0.00     15.31     0.00       66     0.00     0.00  character
+  0.00     15.31     0.00       66     0.00     0.00  is_integer
+  0.00     15.31     0.00       65     0.00     0.00  define_variable
+  0.00     15.31     0.00       64     0.00     0.00  mk_definition
+  0.00     15.31     0.00       64     0.00     0.00  sexp_definition_value
+  0.00     15.31     0.00       63     0.00     0.00  caadr
+  0.00     15.31     0.00       63     0.00     0.00  cdadr
+  0.00     15.31     0.00       63     0.00     0.00  define_to_lambda
+  0.00     15.31     0.00       62     0.00     0.00  mk_none
+  0.00     15.31     0.00       61     0.00     0.00  exp_to_name_free_exp
+  0.00     15.31     0.00       58     0.00     0.00  eval
+  0.00     15.31     0.00       57     0.00     0.00  global_env_define_variable
+  0.00     15.31     0.00       57     0.00     0.00  if_sexp_alternative
+  0.00     15.31     0.00       57     0.00     0.00  if_sexp_consequent
+  0.00     15.31     0.00       57     0.00     0.00  if_sexp_predicate
+  0.00     15.31     0.00       57     0.00     0.00  mk_if
+  0.00     15.31     0.00       56     0.00     0.00  is_unquote
+  0.00     15.31     0.00       54     0.00     0.00  read_from_file
+  0.00     15.31     0.00       49     0.00     0.00  cond_actions
+  0.00     15.31     0.00       49     0.00     0.00  is_cond_else_clause
+  0.00     15.31     0.00       49     0.00     0.00  sequence_to_exp
+  0.00     15.31     0.00       42     0.00     0.00  mk_cell_data
+  0.00     15.31     0.00       37     0.00     0.00  mk_quoted
+  0.00     15.31     0.00       37     0.00     0.00  mk_sexp_if
+  0.00     15.31     0.00       34     0.00     0.00  _IS_NIL_procedure_
+  0.00     15.31     0.00       33     0.00     0.00  _decimal
+  0.00     15.31     0.00       33     0.00     0.00  decimal
+  0.00     15.31     0.00       33     0.00     0.00  handle_sign
+  0.00     15.31     0.00       33     0.00     0.00  is_unqoute_splicing
+  0.00     15.31     0.00       32     0.00     0.00  _less_procedure_
+  0.00     15.31     0.00       32     0.00     0.00  abbreviation
+  0.00     15.31     0.00       32     0.00     0.00  is_number_lt
+  0.00     15.31     0.00       31     0.00     0.00  _mul_procedure_
+  0.00     15.31     0.00       31     0.00     0.00  is_pattern_var
+  0.00     15.31     0.00       31     0.00     0.00  mk_number
+  0.00     15.31     0.00       25     0.00     0.00  mk_string_type
+  0.00     15.31     0.00       23     0.00     0.00  _unzip_
+  0.00     15.31     0.00       23     0.00     0.00  unzip
+  0.00     15.31     0.00       21     0.00     0.00  is_wildcard_pattern
+  0.00     15.31     0.00       21     0.00     0.00  mk_string_with_length
+  0.00     15.31     0.00       20     0.00     0.00  case_clause_datum
+  0.00     15.31     0.00       20     0.00     0.00  is_char
+  0.00     15.31     0.00       20     0.00     0.00  name_from_pattern_var
+  0.00     15.31     0.00       19     0.00     0.00  is_string
+  0.00     15.31     0.00       16     0.00     0.00  add_var_if_consistent
+  0.00     15.31     0.00       16     0.00     0.00  cond_clauses
+  0.00     15.31     0.00       16     0.00     0.00  cond_to_if
+  0.00     15.31     0.00       16     0.00     0.00  expand_cond_clauses
+  0.00     15.31     0.00       16     0.00     0.00  find
+  0.00     15.31     0.00       16     0.00     0.00  let_to_combination
+  0.00     15.31     0.00       16     0.00     0.00  mk_sexp_lambda
+  0.00     15.31     0.00       16     0.00     0.00  rest_exps
+  0.00     15.31     0.00       14     0.00     0.00  _car_procedure_
+  0.00     15.31     0.00       13     0.00     0.00  is_input_port
+  0.00     15.31     0.00       11     0.00     0.00  set_car
+  0.00     15.31     0.00       11     0.00     0.00  string
+  0.00     15.31     0.00       10     0.00     0.00  _read_char_from_port
+  0.00     15.31     0.00       10     0.00     0.00  constructor
+  0.00     15.31     0.00       10     0.00     0.00  find_matching_match_clause
+  0.00     15.31     0.00       10     0.00     0.00  improper_list_length
+  0.00     15.31     0.00       10     0.00     0.00  is_char_equal
+  0.00     15.31     0.00       10     0.00     0.00  parse_vector
+  0.00     15.31     0.00       10     0.00     0.00  pattern_match
+  0.00     15.31     0.00        9     0.00     0.00  add_definition_to_context
+  0.00     15.31     0.00        9     0.00     0.00  read_char_from_port
+  0.00     15.31     0.00        9     0.00     0.00  symbol_exist_in_improper_list
+  0.00     15.31     0.00        8     0.00     0.00  _cdr_procedure_
+  0.00     15.31     0.00        8     0.00     0.00  _reverse_procedure_
+  0.00     15.31     0.00        8     0.00     0.00  add_binding_to_frame
+  0.00     15.31     0.00        8     0.00     0.00  define_scan
+  0.00     15.31     0.00        8     0.00     0.00  hash_table_delete
+  0.00     15.31     0.00        8     0.00     0.00  is_else_clause
+  0.00     15.31     0.00        8     0.00     0.00  string_length
+  0.00     15.31     0.00        6     0.00     0.00  _data_eval_procedure_
+  0.00     15.31     0.00        6     0.00     0.00  mk_assignment
+  0.00     15.31     0.00        6     0.00     0.00  mk_sexp_quoted
+  0.00     15.31     0.00        5     0.00     0.00  mk_begin
+  0.00     15.31     0.00        5     0.00     0.00  unquote_value
+  0.00     15.31     0.00        4     0.00     0.00  _caar_procedure_
+  0.00     15.31     0.00        4     0.00     0.00  _cdar_procedure_
+  0.00     15.31     0.00        4     0.00     0.00  _mk_vector
+  0.00     15.31     0.00        4     0.00     0.00  caar
+  0.00     15.31     0.00        4     0.00     0.00  case_clause_exp
+  0.00     15.31     0.00        4     0.00     0.00  case_clauses
+  0.00     15.31     0.00        4     0.00     0.00  case_key
+  0.00     15.31     0.00        4     0.00     0.00  case_to_cond
+  0.00     15.31     0.00        4     0.00     0.00  cdar
+  0.00     15.31     0.00        4     0.00     0.00  construct_case_clauses
+  0.00     15.31     0.00        4     0.00     0.00  inner_construct_case_clauses
+  0.00     15.31     0.00        4     0.00     0.00  is_last_clause
+  0.00     15.31     0.00        4     0.00     0.00  letrec_to_let
+  0.00     15.31     0.00        4     0.00     0.00  mk_apply
+  0.00     15.31     0.00        4     0.00     0.00  mk_set_var_values
+  0.00     15.31     0.00        4     0.00     0.00  mk_unassigned_vars
+  0.00     15.31     0.00        4     0.00     0.00  mk_vector
+  0.00     15.31     0.00        4     0.00     0.00  sexp_apply_arguments
+  0.00     15.31     0.00        4     0.00     0.00  sexp_apply_procedure
+  0.00     15.31     0.00        4     0.00     0.00  string_append
+  0.00     15.31     0.00        3     0.00     0.00  caddr
+  0.00     15.31     0.00        3     0.00     0.00  cdddr
+  0.00     15.31     0.00        3     0.00     0.00  get_vars_from_match
+  0.00     15.31     0.00        3     0.00     0.00  named_let_to_letrec
+  0.00     15.31     0.00        3     0.00     0.00  read_from_port
+  0.00     15.31     0.00        2     0.00     0.00  _string_append_procedure_
+  0.00     15.31     0.00        2     0.00     0.01  _string_to_symbol_procedure_
+  0.00     15.31     0.00        2     0.00     0.01  _symbol_to_string_procedure_
+  0.00     15.31     0.00        2     0.00     0.01  decimal_sufix
+  0.00     15.31     0.00        2     0.00     0.00  inner_or_to_if
+  0.00     15.31     0.00        2     0.00     0.00  match_clauses_to_name_free
+  0.00     15.31     0.00        2     0.00     0.00  mk_eof
+  0.00     15.31     0.00        2     0.00     0.00  mk_match
+  0.00     15.31     0.00        2     0.00     0.00  mk_real_from_double
+  0.00     15.31     0.00        2     0.00     0.00  or_to_if
+  0.00     15.31     0.00        2     0.00     0.00  quasiquote_to_list
+  0.00     15.31     0.00        2     0.00     0.00  set_var
+  0.00     15.31     0.00        2     0.00     0.00  set_variable_value
+  0.00     15.31     0.00        2     0.00     0.00  sexp_begin_actions
+  0.00     15.31     0.00        2     0.00     0.00  sexp_match_clauses
+  0.00     15.31     0.00        2     0.00     0.00  sexp_match_key
+  0.00     15.31     0.00        1     0.00     0.00  _display_procedure_
+  0.00     15.31     0.00        1     0.00     0.00  display
+  0.00     15.31     0.00        1     0.00     0.00  display_inside_list
+  0.00     15.31     0.00        1     0.00     0.00  display_number
+  0.00     15.31     0.00        1     0.00     0.00  display_on_file
+  0.00     15.31     0.00        1     0.00     0.00  get_global_env
+  0.00     15.31     0.00        1     0.00     0.02  gr_init
+  0.00     15.31     0.00        1     0.00     0.01  init_primitive_procedures
+  0.00     15.31     0.00        1     0.00     0.00  init_symbol_table
+  0.00     15.31     0.00        1     0.00     0.00  is_none
+  0.00     15.31     0.00        1     0.00     0.00  mk_command_line_list
+  0.00     15.31     0.00        1     0.00     0.00  mk_port
+  0.00     15.31     0.00        1     0.00     0.00  open_input_file
+  0.00     15.31     0.00        1     0.00     0.00  peek_char_from_file
+  0.00     15.31     0.00        1     0.00     0.00  peek_char_from_port
+  0.00     15.31     0.00        1     0.00    14.55  populate_initial_environment
+  0.00     15.31     0.00        1     0.00     0.59  script_mode
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.07% of 15.31 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.1    0.00   15.17                 main [1]
+                0.00   14.55       1/1           populate_initial_environment [3]
+                0.00    0.59       1/1           script_mode [23]
+                0.00    0.02       1/1           gr_init [79]
+                0.00    0.01       1/1           init_primitive_procedures [112]
+                0.00    0.00       1/1           init_symbol_table [121]
+                0.00    0.00       1/4778        mk_symbol [61]
+                0.00    0.00       1/65          define_variable [124]
+                0.00    0.00       1/1           get_global_env [246]
+-----------------------------------------------
+[2]     97.5    2.12   12.81      52+61068101 <cycle 1 as a whole> [2]
+                1.97   10.79      58             hairy_eval <cycle 1> [4]
+                0.14    2.01 61068025             apply_primitive_procedure <cycle 1> [8]
+                0.01    0.01       6             data_eval <cycle 1> [93]
+                0.00    0.00      58             eval <cycle 1> [116]
+                0.00    0.00       6             _data_eval_procedure_ <cycle 1> [209]
+-----------------------------------------------
+                0.00   14.55       1/1           main [1]
+[3]     95.0    0.00   14.55       1         populate_initial_environment [3]
+                2.03   12.32      50/52          eval <cycle 1> [116]
+                0.11    0.00      50/53          stack_init [48]
+                0.00    0.05      50/58          xlat <cycle 4> [70]
+                0.00    0.04      51/54          read_from_file [66]
+                0.00    0.00     102/114         is_eof_object [270]
+-----------------------------------------------
+                                  58             eval <cycle 1> [116]
+[4]     83.3    1.97   10.79      58         hairy_eval <cycle 1> [4]
+                0.23    2.52 79523043/79523043     lookup_unbound_var [5]
+                1.75    0.00 760498976/760498976     save [9]
+                1.58    0.00 760498976/760498976     restore [10]
+                0.36    0.76 79523086/79523378     reverse [11]
+                0.34    0.58 140591083/140600067     cons [14]
+                0.18    0.28 140591087/140591087     first_operand [27]
+                0.23    0.18 140591087/140591087     last_operand [28]
+                0.10    0.20 51840589/51840589     lookup_variable_value [35]
+                0.11    0.10 79523066/79523066     operands [37]
+                0.04    0.16 79523066/79523066     operator [41]
+                0.08    0.08 18455045/18455045     check_procedure_arg_len [44]
+                0.07    0.08 61068017/61068017     rest_operands [45]
+                0.04    0.10 18455053/18455053     extend_environment [46]
+                0.07    0.04 18455045/18455045     procedure_environment [49]
+                0.10    0.00 79523070/79523070     no_operands [52]
+                0.05    0.04 18455053/55365342     length [36]
+                0.05    0.02 18455069/18455118     is_last_exp [55]
+                0.07    0.00 79523302/232867458     nil [40]
+                0.02    0.04 18455045/18455045     procedure_body [56]
+                0.02    0.04 18455069/18455118     first_exp [60]
+                0.03    0.01 18455045/18455045     procedure_parameters [64]
+                0.04    0.00 33385410/33385423     is_true [69]
+                0.02    0.00       4/4           is_list [86]
+                0.01    0.00       4/8           append [98]
+                0.00    0.00      63/65          define_variable [124]
+                0.00    0.00      10/10          find_matching_match_clause [130]
+                0.00    0.00      76/76          mk_procedure [171]
+                0.00    0.00      16/16          rest_exps [230]
+                0.00    0.00       4/62          mk_none [213]
+                0.00    0.00       2/2           set_variable_value [260]
+                             61068025             apply_primitive_procedure <cycle 1> [8]
+-----------------------------------------------
+                0.23    2.52 79523043/79523043     hairy_eval <cycle 1> [4]
+[5]     18.0    0.23    2.52 79523043         lookup_unbound_var [5]
+                0.14    2.38 79523043/79523043     global_env_lookup_var [6]
+-----------------------------------------------
+                0.14    2.38 79523043/79523043     lookup_unbound_var [5]
+[6]     16.5    0.14    2.38 79523043         global_env_lookup_var [6]
+                0.19    2.19 79523043/79529815     hash_table_ref [7]
+-----------------------------------------------
+                0.00    0.00    1994/79529815     hash_table_set [80]
+                0.00    0.00    4778/79529815     mk_symbol [61]
+                0.19    2.19 79523043/79529815     global_env_lookup_var [6]
+[7]     15.6    0.19    2.20 79529815         hash_table_ref [7]
+                0.28    0.51 79529815/79529815     _find [16]
+                0.26    0.51 79529815/79531817     vector_ref [17]
+                0.32    0.32 79529815/79533811     get_index [22]
+-----------------------------------------------
+                             61068025             hairy_eval <cycle 1> [4]
+[8]     14.0    0.14    2.01 61068025         apply_primitive_procedure <cycle 1> [8]
+                0.05    0.81 18454959/18454959     _minus_procedure_ [15]
+                0.05    0.65 33385344/33385344     _equal_procedure_ [19]
+                0.03    0.37 9227464/9227464     _plus_procedure_ [29]
+                0.00    0.02       2/2           _string_to_symbol_procedure_ [81]
+                0.00    0.02       2/2           _symbol_to_string_procedure_ [85]
+                0.00    0.00       2/2           _string_append_procedure_ [119]
+                0.00    0.00     110/110         _cons_procedure_ [156]
+                0.00    0.00      31/31          _mul_procedure_ [169]
+                0.00    0.00      32/32          _less_procedure_ [172]
+                0.00    0.00      34/34          _IS_NIL_procedure_ [180]
+                0.00    0.00       8/8           _reverse_procedure_ [197]
+                0.00    0.00      14/14          _car_procedure_ [200]
+                0.00    0.00       8/8           _cdr_procedure_ [208]
+                0.00    0.00       4/4           _caar_procedure_ [216]
+                0.00    0.00       4/4           _cdar_procedure_ [218]
+                0.00    0.00       1/1           _display_procedure_ [236]
+                                   6             _data_eval_procedure_ <cycle 1> [209]
+-----------------------------------------------
+                1.75    0.00 760498976/760498976     hairy_eval <cycle 1> [4]
+[9]     11.4    1.75    0.00 760498976         save [9]
+-----------------------------------------------
+                1.58    0.00 760498976/760498976     hairy_eval <cycle 1> [4]
+[10]    10.3    1.58    0.00 760498976         restore [10]
+-----------------------------------------------
+                0.00    0.00       1/79523378     mk_command_line_list [120]
+                0.00    0.00       8/79523378     _reverse_procedure_ [197]
+                0.00    0.00      46/79523378     _unzip_ [167]
+                0.00    0.00      85/79523378     scan_internal_defs [157]
+                0.00    0.00     152/79523378     mk_list [155]
+                0.36    0.76 79523086/79523378     hairy_eval <cycle 1> [4]
+[11]     7.3    0.36    0.76 79523378         reverse [11]
+                0.30    0.21 140591383/140591387     set_cdr [25]
+                0.18    0.00 140591383/710018448     cdr [13]
+                0.07    0.00 79523296/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00       1/519808999     _display_procedure_ [236]
+                0.00    0.00       2/519808999     sexp_match_key [248]
+                0.00    0.00       2/519808999     get_vars_from_match [141]
+                0.00    0.00       2/519808999     _symbol_to_string_procedure_ [85]
+                0.00    0.00       2/519808999     _string_to_symbol_procedure_ [81]
+                0.00    0.00       3/519808999     caddr [237]
+                0.00    0.00       3/519808999     named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       4/519808999     inner_or_to_if <cycle 4> [203]
+                0.00    0.00       4/519808999     letrec_to_let <cycle 4> [90]
+                0.00    0.00       4/519808999     cdar [238]
+                0.00    0.00       4/519808999     sexp_apply_procedure [239]
+                0.00    0.00       4/519808999     _caar_procedure_ [216]
+                0.00    0.00       4/519808999     _cdar_procedure_ [218]
+                0.00    0.00       5/519808999     mk_unassigned_vars [107]
+                0.00    0.00       6/519808999     match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00       8/519808999     caar [235]
+                0.00    0.00       8/519808999     _cdr_procedure_ [208]
+                0.00    0.00       8/519808999     _reverse_procedure_ [197]
+                0.00    0.00       9/519808999     add_definition_to_context [202]
+                0.00    0.00       9/519808999     add_defs_to_context [198]
+                0.00    0.00      10/519808999     mk_set_var_values [139]
+                0.00    0.00      12/519808999     inner_construct_case_clauses [136]
+                0.00    0.00      12/519808999     _data_eval_procedure_ <cycle 1> [209]
+                0.00    0.00      16/519808999     let_to_combination <cycle 4> [164]
+                0.00    0.00      16/519808999     find [211]
+                0.00    0.00      16/519808999     pattern_match [131]
+                0.00    0.00      16/519808999     _remove [84]
+                0.00    0.00      18/519808999     symbol_exist_in_improper_list [217]
+                0.00    0.00      20/519808999     case_clause_datum [220]
+                0.00    0.00      20/519808999     find_matching_match_clause [130]
+                0.00    0.00      28/519808999     _car_procedure_ [200]
+                0.00    0.00      31/519808999     _mul_procedure_ [169]
+                0.00    0.00      32/519808999     define_scan [193]
+                0.00    0.00      33/519808999     quasiquote_to_list [127]
+                0.00    0.00      34/519808999     _IS_NIL_procedure_ [180]
+                0.00    0.00      37/519808999     sexp_quotation_value [101]
+                0.00    0.00      54/519808999     if_sexp_alternative [173]
+                0.00    0.00      57/519808999     if_sexp_predicate [196]
+                0.00    0.00      57/519808999     if_sexp_consequent [186]
+                0.00    0.00      63/519808999     cdadr [182]
+                0.00    0.00      64/519808999     sexp_definition_value [181]
+                0.00    0.00      70/519808999     cadr [190]
+                0.00    0.00      73/519808999     sexp_definition_variable [188]
+                0.00    0.00      85/519808999     lambda_sexp_parameters [183]
+                0.00    0.00     107/519808999     scan_internal_defs [157]
+                0.00    0.00     126/519808999     caadr [177]
+                0.00    0.00     128/519808999     _unzip_ [167]
+                0.00    0.00     128/519808999     is_define [111]
+                0.00    0.00     131/519808999     cond_predicate [187]
+                0.00    0.00     131/519808999     expand_cond_clauses <cycle 4> [168]
+                0.00    0.00     220/519808999     _cons_procedure_ [156]
+                0.00    0.00     800/519808999     symbol_to_bound_var [145]
+                0.00    0.00     962/519808999     exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00    1436/519808999     xlat_sequence <cycle 4> [142]
+                0.00    0.00    2768/519808999     get_var_index [146]
+                0.00    0.00   36188/519808999     is_tagged_list [137]
+                0.02    0.00 9227464/519808999     _plus_procedure_ [29]
+                0.02    0.00 9227499/519808999     fold_right [31]
+                0.04    0.00 18454959/519808999     _sub_numbers [26]
+                0.04    0.00 18454959/519808999     sub_numbers [20]
+                0.04    0.00 18455118/519808999     first_exp [60]
+                0.13    0.00 66770752/519808999     it_bin_pred [21]
+                0.16    0.00 79523066/519808999     operator [41]
+                0.28    0.00 140591087/519808999     first_operand [27]
+                0.32    0.00 159060004/519808999     _find [16]
+[12]     6.7    1.03    0.00 519808999         car [12]
+-----------------------------------------------
+                0.00    0.00       2/710018448     or_to_if <cycle 4> [262]
+                0.00    0.00       2/710018448     xlat <cycle 4> [70]
+                0.00    0.00       2/710018448     sexp_begin_actions [261]
+                0.00    0.00       2/710018448     sexp_match_key [248]
+                0.00    0.00       2/710018448     get_vars_from_match [141]
+                0.00    0.00       3/710018448     named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       4/710018448     letrec_to_let <cycle 4> [90]
+                0.00    0.00       4/710018448     case_clause_exp [250]
+                0.00    0.00       4/710018448     is_last_clause [251]
+                0.00    0.00       4/710018448     inner_construct_case_clauses [136]
+                0.00    0.00       4/710018448     cdar [238]
+                0.00    0.00       4/710018448     is_list [86]
+                0.00    0.00       4/710018448     sexp_match_clauses [249]
+                0.00    0.00       4/710018448     sexp_apply_procedure [239]
+                0.00    0.00       5/710018448     mk_unassigned_vars [107]
+                0.00    0.00       5/710018448     append [98]
+                0.00    0.00       6/710018448     caddr [237]
+                0.00    0.00       6/710018448     inner_or_to_if <cycle 4> [203]
+                0.00    0.00       6/710018448     match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00       6/710018448     _data_eval_procedure_ <cycle 1> [209]
+                0.00    0.00       7/710018448     improper_list_length [244]
+                0.00    0.00       8/710018448     sexp_apply_arguments [242]
+                0.00    0.00       8/710018448     _cdr_procedure_ [208]
+                0.00    0.00       8/710018448     _remove [84]
+                0.00    0.00       9/710018448     cdddr [241]
+                0.00    0.00       9/710018448     symbol_exist_in_improper_list [217]
+                0.00    0.00       9/710018448     add_defs_to_context [198]
+                0.00    0.00      10/710018448     mk_set_var_values [139]
+                0.00    0.00      10/710018448     find_matching_match_clause [130]
+                0.00    0.00      16/710018448     let_to_combination <cycle 4> [164]
+                0.00    0.00      16/710018448     cond_clauses [231]
+                0.00    0.00      16/710018448     rest_exps [230]
+                0.00    0.00      16/710018448     find [211]
+                0.00    0.00      16/710018448     pattern_match [131]
+                0.00    0.00      31/710018448     _mul_procedure_ [169]
+                0.00    0.00      32/710018448     define_scan [193]
+                0.00    0.00      33/710018448     quasiquote_to_list [127]
+                0.00    0.00      37/710018448     sexp_quotation_value [101]
+                0.00    0.00      49/710018448     expand_cond_clauses <cycle 4> [168]
+                0.00    0.00      49/710018448     cond_actions [212]
+                0.00    0.00      57/710018448     if_sexp_predicate [196]
+                0.00    0.00      63/710018448     caadr [177]
+                0.00    0.00      64/710018448     _unzip_ [167]
+                0.00    0.00      64/710018448     is_define [111]
+                0.00    0.00      70/710018448     cadr [190]
+                0.00    0.00      73/710018448     sexp_definition_variable [188]
+                0.00    0.00      85/710018448     lambda_sexp_parameters [183]
+                0.00    0.00     107/710018448     is_improper_list [201]
+                0.00    0.00     107/710018448     scan_internal_defs [157]
+                0.00    0.00     110/710018448     _cons_procedure_ [156]
+                0.00    0.00     114/710018448     if_sexp_consequent [186]
+                0.00    0.00     126/710018448     cdadr [182]
+                0.00    0.00     128/710018448     sexp_definition_value [181]
+                0.00    0.00     170/710018448     lambda_sexp_body [192]
+                0.00    0.00     174/710018448     cddr [191]
+                0.00    0.00     333/710018448     if_sexp_alternative [173]
+                0.00    0.00     514/710018448     symbol_to_bound_var [145]
+                0.00    0.00     968/710018448     exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00    1117/710018448     get_var_index [146]
+                0.00    0.00    1436/710018448     xlat_sequence <cycle 4> [142]
+                0.01    0.00 9227464/710018448     _plus_procedure_ [29]
+                0.01    0.00 9227499/710018448     fold_right [31]
+                0.02    0.00 18454959/710018448     _sub_numbers [26]
+                0.02    0.00 18454959/710018448     sub_numbers [20]
+                0.02    0.00 18455118/710018448     is_last_exp [55]
+                0.06    0.00 42612842/710018448     it_bin_pred [21]
+                0.08    0.00 61068017/710018448     rest_operands [45]
+                0.10    0.00 79523066/710018448     operands [37]
+                0.10    0.00 79530002/710018448     _find [16]
+                0.12    0.00 92275704/710018448     length [36]
+                0.18    0.00 140591087/710018448     last_operand [28]
+                0.18    0.00 140591383/710018448     reverse [11]
+[13]     6.0    0.92    0.00 710018448         cdr [13]
+-----------------------------------------------
+                0.00    0.00       2/140600067     mk_command_line_list [120]
+                0.00    0.00       4/140600067     construct_case_clauses [135]
+                0.00    0.00       4/140600067     get_vars_from_match [141]
+                0.00    0.00       6/140600067     match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00       8/140600067     letrec_to_let <cycle 4> [90]
+                0.00    0.00       9/140600067     add_definition_to_context [202]
+                0.00    0.00       9/140600067     scan_internal_defs [157]
+                0.00    0.00      10/140600067     mk_unassigned_vars [107]
+                0.00    0.00      12/140600067     mk_sexp_quoted [207]
+                0.00    0.00      12/140600067     abbreviation <cycle 3> [126]
+                0.00    0.00      15/140600067     mk_set_var_values [139]
+                0.00    0.00      16/140600067     let_to_combination <cycle 4> [164]
+                0.00    0.00      16/140600067     inner_construct_case_clauses [136]
+                0.00    0.00      16/140600067     add_binding_to_frame [205]
+                0.00    0.00      18/140600067     named_let_to_letrec <cycle 4> [138]
+                0.00    0.00      32/140600067     mk_sexp_lambda [194]
+                0.00    0.00      32/140600067     add_var_if_consistent [184]
+                0.00    0.00      66/140600067     quasiquote_to_list [127]
+                0.00    0.00      87/140600067     _unzip_ [167]
+                0.00    0.00      87/140600067     extend_context [175]
+                0.00    0.00     110/140600067     _cons_procedure_ [156]
+                0.00    0.00     148/140600067     mk_sexp_if [170]
+                0.00    0.00     185/140600067     mk_list [155]
+                0.00    0.00     252/140600067     define_to_lambda <cycle 4> [123]
+                0.00    0.00     540/140600067     parse_list <cycle 3> [100]
+                0.00    0.00     914/140600067     datum_plus <cycle 3> [99]
+                0.00    0.00     950/140600067     exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00    1436/140600067     xlat_sequence <cycle 4> [142]
+                0.00    0.00    3988/140600067     hash_table_set [80]
+                0.34    0.58 140591083/140600067     hairy_eval <cycle 1> [4]
+[14]     6.0    0.34    0.58 140600067         cons [14]
+                0.29    0.29 140600067/140600224     mk_pair_data [24]
+-----------------------------------------------
+                0.05    0.81 18454959/18454959     apply_primitive_procedure <cycle 1> [8]
+[15]     5.6    0.05    0.81 18454959         _minus_procedure_ [15]
+                0.05    0.64 18454959/18454959     sub_numbers [20]
+                0.05    0.04 18454959/55365342     length [36]
+                0.03    0.00 18454959/477160054     assert_throw [18]
+-----------------------------------------------
+                0.28    0.51 79529815/79529815     hash_table_ref [7]
+[16]     5.2    0.28    0.51 79529815         _find [16]
+                0.32    0.00 159060004/519808999     car [12]
+                0.10    0.00 79530002/710018448     cdr [13]
+                0.09    0.00 79523067/79523069     is_symbol_eq [53]
+                0.01    0.00    6929/6929        _symbol_equal_ [115]
+                0.00    0.00       6/33385356     is_number_equal [30]
+-----------------------------------------------
+                0.00    0.00       8/79531817     hash_table_delete [83]
+                0.00    0.00    1994/79531817     hash_table_set [80]
+                0.26    0.51 79529815/79531817     hash_table_ref [7]
+[17]     5.0    0.26    0.51 79531817         vector_ref [17]
+                0.24    0.00 159063634/477160054     assert_throw [18]
+                0.09    0.12 79531817/79534425     as_integer [38]
+                0.06    0.00 79531817/79533812     is_vector [57]
+-----------------------------------------------
+                0.00    0.00       1/477160054     open_input_file [257]
+                0.00    0.00       1/477160054     _display_procedure_ [236]
+                0.00    0.00       1/477160054     peek_char_from_port [258]
+                0.00    0.00       2/477160054     string_to_symbol [82]
+                0.00    0.00       2/477160054     symbol_to_string [87]
+                0.00    0.00       2/477160054     _symbol_to_string_procedure_ [85]
+                0.00    0.00       2/477160054     _string_to_symbol_procedure_ [81]
+                0.00    0.00       3/477160054     read_from_port [122]
+                0.00    0.00       4/477160054     inner_construct_case_clauses [136]
+                0.00    0.00       4/477160054     construct_case_clauses [135]
+                0.00    0.00       4/477160054     mk_vector [221]
+                0.00    0.00       4/477160054     _caar_procedure_ [216]
+                0.00    0.00       4/477160054     _cdar_procedure_ [218]
+                0.00    0.00       6/477160054     named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       6/477160054     _data_eval_procedure_ <cycle 1> [209]
+                0.00    0.00       8/477160054     string_length [227]
+                0.00    0.00       8/477160054     string_append [210]
+                0.00    0.00       8/477160054     _cdr_procedure_ [208]
+                0.00    0.00       8/477160054     _reverse_procedure_ [197]
+                0.00    0.00       9/477160054     read_char_from_port [225]
+                0.00    0.00      11/477160054     set_car [234]
+                0.00    0.00      14/477160054     _car_procedure_ [200]
+                0.00    0.00      16/477160054     let_to_combination <cycle 4> [164]
+                0.00    0.00      20/477160054     xlat <cycle 4> [70]
+                0.00    0.00      20/477160054     is_char_equal [224]
+                0.00    0.00      34/477160054     _IS_NIL_procedure_ [180]
+                0.00    0.00      62/477160054     mul_number [73]
+                0.00    0.00      64/477160054     is_number_lt [189]
+                0.00    0.00     110/477160054     _cons_procedure_ [156]
+                0.00    0.00    3988/477160054     vector_set [143]
+                0.03    0.00 18454928/477160054     add_number [42]
+                0.03    0.00 18454959/477160054     _minus_procedure_ [15]
+                0.03    0.00 18455045/477160054     procedure_body [56]
+                0.03    0.00 18455045/477160054     procedure_environment [49]
+                0.05    0.00 36909918/477160054     _sub_two_numbers [34]
+                0.10    0.00 66770712/477160054     is_number_equal [30]
+                0.21    0.00 140591387/477160054     set_cdr [25]
+                0.24    0.00 159063634/477160054     vector_ref [17]
+[18]     4.6    0.71    0.00 477160054         assert_throw [18]
+-----------------------------------------------
+                0.05    0.65 33385344/33385344     apply_primitive_procedure <cycle 1> [8]
+[19]     4.6    0.05    0.65 33385344         _equal_procedure_ [19]
+                0.10    0.55 33385344/33385376     it_bin_pred [21]
+-----------------------------------------------
+                0.05    0.64 18454959/18454959     _minus_procedure_ [15]
+[20]     4.5    0.05    0.64 18454959         sub_numbers [20]
+                0.08    0.40 18454959/18454959     _sub_numbers [26]
+                0.05    0.04 18454959/55365342     length [36]
+                0.04    0.00 18454959/519808999     car [12]
+                0.02    0.00 18454959/710018448     cdr [13]
+                0.02    0.00 18454959/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00      32/33385376     _less_procedure_ [172]
+                0.10    0.55 33385344/33385376     _equal_procedure_ [19]
+[21]     4.3    0.10    0.55 33385376         it_bin_pred [21]
+                0.10    0.25 33385344/33385356     is_number_equal [30]
+                0.13    0.00 66770752/519808999     car [12]
+                0.06    0.00 42612842/710018448     cdr [13]
+                0.02    0.00 33385376/33385441     mk_boolean [88]
+                0.00    0.00      32/32          is_number_lt [189]
+-----------------------------------------------
+                0.00    0.00       8/79533811     hash_table_delete [83]
+                0.00    0.00    3988/79533811     hash_table_set [80]
+                0.32    0.32 79529815/79533811     hash_table_ref [7]
+[22]     4.1    0.32    0.32 79533811         get_index [22]
+                0.32    0.00 79533214/79533214     _symbol_hash_ [33]
+                0.00    0.00     597/597         number_hash [166]
+-----------------------------------------------
+                0.00    0.59       1/1           main [1]
+[23]     3.9    0.00    0.59       1         script_mode [23]
+                0.08    0.49       2/52          eval <cycle 1> [116]
+                0.01    0.00       3/53          stack_init [48]
+                0.00    0.00       1/1           mk_command_line_list [120]
+                0.00    0.00       3/3           read_from_port [122]
+                0.00    0.00       2/58          xlat <cycle 4> [70]
+                0.00    0.00       1/21          mk_string_with_length [71]
+                0.00    0.00       1/4778        mk_symbol [61]
+                0.00    0.00       1/65          define_variable [124]
+                0.00    0.00      10/10          is_char_equal [224]
+                0.00    0.00       9/9           read_char_from_port [225]
+                0.00    0.00       1/1           open_input_file [257]
+                0.00    0.00       1/1           peek_char_from_port [258]
+                0.00    0.00      12/114         is_eof_object [270]
+                0.00    0.00       2/78          mk_char [271]
+-----------------------------------------------
+                0.00    0.00       2/140600224     mk_match [245]
+                0.00    0.00       6/140600224     mk_assignment [228]
+                0.00    0.00      64/140600224     mk_definition [185]
+                0.00    0.00      85/140600224     mk_lambda [176]
+                0.29    0.29 140600067/140600224     cons [14]
+[24]     3.8    0.29    0.29 140600224         mk_pair_data [24]
+                0.29    0.00 281200448/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       4/140591387     append [98]
+                0.30    0.21 140591383/140591387     reverse [11]
+[25]     3.3    0.30    0.21 140591387         set_cdr [25]
+                0.21    0.00 140591387/477160054     assert_throw [18]
+-----------------------------------------------
+                             18454959             _sub_numbers [26]
+                0.08    0.40 18454959/18454959     sub_numbers [20]
+[26]     3.1    0.08    0.40 18454959+18454959 _sub_numbers [26]
+                0.14    0.17 18454959/18454959     _sub_two_numbers [34]
+                0.04    0.00 18454959/519808999     car [12]
+                0.03    0.00 36909918/232867458     nil [40]
+                0.02    0.00 18454959/710018448     cdr [13]
+                             18454959             _sub_numbers [26]
+-----------------------------------------------
+                0.18    0.28 140591087/140591087     hairy_eval <cycle 1> [4]
+[27]     3.0    0.18    0.28 140591087         first_operand [27]
+                0.28    0.00 140591087/519808999     car [12]
+-----------------------------------------------
+                0.23    0.18 140591087/140591087     hairy_eval <cycle 1> [4]
+[28]     2.7    0.23    0.18 140591087         last_operand [28]
+                0.18    0.00 140591087/710018448     cdr [13]
+-----------------------------------------------
+                0.03    0.37 9227464/9227464     apply_primitive_procedure <cycle 1> [8]
+[29]     2.6    0.03    0.37 9227464         _plus_procedure_ [29]
+                0.08    0.26 9227464/9227497     fold_right [31]
+                0.02    0.00 9227464/519808999     car [12]
+                0.01    0.00 9227464/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       6/33385356     _find [16]
+                0.00    0.00       6/33385356     _remove [84]
+                0.10    0.25 33385344/33385356     it_bin_pred [21]
+[30]     2.3    0.10    0.25 33385356         is_number_equal [30]
+                0.10    0.00 66770712/477160054     assert_throw [18]
+                0.09    0.00 66770712/122135684     is_number [43]
+                0.06    0.00 33385356/61067842     is_atleast_one [50]
+-----------------------------------------------
+                             9227499             fold_right [31]
+                0.00    0.00       2/9227497     _string_append_procedure_ [119]
+                0.00    0.00      31/9227497     _mul_procedure_ [169]
+                0.08    0.26 9227464/9227497     _plus_procedure_ [29]
+[31]     2.2    0.08    0.26 9227497+9227499 fold_right [31]
+                0.07    0.12 9227464/9227464     add_number [42]
+                0.01    0.03      31/31          mul_number [73]
+                0.02    0.00 9227499/519808999     car [12]
+                0.02    0.00 18454996/232867458     nil [40]
+                0.01    0.00 9227499/710018448     cdr [13]
+                0.00    0.00       4/4           string_append [210]
+                             9227499             fold_right [31]
+-----------------------------------------------
+                0.00    0.00       2/318114044     symbol_to_string [87]
+                0.00    0.00       2/318114044     mk_eof [263]
+                0.00    0.00       2/318114044     mk_port [264]
+                0.00    0.00       8/318114044     mk_apply [226]
+                0.00    0.00       8/318114044     mk_hash_table [102]
+                0.00    0.00      12/318114044     _mk_vector [229]
+                0.00    0.00      33/318114044     mk_unasigned_number [113]
+                0.00    0.00      42/318114044     mk_cell_data [219]
+                0.00    0.00      50/318114044     mk_string_type [215]
+                0.00    0.00      53/318114044     stack_init [48]
+                0.00    0.00      62/318114044     mk_none [213]
+                0.00    0.00     114/318114044     mk_if [204]
+                0.00    0.00     152/318114044     mk_procedure [171]
+                0.00    0.00     306/318114044     mk_primitive_procedure [179]
+                0.00    0.00     572/318114044     mk_bound_var [174]
+                0.00    0.00    2070/318114044     mk_symbol [61]
+                0.04    0.00 36910108/318114044     mk_env [51]
+                0.29    0.00 281200448/318114044     mk_pair_data [24]
+[32]     2.1    0.33    0.00 318114044         mloc [32]
+-----------------------------------------------
+                0.32    0.00 79533214/79533214     get_index [22]
+[33]     2.1    0.32    0.00 79533214         _symbol_hash_ [33]
+-----------------------------------------------
+                0.14    0.17 18454959/18454959     _sub_numbers [26]
+[34]     2.0    0.14    0.17 18454959         _sub_two_numbers [34]
+                0.05    0.00 36909918/477160054     assert_throw [18]
+                0.05    0.00 36909918/122135684     is_number [43]
+                0.04    0.00 18454959/27683215     mk_number_from_int [58]
+                0.03    0.00 18454959/61067842     is_atleast_one [50]
+-----------------------------------------------
+                0.10    0.20 51840589/51840589     hairy_eval <cycle 1> [4]
+[35]     2.0    0.10    0.20 51840589         lookup_variable_value [35]
+                0.12    0.08 51840589/51840589     get_var [39]
+-----------------------------------------------
+                0.00    0.00       1/55365342     _display_procedure_ [236]
+                0.00    0.00       2/55365342     exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00       2/55365342     _symbol_to_string_procedure_ [85]
+                0.00    0.00       2/55365342     _string_to_symbol_procedure_ [81]
+                0.00    0.00       3/55365342     named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       4/55365342     mk_apply [226]
+                0.00    0.00       4/55365342     _caar_procedure_ [216]
+                0.00    0.00       4/55365342     _cdar_procedure_ [218]
+                0.00    0.00       4/55365342     construct_case_clauses [135]
+                0.00    0.00       6/55365342     _data_eval_procedure_ <cycle 1> [209]
+                0.00    0.00       8/55365342     _cdr_procedure_ [208]
+                0.00    0.00       8/55365342     _reverse_procedure_ [197]
+                0.00    0.00      14/55365342     _car_procedure_ [200]
+                0.00    0.00      16/55365342     let_to_combination <cycle 4> [164]
+                0.00    0.00      20/55365342     xlat <cycle 4> [70]
+                0.00    0.00      34/55365342     _IS_NIL_procedure_ [180]
+                0.00    0.00      63/55365342     define_to_lambda <cycle 4> [123]
+                0.00    0.00      66/55365342     mk_procedure [171]
+                0.00    0.00     110/55365342     _cons_procedure_ [156]
+                0.05    0.04 18454959/55365342     sub_numbers [20]
+                0.05    0.04 18454959/55365342     _minus_procedure_ [15]
+                0.05    0.04 18455053/55365342     hairy_eval <cycle 1> [4]
+[36]     1.8    0.16    0.12 55365342         length [36]
+                0.12    0.00 92275704/710018448     cdr [13]
+-----------------------------------------------
+                0.11    0.10 79523066/79523066     hairy_eval <cycle 1> [4]
+[37]     1.4    0.11    0.10 79523066         operands [37]
+                0.10    0.00 79523066/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       1/79534425     display_number [256]
+                0.00    0.00       4/79534425     _mk_vector [229]
+                0.00    0.00       4/79534425     mk_vector [221]
+                0.00    0.00       8/79534425     string_append [210]
+                0.00    0.00     597/79534425     number_hash [166]
+                0.00    0.00    1994/79534425     vector_set [143]
+                0.09    0.12 79531817/79534425     vector_ref [17]
+[38]     1.4    0.09    0.12 79534425         as_integer [38]
+                0.12    0.00 79534425/79534488     is_real [47]
+-----------------------------------------------
+                0.12    0.08 51840589/51840589     lookup_variable_value [35]
+[39]     1.3    0.12    0.08 51840589         get_var [39]
+                0.08    0.00 51840589/51840589     get_var_from_frame [54]
+-----------------------------------------------
+                0.00    0.00       1/232867458     mk_command_line_list [120]
+                0.00    0.00       3/232867458     get_global_env [246]
+                0.00    0.00       4/232867458     mk_set_var_values [139]
+                0.00    0.00       4/232867458     mk_hash_table [102]
+                0.00    0.00       5/232867458     get_vars_from_match [141]
+                0.00    0.00       5/232867458     abbreviation <cycle 3> [126]
+                0.00    0.00       6/232867458     mk_sexp_quoted [207]
+                0.00    0.00      10/232867458     parse_list <cycle 3> [100]
+                0.00    0.00      16/232867458     find [211]
+                0.00    0.00      24/232867458     find_matching_match_clause [130]
+                0.00    0.00      37/232867458     mk_sexp_if [170]
+                0.00    0.00      46/232867458     unzip [165]
+                0.00    0.00      58/232867458     eval <cycle 1> [116]
+                0.00    0.00      85/232867458     scan_internal_defs [157]
+                0.00    0.00     152/232867458     mk_list [155]
+                0.00    0.00     531/232867458     datum_plus <cycle 3> [99]
+                0.02    0.00 18454959/232867458     sub_numbers [20]
+                0.02    0.00 18454996/232867458     fold_right [31]
+                0.03    0.00 36909918/232867458     _sub_numbers [26]
+                0.07    0.00 79523296/232867458     reverse [11]
+                0.07    0.00 79523302/232867458     hairy_eval <cycle 1> [4]
+[40]     1.3    0.20    0.00 232867458         nil [40]
+-----------------------------------------------
+                0.04    0.16 79523066/79523066     hairy_eval <cycle 1> [4]
+[41]     1.3    0.04    0.16 79523066         operator [41]
+                0.16    0.00 79523066/519808999     car [12]
+-----------------------------------------------
+                0.07    0.12 9227464/9227464     fold_right [31]
+[42]     1.2    0.07    0.12 9227464         add_number [42]
+                0.03    0.00 18454928/18454928     type_tag_to_string [75]
+                0.03    0.00 18454928/477160054     assert_throw [18]
+                0.02    0.00 18454928/122135684     is_number [43]
+                0.02    0.00 9227464/27683215     mk_number_from_int [58]
+                0.02    0.00 9227464/61067842     is_atleast_one [50]
+-----------------------------------------------
+                0.00    0.00      62/122135684     mul_number [73]
+                0.00    0.00      64/122135684     is_number_lt [189]
+                0.02    0.00 18454928/122135684     add_number [42]
+                0.05    0.00 36909918/122135684     _sub_two_numbers [34]
+                0.09    0.00 66770712/122135684     is_number_equal [30]
+[43]     1.1    0.17    0.00 122135684         is_number [43]
+-----------------------------------------------
+                0.08    0.08 18455045/18455045     hairy_eval <cycle 1> [4]
+[44]     1.0    0.08    0.08 18455045         check_procedure_arg_len [44]
+                0.05    0.00 18455045/18455045     param_len [63]
+                0.03    0.00 18455045/18455045     is_var_arg [74]
+-----------------------------------------------
+                0.07    0.08 61068017/61068017     hairy_eval <cycle 1> [4]
+[45]     1.0    0.07    0.08 61068017         rest_operands [45]
+                0.08    0.00 61068017/710018448     cdr [13]
+-----------------------------------------------
+                0.04    0.10 18455053/18455053     hairy_eval <cycle 1> [4]
+[46]     0.9    0.04    0.10 18455053         extend_environment [46]
+                0.06    0.04 18455053/18455054     mk_env [51]
+-----------------------------------------------
+                0.00    0.00       1/79534488     display_number [256]
+                0.00    0.00      62/79534488     as_real [78]
+                0.12    0.00 79534425/79534488     as_integer [38]
+[47]     0.8    0.12    0.00 79534488         is_real [47]
+-----------------------------------------------
+                0.01    0.00       3/53          script_mode [23]
+                0.11    0.00      50/53          populate_initial_environment [3]
+[48]     0.8    0.12    0.00      53         stack_init [48]
+                0.00    0.00      53/318114044     mloc [32]
+-----------------------------------------------
+                0.07    0.04 18455045/18455045     hairy_eval <cycle 1> [4]
+[49]     0.7    0.07    0.04 18455045         procedure_environment [49]
+                0.03    0.00 18455045/477160054     assert_throw [18]
+                0.01    0.00 18455045/55365135     is_compound_procedure [68]
+-----------------------------------------------
+                0.00    0.00      31/61067842     mul_number [73]
+                0.00    0.00      32/61067842     is_number_lt [189]
+                0.02    0.00 9227464/61067842     add_number [42]
+                0.03    0.00 18454959/61067842     _sub_two_numbers [34]
+                0.06    0.00 33385356/61067842     is_number_equal [30]
+[50]     0.7    0.11    0.00 61067842         is_atleast_one [50]
+-----------------------------------------------
+                0.00    0.00       1/18455054     get_global_env [246]
+                0.06    0.04 18455053/18455054     extend_environment [46]
+[51]     0.6    0.06    0.04 18455054         mk_env [51]
+                0.04    0.00 36910108/318114044     mloc [32]
+-----------------------------------------------
+                0.10    0.00 79523070/79523070     hairy_eval <cycle 1> [4]
+[52]     0.6    0.10    0.00 79523070         no_operands [52]
+-----------------------------------------------
+                0.00    0.00       2/79523069     _remove [84]
+                0.09    0.00 79523067/79523069     _find [16]
+[53]     0.6    0.09    0.00 79523069         is_symbol_eq [53]
+-----------------------------------------------
+                0.08    0.00 51840589/51840589     get_var [39]
+[54]     0.5    0.08    0.00 51840589         get_var_from_frame [54]
+-----------------------------------------------
+                0.00    0.00      49/18455118     sequence_to_exp <cycle 4> [178]
+                0.05    0.02 18455069/18455118     hairy_eval <cycle 1> [4]
+[55]     0.5    0.05    0.02 18455118         is_last_exp [55]
+                0.02    0.00 18455118/710018448     cdr [13]
+-----------------------------------------------
+                0.02    0.04 18455045/18455045     hairy_eval <cycle 1> [4]
+[56]     0.4    0.02    0.04 18455045         procedure_body [56]
+                0.03    0.00 18455045/477160054     assert_throw [18]
+                0.01    0.00 18455045/55365135     is_compound_procedure [68]
+-----------------------------------------------
+                0.00    0.00       1/79533812     display_on_file [254]
+                0.00    0.00    1994/79533812     vector_set [143]
+                0.06    0.00 79531817/79533812     vector_ref [17]
+[57]     0.4    0.06    0.00 79533812         is_vector [57]
+-----------------------------------------------
+                0.00    0.00       4/27683215     mk_hash_table [102]
+                0.00    0.00       8/27683215     string_length [227]
+                0.00    0.00      31/27683215     mk_number [214]
+                0.00    0.00     749/27683215     gr_init [79]
+                0.02    0.00 9227464/27683215     add_number [42]
+                0.04    0.00 18454959/27683215     _sub_two_numbers [34]
+[58]     0.4    0.06    0.00 27683215         mk_number_from_int [58]
+-----------------------------------------------
+[59]     0.3    0.00    0.05      58+2445    <cycle 4 as a whole> [59]
+                0.00    0.04    1725             xlat <cycle 4> [70]
+                0.00    0.02       4             letrec_to_let <cycle 4> [90]
+                0.00    0.00      63             define_to_lambda <cycle 4> [123]
+                0.00    0.00       4             case_to_cond <cycle 4> [132]
+                0.00    0.00       3             named_let_to_letrec <cycle 4> [138]
+                0.00    0.00     603+1436        xlat_sequence <cycle 4> [142]
+                0.00    0.00      16             let_to_combination <cycle 4> [164]
+                0.00    0.00      16+33          expand_cond_clauses <cycle 4> [168]
+                0.00    0.00      49             sequence_to_exp <cycle 4> [178]
+                0.00    0.00       2+2           inner_or_to_if <cycle 4> [203]
+                0.00    0.00      16             cond_to_if <cycle 4> [232]
+                0.00    0.00       2             or_to_if <cycle 4> [262]
+-----------------------------------------------
+                0.00    0.00      49/18455118     sequence_to_exp <cycle 4> [178]
+                0.02    0.04 18455069/18455118     hairy_eval <cycle 1> [4]
+[60]     0.3    0.02    0.04 18455118         first_exp [60]
+                0.04    0.00 18455118/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00       1/4778        script_mode [23]
+                0.00    0.00       1/4778        main [1]
+                0.00    0.00       2/4778        string_to_symbol [82]
+                0.00    0.00       4/4778        case_to_cond <cycle 4> [132]
+                0.00    0.00       5/4778        mk_set_var_values [139]
+                0.00    0.00       6/4778        named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       7/4778        abbreviation <cycle 3> [126]
+                0.00    0.00       8/4778        inner_construct_case_clauses [136]
+                0.00    0.00      14/4778        next_token [67]
+                0.00    0.00      20/4778        name_from_pattern_var [129]
+                0.00    0.00      22/4778        init_symbol_table [121]
+                0.00    0.00      33/4778        quasiquote_to_list [127]
+                0.00    0.00     126/4778        define_to_lambda <cycle 4> [123]
+                0.00    0.00     153/4778        init_primitive_procedures [112]
+                0.01    0.00     688/4778        is_define [111]
+                0.01    0.00     692/4778        is_let_star [110]
+                0.01    0.00     711/4778        is_and [109]
+                0.01    0.00     711/4778        is_named_let [108]
+                0.01    0.00     749/4778        gr_init [79]
+                0.01    0.00     825/4778        identifier [106]
+[61]     0.3    0.04    0.01    4778         mk_symbol [61]
+                0.00    0.01    1035/1994        hash_table_set [80]
+                0.00    0.00    4778/79529815     hash_table_ref [7]
+                0.00    0.00    2070/318114044     mloc [32]
+-----------------------------------------------
+                                                 <spontaneous>
+[62]     0.3    0.05    0.00                 format_error [62]
+-----------------------------------------------
+                0.05    0.00 18455045/18455045     check_procedure_arg_len [44]
+[63]     0.3    0.05    0.00 18455045         param_len [63]
+-----------------------------------------------
+                0.03    0.01 18455045/18455045     hairy_eval <cycle 1> [4]
+[64]     0.3    0.03    0.01 18455045         procedure_parameters [64]
+                0.01    0.00 18455045/55365135     is_compound_procedure [68]
+-----------------------------------------------
+[65]     0.3    0.00    0.04      54+3231    <cycle 3 as a whole> [65]
+                0.00    0.02    1549             datum <cycle 3> [91]
+                0.00    0.01     540+914         datum_plus <cycle 3> [99]
+                0.00    0.01     582             parse_list <cycle 3> [100]
+                0.00    0.00      32             abbreviation <cycle 3> [126]
+                0.00    0.00     582             compound_datum <cycle 3> [133]
+-----------------------------------------------
+                0.00    0.00       3/54          read_from_port [122]
+                0.00    0.04      51/54          populate_initial_environment [3]
+[66]     0.3    0.00    0.04      54         read_from_file [66]
+                0.00    0.04      54/54          datum <cycle 3> [91]
+-----------------------------------------------
+                0.00    0.00      10/4177        parse_vector [134]
+                0.00    0.00      32/4177        abbreviation <cycle 3> [126]
+                0.00    0.01    1132/4177        parse_list <cycle 3> [100]
+                0.00    0.01    1454/4177        datum_plus <cycle 3> [99]
+                0.00    0.02    1549/4177        simple_datum [92]
+[67]     0.3    0.00    0.04    4177         next_token [67]
+                0.00    0.02      11/11          string [89]
+                0.00    0.02      33/33          _decimal [95]
+                0.00    0.01     825/825         identifier [106]
+                0.00    0.00      14/4778        mk_symbol [61]
+                0.00    0.00      16/33385441     mk_boolean [88]
+                0.00    0.00    2098/2098        skip_atmospheres [268]
+                0.00    0.00    2096/5904        initial [265]
+                0.00    0.00      66/66          character [274]
+-----------------------------------------------
+                0.01    0.00 18455045/55365135     procedure_parameters [64]
+                0.01    0.00 18455045/55365135     procedure_body [56]
+                0.01    0.00 18455045/55365135     procedure_environment [49]
+[68]     0.3    0.04    0.00 55365135         is_compound_procedure [68]
+-----------------------------------------------
+                0.00    0.00       1/33385423     peek_char_from_port [258]
+                0.00    0.00       3/33385423     read_from_port [122]
+                0.00    0.00       9/33385423     read_char_from_port [225]
+                0.04    0.00 33385410/33385423     hairy_eval <cycle 1> [4]
+[69]     0.3    0.04    0.00 33385423         is_true [69]
+-----------------------------------------------
+                                   3             named_let_to_letrec <cycle 4> [138]
+                                   4             inner_or_to_if <cycle 4> [203]
+                                   4             case_to_cond <cycle 4> [132]
+                                   8             letrec_to_let <cycle 4> [90]
+                                  32             let_to_combination <cycle 4> [164]
+                                  49             sequence_to_exp <cycle 4> [178]
+                                  63             define_to_lambda <cycle 4> [123]
+                                  66             expand_cond_clauses <cycle 4> [168]
+                                1438             xlat_sequence <cycle 4> [142]
+                0.00    0.00       2/58          script_mode [23]
+                0.00    0.01       6/58          data_eval <cycle 1> [93]
+                0.00    0.05      50/58          populate_initial_environment [3]
+[70]     0.2    0.00    0.04    1725         xlat <cycle 4> [70]
+                0.00    0.01     711/711         is_named_let [108]
+                0.00    0.01     711/711         is_and [109]
+                0.00    0.01     692/692         is_let_star [110]
+                0.00    0.01     688/688         is_define [111]
+                0.01    0.00      20/37          sexp_quotation_value [101]
+                0.00    0.00       2/2           quasiquote_to_list [127]
+                0.00    0.00    1725/3583        is_sexp_quoted [144]
+                0.00    0.00     713/713         is_or [158]
+                0.00    0.00     708/708         is_let [159]
+                0.00    0.00     692/692         is_letrec [160]
+                0.00    0.00     625/625         is_cond [161]
+                0.00    0.00     609/609         is_case [162]
+                0.00    0.00     605/605         is_quasiquote [163]
+                0.00    0.00      20/55365342     length [36]
+                0.00    0.00      20/477160054     assert_throw [18]
+                0.00    0.00      20/37          mk_quoted [222]
+                0.00    0.00       2/710018448     cdr [13]
+                                 603             xlat_sequence <cycle 4> [142]
+                                  63             define_to_lambda <cycle 4> [123]
+                                  16             let_to_combination <cycle 4> [164]
+                                  16             cond_to_if <cycle 4> [232]
+                                   4             letrec_to_let <cycle 4> [90]
+                                   4             case_to_cond <cycle 4> [132]
+                                   3             named_let_to_letrec <cycle 4> [138]
+                                   2             or_to_if <cycle 4> [262]
+-----------------------------------------------
+                0.00    0.00       1/21          script_mode [23]
+                0.00    0.00       2/21          _string_append_procedure_ [119]
+                0.00    0.00       2/21          mk_command_line_list [120]
+                0.00    0.01       5/21          mk_unassigned_vars [107]
+                0.00    0.02      11/21          string [89]
+[71]     0.2    0.00    0.04      21         mk_string_with_length [71]
+                0.04    0.00      21/21          nstrcpy [72]
+                0.00    0.00      21/25          mk_string_type [215]
+-----------------------------------------------
+                0.04    0.00      21/21          mk_string_with_length [71]
+[72]     0.2    0.04    0.00      21         nstrcpy [72]
+-----------------------------------------------
+                0.01    0.03      31/31          fold_right [31]
+[73]     0.2    0.01    0.03      31         mul_number [73]
+                0.03    0.00      62/62          as_real [78]
+                0.00    0.00      31/33          mk_unasigned_number [113]
+                0.00    0.00      62/477160054     assert_throw [18]
+                0.00    0.00      62/122135684     is_number [43]
+                0.00    0.00      31/61067842     is_atleast_one [50]
+-----------------------------------------------
+                0.03    0.00 18455045/18455045     check_procedure_arg_len [44]
+[74]     0.2    0.03    0.00 18455045         is_var_arg [74]
+-----------------------------------------------
+                0.03    0.00 18454928/18454928     add_number [42]
+[75]     0.2    0.03    0.00 18454928         type_tag_to_string [75]
+-----------------------------------------------
+                                                 <spontaneous>
+[76]     0.2    0.03    0.00                 vector_length [76]
+-----------------------------------------------
+                                                 <spontaneous>
+[77]     0.2    0.03    0.00                 _is_inexact_procedure_ [77]
+-----------------------------------------------
+                0.03    0.00      62/62          mul_number [73]
+[78]     0.2    0.03    0.00      62         as_real [78]
+                0.00    0.00      62/79534488     is_real [47]
+                0.00    0.00      62/66          is_integer [275]
+-----------------------------------------------
+                0.00    0.02       1/1           main [1]
+[79]     0.1    0.00    0.02       1         gr_init [79]
+                0.01    0.00     749/4778        mk_symbol [61]
+                0.00    0.01     749/1994        hash_table_set [80]
+                0.01    0.00       2/4           mk_hash_table [102]
+                0.00    0.00     749/27683215     mk_number_from_int [58]
+-----------------------------------------------
+                0.00    0.00      57/1994        global_env_define_variable [125]
+                0.00    0.00     153/1994        init_primitive_procedures [112]
+                0.00    0.01     749/1994        gr_init [79]
+                0.00    0.01    1035/1994        mk_symbol [61]
+[80]     0.1    0.00    0.02    1994         hash_table_set [80]
+                0.00    0.02       8/8           hash_table_delete [83]
+                0.00    0.00    1994/79529815     hash_table_ref [7]
+                0.00    0.00    3988/79533811     get_index [22]
+                0.00    0.00    3988/140600067     cons [14]
+                0.00    0.00    1994/79531817     vector_ref [17]
+                0.00    0.00    1994/1994        vector_set [143]
+-----------------------------------------------
+                0.00    0.02       2/2           apply_primitive_procedure <cycle 1> [8]
+[81]     0.1    0.00    0.02       2         _string_to_symbol_procedure_ [81]
+                0.02    0.00       2/2           string_to_symbol [82]
+                0.00    0.00       2/55365342     length [36]
+                0.00    0.00       2/519808999     car [12]
+                0.00    0.00       2/477160054     assert_throw [18]
+-----------------------------------------------
+                0.02    0.00       2/2           _string_to_symbol_procedure_ [81]
+[82]     0.1    0.02    0.00       2         string_to_symbol [82]
+                0.00    0.00       2/4778        mk_symbol [61]
+                0.00    0.00       2/477160054     assert_throw [18]
+                0.00    0.00       2/19          is_string [280]
+-----------------------------------------------
+                0.00    0.02       8/8           hash_table_set [80]
+[83]     0.1    0.00    0.02       8         hash_table_delete [83]
+                0.02    0.00       8/8           _remove [84]
+                0.00    0.00       8/79531817     vector_ref [17]
+                0.00    0.00       8/79533811     get_index [22]
+-----------------------------------------------
+                0.02    0.00       8/8           hash_table_delete [83]
+[84]     0.1    0.02    0.00       8         _remove [84]
+                0.00    0.00       6/33385356     is_number_equal [30]
+                0.00    0.00      16/519808999     car [12]
+                0.00    0.00       8/710018448     cdr [13]
+                0.00    0.00       2/79523069     is_symbol_eq [53]
+-----------------------------------------------
+                0.00    0.02       2/2           apply_primitive_procedure <cycle 1> [8]
+[85]     0.1    0.00    0.02       2         _symbol_to_string_procedure_ [85]
+                0.02    0.00       2/2           symbol_to_string [87]
+                0.00    0.00       2/55365342     length [36]
+                0.00    0.00       2/519808999     car [12]
+                0.00    0.00       2/477160054     assert_throw [18]
+-----------------------------------------------
+                                   4             is_list [86]
+                0.02    0.00       4/4           hairy_eval <cycle 1> [4]
+[86]     0.1    0.02    0.00       4+4       is_list [86]
+                0.00    0.00       4/710018448     cdr [13]
+                                   4             is_list [86]
+-----------------------------------------------
+                0.02    0.00       2/2           _symbol_to_string_procedure_ [85]
+[87]     0.1    0.02    0.00       2         symbol_to_string [87]
+                0.00    0.00       2/477160054     assert_throw [18]
+                0.00    0.00       2/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       2/33385441     inner_or_to_if <cycle 4> [203]
+                0.00    0.00      13/33385441     is_input_port [247]
+                0.00    0.00      16/33385441     next_token [67]
+                0.00    0.00      34/33385441     _IS_NIL_procedure_ [180]
+                0.02    0.00 33385376/33385441     it_bin_pred [21]
+[88]     0.1    0.02    0.00 33385441         mk_boolean [88]
+-----------------------------------------------
+                0.00    0.02      11/11          next_token [67]
+[89]     0.1    0.00    0.02      11         string [89]
+                0.00    0.02      11/21          mk_string_with_length [71]
+                0.00    0.00     374/4403        set_token_char [266]
+-----------------------------------------------
+                                   4             xlat <cycle 4> [70]
+[90]     0.1    0.00    0.02       4         letrec_to_let <cycle 4> [90]
+                0.00    0.01       4/4           mk_unassigned_vars [107]
+                0.01    0.00       4/8           append [98]
+                0.00    0.00       4/4           mk_set_var_values [139]
+                0.00    0.00       4/23          unzip [165]
+                0.00    0.00       8/140600067     cons [14]
+                0.00    0.00       4/70          cadr [190]
+                0.00    0.00       4/87          cddr [191]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       4/710018448     cdr [13]
+                                   8             xlat <cycle 4> [70]
+-----------------------------------------------
+                                  22             abbreviation <cycle 3> [126]
+                                 550             parse_list <cycle 3> [100]
+                                 923             datum_plus <cycle 3> [99]
+                0.00    0.04      54/54          read_from_file [66]
+[91]     0.1    0.00    0.02    1549         datum <cycle 3> [91]
+                0.00    0.02    1549/1549        simple_datum [92]
+                                 582             compound_datum <cycle 3> [133]
+-----------------------------------------------
+                0.00    0.02    1549/1549        datum <cycle 3> [91]
+[92]     0.1    0.00    0.02    1549         simple_datum [92]
+                0.00    0.02    1549/4177        next_token [67]
+                0.00    0.00       2/2           mk_eof [263]
+                0.00    0.00     582/2079        unget_token [269]
+-----------------------------------------------
+                                   6             _data_eval_procedure_ <cycle 1> [209]
+[93]     0.1    0.01    0.01       6         data_eval <cycle 1> [93]
+                0.00    0.01       6/58          xlat <cycle 4> [70]
+                                   6             eval <cycle 1> [116]
+-----------------------------------------------
+                0.00    0.02      33/33          _decimal [95]
+[94]     0.1    0.00    0.02      33         decimal [94]
+                0.00    0.02       2/2           decimal_sufix [96]
+                0.00    0.00      31/31          mk_number [214]
+                0.00    0.00      76/4403        set_token_char [266]
+                0.00    0.00      33/33          handle_sign [276]
+-----------------------------------------------
+                0.00    0.02      33/33          next_token [67]
+[95]     0.1    0.00    0.02      33         _decimal [95]
+                0.00    0.02      33/33          decimal [94]
+-----------------------------------------------
+                0.00    0.02       2/2           decimal [94]
+[96]     0.1    0.00    0.02       2         decimal_sufix [96]
+                0.02    0.00       2/2           mk_real [97]
+                0.00    0.00       6/4403        set_token_char [266]
+-----------------------------------------------
+                0.02    0.00       2/2           decimal_sufix [96]
+[97]     0.1    0.02    0.00       2         mk_real [97]
+                0.00    0.00       2/2           mk_real_from_double [128]
+-----------------------------------------------
+                0.01    0.00       4/8           letrec_to_let <cycle 4> [90]
+                0.01    0.00       4/8           hairy_eval <cycle 1> [4]
+[98]     0.1    0.02    0.00       8         append [98]
+                0.00    0.00       4/140591387     set_cdr [25]
+                0.00    0.00       5/710018448     cdr [13]
+-----------------------------------------------
+                                 914             datum_plus <cycle 3> [99]
+                                 540             parse_list <cycle 3> [100]
+[99]     0.1    0.00    0.01     540+914     datum_plus <cycle 3> [99]
+                0.00    0.01    1454/4177        next_token [67]
+                0.00    0.00     914/140600067     cons [14]
+                0.00    0.00     531/232867458     nil [40]
+                0.00    0.00    1445/2079        unget_token [269]
+                                 923             datum <cycle 3> [91]
+                                 914             datum_plus <cycle 3> [99]
+-----------------------------------------------
+                                 582             compound_datum <cycle 3> [133]
+[100]    0.1    0.00    0.01     582         parse_list <cycle 3> [100]
+                0.00    0.01    1132/4177        next_token [67]
+                0.00    0.00     540/140600067     cons [14]
+                0.00    0.00      10/232867458     nil [40]
+                0.00    0.00      32/2079        unget_token [269]
+                                 550             datum <cycle 3> [91]
+                                 540             datum_plus <cycle 3> [99]
+                                  32             abbreviation <cycle 3> [126]
+-----------------------------------------------
+                0.00    0.00      17/37          exp_to_name_free_exp <cycle 2> [118]
+                0.01    0.00      20/37          xlat <cycle 4> [70]
+[101]    0.1    0.01    0.00      37         sexp_quotation_value [101]
+                0.00    0.00      37/519808999     car [12]
+                0.00    0.00      37/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       1/4           init_symbol_table [121]
+                0.00    0.00       1/4           init_primitive_procedures [112]
+                0.01    0.00       2/4           gr_init [79]
+[102]    0.1    0.01    0.00       4         mk_hash_table [102]
+                0.00    0.00       4/4           mk_vector [221]
+                0.00    0.00       8/318114044     mloc [32]
+                0.00    0.00       4/27683215     mk_number_from_int [58]
+                0.00    0.00       4/232867458     nil [40]
+-----------------------------------------------
+                                                 <spontaneous>
+[103]    0.1    0.01    0.00                 is_primitive_procedure [103]
+-----------------------------------------------
+                                                 <spontaneous>
+[104]    0.1    0.01    0.00                 is_stream_cons [104]
+-----------------------------------------------
+                                                 <spontaneous>
+[105]    0.1    0.01    0.00                 not [105]
+-----------------------------------------------
+                0.00    0.01     825/825         next_token [67]
+[106]    0.1    0.00    0.01     825         identifier [106]
+                0.01    0.00     825/4778        mk_symbol [61]
+                0.00    0.00    3808/4403        set_token_char [266]
+                0.00    0.00    3808/3808        subsequent [267]
+-----------------------------------------------
+                                   5             mk_unassigned_vars [107]
+                0.00    0.01       4/4           letrec_to_let <cycle 4> [90]
+[107]    0.1    0.00    0.01       4+5       mk_unassigned_vars [107]
+                0.00    0.01       5/21          mk_string_with_length [71]
+                0.00    0.00       5/152         mk_list [155]
+                0.00    0.00      10/140600067     cons [14]
+                0.00    0.00       5/519808999     car [12]
+                0.00    0.00       5/710018448     cdr [13]
+                                   5             mk_unassigned_vars [107]
+-----------------------------------------------
+                0.00    0.01     711/711         xlat <cycle 4> [70]
+[108]    0.0    0.00    0.01     711         is_named_let [108]
+                0.01    0.00     711/4778        mk_symbol [61]
+                0.00    0.00     711/25832       is_tagged_list [137]
+                0.00    0.00      38/70          cadr [190]
+-----------------------------------------------
+                0.00    0.01     711/711         xlat <cycle 4> [70]
+[109]    0.0    0.00    0.01     711         is_and [109]
+                0.01    0.00     711/4778        mk_symbol [61]
+                0.00    0.00     711/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.01     692/692         xlat <cycle 4> [70]
+[110]    0.0    0.00    0.01     692         is_let_star [110]
+                0.01    0.00     692/4778        mk_symbol [61]
+                0.00    0.00     692/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.01     688/688         xlat <cycle 4> [70]
+[111]    0.0    0.00    0.01     688         is_define [111]
+                0.01    0.00     688/4778        mk_symbol [61]
+                0.00    0.00     688/25832       is_tagged_list [137]
+                0.00    0.00     128/519808999     car [12]
+                0.00    0.00      64/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.01       1/1           main [1]
+[112]    0.0    0.00    0.01       1         init_primitive_procedures [112]
+                0.00    0.00       1/4           mk_hash_table [102]
+                0.00    0.00     153/4778        mk_symbol [61]
+                0.00    0.00     153/1994        hash_table_set [80]
+                0.00    0.00     153/153         mk_primitive_procedure [179]
+-----------------------------------------------
+                0.00    0.00       2/33          mk_real_from_double [128]
+                0.00    0.00      31/33          mul_number [73]
+[113]    0.0    0.01    0.00      33         mk_unasigned_number [113]
+                0.00    0.00      33/318114044     mloc [32]
+-----------------------------------------------
+                                                 <spontaneous>
+[114]    0.0    0.01    0.00                 min_number [114]
+-----------------------------------------------
+                0.01    0.00    6929/6929        _find [16]
+[115]    0.0    0.01    0.00    6929         _symbol_equal_ [115]
+-----------------------------------------------
+                                   6             data_eval <cycle 1> [93]
+                0.08    0.49       2/52          script_mode [23]
+                2.03   12.32      50/52          populate_initial_environment [3]
+[116]    0.0    0.00    0.00      58         eval <cycle 1> [116]
+                0.00    0.00      58/58          exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00      58/232867458     nil [40]
+                                  58             hairy_eval <cycle 1> [4]
+-----------------------------------------------
+[117]    0.0    0.00    0.00      58+5       <cycle 2 as a whole> [117]
+                0.00    0.00      61+2244        exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00       2+3           match_clauses_to_name_free <cycle 2> [140]
+-----------------------------------------------
+                                2244             exp_to_name_free_exp <cycle 2> [118]
+                                   3             match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00      58/58          eval <cycle 1> [116]
+[118]    0.0    0.00    0.00      61+2244    exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00      17/37          sexp_quotation_value [101]
+                0.00    0.00     579/579         symbol_to_bound_var [145]
+                0.00    0.00     950/140600067     cons [14]
+                0.00    0.00    1858/3583        is_sexp_quoted [144]
+                0.00    0.00    1841/25832       is_tagged_list [137]
+                0.00    0.00    1835/1835        is_sexp_if [148]
+                0.00    0.00    1778/1885        is_sexp_definition [147]
+                0.00    0.00    1714/1714        is_sexp_lambda [149]
+                0.00    0.00    1629/1629        is_sexp_begin [150]
+                0.00    0.00    1627/1627        is_sexp_match [151]
+                0.00    0.00    1625/1625        is_sexp_delay [154]
+                0.00    0.00    1625/1625        is_sexp_call_cc [153]
+                0.00    0.00    1625/1625        is_sexp_apply [152]
+                0.00    0.00      85/85          scan_internal_defs [157]
+                0.00    0.00     962/519808999     car [12]
+                0.00    0.00     968/710018448     cdr [13]
+                0.00    0.00      57/57          if_sexp_alternative [173]
+                0.00    0.00      85/87          extend_context [175]
+                0.00    0.00      85/85          mk_lambda [176]
+                0.00    0.00      64/64          sexp_definition_value [181]
+                0.00    0.00      85/85          lambda_sexp_parameters [183]
+                0.00    0.00      64/64          mk_definition [185]
+                0.00    0.00      57/57          if_sexp_consequent [186]
+                0.00    0.00      85/85          lambda_sexp_body [192]
+                0.00    0.00      64/73          sexp_definition_variable [188]
+                0.00    0.00      57/57          if_sexp_predicate [196]
+                0.00    0.00      85/85          add_defs_to_context [198]
+                0.00    0.00      57/57          mk_if [204]
+                0.00    0.00       4/4           mk_apply [226]
+                0.00    0.00       6/6           mk_assignment [228]
+                0.00    0.00      17/37          mk_quoted [222]
+                0.00    0.00       4/4           sexp_apply_procedure [239]
+                0.00    0.00       4/4           sexp_apply_arguments [242]
+                0.00    0.00       2/55365342     length [36]
+                0.00    0.00       2/2           mk_match [245]
+                0.00    0.00       2/2           sexp_match_key [248]
+                0.00    0.00       2/2           sexp_match_clauses [249]
+                0.00    0.00       2/2           sexp_begin_actions [261]
+                0.00    0.00       2/5           mk_begin [252]
+                                   2             match_clauses_to_name_free <cycle 2> [140]
+                                2244             exp_to_name_free_exp <cycle 2> [118]
+-----------------------------------------------
+                0.00    0.00       2/2           apply_primitive_procedure <cycle 1> [8]
+[119]    0.0    0.00    0.00       2         _string_append_procedure_ [119]
+                0.00    0.00       2/21          mk_string_with_length [71]
+                0.00    0.00       2/9227497     fold_right [31]
+-----------------------------------------------
+                0.00    0.00       1/1           script_mode [23]
+[120]    0.0    0.00    0.00       1         mk_command_line_list [120]
+                0.00    0.00       2/21          mk_string_with_length [71]
+                0.00    0.00       1/79523378     reverse [11]
+                0.00    0.00       2/140600067     cons [14]
+                0.00    0.00       1/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[121]    0.0    0.00    0.00       1         init_symbol_table [121]
+                0.00    0.00       1/4           mk_hash_table [102]
+                0.00    0.00      22/4778        mk_symbol [61]
+-----------------------------------------------
+                0.00    0.00       3/3           script_mode [23]
+[122]    0.0    0.00    0.00       3         read_from_port [122]
+                0.00    0.00       3/54          read_from_file [66]
+                0.00    0.00       3/477160054     assert_throw [18]
+                0.00    0.00       3/33385423     is_true [69]
+                0.00    0.00       3/13          is_input_port [247]
+-----------------------------------------------
+                                  63             xlat <cycle 4> [70]
+[123]    0.0    0.00    0.00      63         define_to_lambda <cycle 4> [123]
+                0.00    0.00     126/4778        mk_symbol [61]
+                0.00    0.00     252/140600067     cons [14]
+                0.00    0.00      63/152         mk_list [155]
+                0.00    0.00      63/63          caadr [177]
+                0.00    0.00      63/55365342     length [36]
+                0.00    0.00      63/63          cdadr [182]
+                0.00    0.00      63/87          cddr [191]
+                                  63             xlat <cycle 4> [70]
+-----------------------------------------------
+                0.00    0.00       1/65          script_mode [23]
+                0.00    0.00       1/65          main [1]
+                0.00    0.00      63/65          hairy_eval <cycle 1> [4]
+[124]    0.0    0.00    0.00      65         define_variable [124]
+                0.00    0.00      57/57          global_env_define_variable [125]
+                0.00    0.00       8/8           define_scan [193]
+-----------------------------------------------
+                0.00    0.00      57/57          define_variable [124]
+[125]    0.0    0.00    0.00      57         global_env_define_variable [125]
+                0.00    0.00      57/1994        hash_table_set [80]
+-----------------------------------------------
+                                  32             parse_list <cycle 3> [100]
+[126]    0.0    0.00    0.00      32         abbreviation <cycle 3> [126]
+                0.00    0.00      32/4177        next_token [67]
+                0.00    0.00       7/4778        mk_symbol [61]
+                0.00    0.00       6/6           mk_sexp_quoted [207]
+                0.00    0.00      12/140600067     cons [14]
+                0.00    0.00       5/232867458     nil [40]
+                0.00    0.00      10/2079        unget_token [269]
+                                  22             datum <cycle 3> [91]
+-----------------------------------------------
+                                  66             quasiquote_to_list [127]
+                0.00    0.00       2/2           xlat <cycle 4> [70]
+[127]    0.0    0.00    0.00       2+66      quasiquote_to_list [127]
+                0.00    0.00      33/4778        mk_symbol [61]
+                0.00    0.00      50/152         mk_list [155]
+                0.00    0.00      66/140600067     cons [14]
+                0.00    0.00      56/56          is_unquote [199]
+                0.00    0.00      33/33          is_unqoute_splicing [206]
+                0.00    0.00      33/519808999     car [12]
+                0.00    0.00      33/710018448     cdr [13]
+                0.00    0.00       5/5           unquote_value [233]
+                                  66             quasiquote_to_list [127]
+-----------------------------------------------
+                0.00    0.00       2/2           mk_real [97]
+[128]    0.0    0.00    0.00       2         mk_real_from_double [128]
+                0.00    0.00       2/33          mk_unasigned_number [113]
+-----------------------------------------------
+                0.00    0.00       4/20          get_vars_from_match [141]
+                0.00    0.00      16/20          pattern_match [131]
+[129]    0.0    0.00    0.00      20         name_from_pattern_var [129]
+                0.00    0.00      20/4778        mk_symbol [61]
+-----------------------------------------------
+                                   2             find_matching_match_clause [130]
+                0.00    0.00      10/10          hairy_eval <cycle 1> [4]
+[130]    0.0    0.00    0.00      10+2       find_matching_match_clause [130]
+                0.00    0.00      10/10          pattern_match [131]
+                0.00    0.00      20/519808999     car [12]
+                0.00    0.00      24/232867458     nil [40]
+                0.00    0.00      10/710018448     cdr [13]
+                                   2             find_matching_match_clause [130]
+-----------------------------------------------
+                                  16             pattern_match [131]
+                0.00    0.00      10/10          find_matching_match_clause [130]
+[131]    0.0    0.00    0.00      10+16      pattern_match [131]
+                0.00    0.00      16/20          name_from_pattern_var [129]
+                0.00    0.00      16/16          add_var_if_consistent [184]
+                0.00    0.00      16/519808999     car [12]
+                0.00    0.00      16/710018448     cdr [13]
+                0.00    0.00      26/31          is_pattern_var [277]
+                0.00    0.00      16/21          is_wildcard_pattern [278]
+                                  16             pattern_match [131]
+-----------------------------------------------
+                                   4             xlat <cycle 4> [70]
+[132]    0.0    0.00    0.00       4         case_to_cond <cycle 4> [132]
+                0.00    0.00       4/4           construct_case_clauses [135]
+                0.00    0.00       4/4778        mk_symbol [61]
+                0.00    0.00      12/152         mk_list [155]
+                0.00    0.00       4/4           case_key [240]
+                0.00    0.00       4/4           case_clauses [243]
+                                   4             xlat <cycle 4> [70]
+-----------------------------------------------
+                                 582             datum <cycle 3> [91]
+[133]    0.0    0.00    0.00     582         compound_datum <cycle 3> [133]
+                0.00    0.00      10/10          parse_vector [134]
+                0.00    0.00      10/10          constructor [281]
+                                 582             parse_list <cycle 3> [100]
+-----------------------------------------------
+                0.00    0.00      10/10          compound_datum <cycle 3> [133]
+[134]    0.0    0.00    0.00      10         parse_vector [134]
+                0.00    0.00      10/4177        next_token [67]
+                0.00    0.00      10/2079        unget_token [269]
+-----------------------------------------------
+                0.00    0.00       4/4           case_to_cond <cycle 4> [132]
+[135]    0.0    0.00    0.00       4         construct_case_clauses [135]
+                0.00    0.00       4/4           inner_construct_case_clauses [136]
+                0.00    0.00       4/140600067     cons [14]
+                0.00    0.00       4/55365342     length [36]
+                0.00    0.00       4/477160054     assert_throw [18]
+-----------------------------------------------
+                                   4             inner_construct_case_clauses [136]
+                0.00    0.00       4/4           construct_case_clauses [135]
+[136]    0.0    0.00    0.00       4+4       inner_construct_case_clauses [136]
+                0.00    0.00       8/4778        mk_symbol [61]
+                0.00    0.00       8/152         mk_list [155]
+                0.00    0.00      16/140600067     cons [14]
+                0.00    0.00       8/8           is_else_clause [223]
+                0.00    0.00      12/519808999     car [12]
+                0.00    0.00       4/20          case_clause_datum [220]
+                0.00    0.00       4/477160054     assert_throw [18]
+                0.00    0.00       4/4           is_last_clause [251]
+                0.00    0.00       4/710018448     cdr [13]
+                0.00    0.00       4/4           case_clause_exp [250]
+                                   4             inner_construct_case_clauses [136]
+-----------------------------------------------
+                0.00    0.00      33/25832       is_unqoute_splicing [206]
+                0.00    0.00      56/25832       is_unquote [199]
+                0.00    0.00     605/25832       is_quasiquote [163]
+                0.00    0.00     609/25832       is_case [162]
+                0.00    0.00     625/25832       is_cond [161]
+                0.00    0.00     688/25832       is_define [111]
+                0.00    0.00     692/25832       is_let_star [110]
+                0.00    0.00     692/25832       is_letrec [160]
+                0.00    0.00     708/25832       is_let [159]
+                0.00    0.00     711/25832       is_and [109]
+                0.00    0.00     711/25832       is_named_let [108]
+                0.00    0.00     713/25832       is_or [158]
+                0.00    0.00    1625/25832       is_sexp_apply [152]
+                0.00    0.00    1625/25832       is_sexp_delay [154]
+                0.00    0.00    1625/25832       is_sexp_call_cc [153]
+                0.00    0.00    1627/25832       is_sexp_match [151]
+                0.00    0.00    1629/25832       is_sexp_begin [150]
+                0.00    0.00    1714/25832       is_sexp_lambda [149]
+                0.00    0.00    1835/25832       is_sexp_if [148]
+                0.00    0.00    1841/25832       exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00    1885/25832       is_sexp_definition [147]
+                0.00    0.00    3583/25832       is_sexp_quoted [144]
+[137]    0.0    0.00    0.00   25832         is_tagged_list [137]
+                0.00    0.00   36188/519808999     car [12]
+-----------------------------------------------
+                                   3             xlat <cycle 4> [70]
+[138]    0.0    0.00    0.00       3         named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       6/4778        mk_symbol [61]
+                0.00    0.00       3/23          unzip [165]
+                0.00    0.00       9/152         mk_list [155]
+                0.00    0.00      18/140600067     cons [14]
+                0.00    0.00       3/55365342     length [36]
+                0.00    0.00       3/3           caddr [237]
+                0.00    0.00       3/3           cdddr [241]
+                0.00    0.00       3/70          cadr [190]
+                0.00    0.00       6/477160054     assert_throw [18]
+                0.00    0.00       3/519808999     car [12]
+                0.00    0.00       3/710018448     cdr [13]
+                                   3             xlat <cycle 4> [70]
+-----------------------------------------------
+                                   5             mk_set_var_values [139]
+                0.00    0.00       4/4           letrec_to_let <cycle 4> [90]
+[139]    0.0    0.00    0.00       4+5       mk_set_var_values [139]
+                0.00    0.00       5/4778        mk_symbol [61]
+                0.00    0.00       5/152         mk_list [155]
+                0.00    0.00      15/140600067     cons [14]
+                0.00    0.00      10/519808999     car [12]
+                0.00    0.00      10/710018448     cdr [13]
+                0.00    0.00       4/232867458     nil [40]
+                                   5             mk_set_var_values [139]
+-----------------------------------------------
+                                   3             match_clauses_to_name_free <cycle 2> [140]
+                                   2             exp_to_name_free_exp <cycle 2> [118]
+[140]    0.0    0.00    0.00       2+3       match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00       3/3           get_vars_from_match [141]
+                0.00    0.00       6/140600067     cons [14]
+                0.00    0.00       2/87          extend_context [175]
+                0.00    0.00       6/519808999     car [12]
+                0.00    0.00       6/710018448     cdr [13]
+                0.00    0.00       3/5           mk_begin [252]
+                                   3             exp_to_name_free_exp <cycle 2> [118]
+                                   3             match_clauses_to_name_free <cycle 2> [140]
+-----------------------------------------------
+                                   2             get_vars_from_match [141]
+                0.00    0.00       3/3           match_clauses_to_name_free <cycle 2> [140]
+[141]    0.0    0.00    0.00       3+2       get_vars_from_match [141]
+                0.00    0.00       4/20          name_from_pattern_var [129]
+                0.00    0.00       4/140600067     cons [14]
+                0.00    0.00       5/232867458     nil [40]
+                0.00    0.00       2/519808999     car [12]
+                0.00    0.00       2/710018448     cdr [13]
+                0.00    0.00       5/31          is_pattern_var [277]
+                0.00    0.00       5/21          is_wildcard_pattern [278]
+                                   2             get_vars_from_match [141]
+-----------------------------------------------
+                                1436             xlat_sequence <cycle 4> [142]
+                                 603             xlat <cycle 4> [70]
+[142]    0.0    0.00    0.00     603+1436    xlat_sequence <cycle 4> [142]
+                0.00    0.00    1436/140600067     cons [14]
+                0.00    0.00    1436/519808999     car [12]
+                0.00    0.00    1436/710018448     cdr [13]
+                                1438             xlat <cycle 4> [70]
+                                1436             xlat_sequence <cycle 4> [142]
+-----------------------------------------------
+                0.00    0.00    1994/1994        hash_table_set [80]
+[143]    0.0    0.00    0.00    1994         vector_set [143]
+                0.00    0.00    3988/477160054     assert_throw [18]
+                0.00    0.00    1994/79534425     as_integer [38]
+                0.00    0.00    1994/79533812     is_vector [57]
+-----------------------------------------------
+                0.00    0.00    1725/3583        xlat <cycle 4> [70]
+                0.00    0.00    1858/3583        exp_to_name_free_exp <cycle 2> [118]
+[144]    0.0    0.00    0.00    3583         is_sexp_quoted [144]
+                0.00    0.00    3583/25832       is_tagged_list [137]
+-----------------------------------------------
+                                 514             symbol_to_bound_var [145]
+                0.00    0.00     579/579         exp_to_name_free_exp <cycle 2> [118]
+[145]    0.0    0.00    0.00     579+514     symbol_to_bound_var [145]
+                0.00    0.00     800/800         get_var_index [146]
+                0.00    0.00     800/519808999     car [12]
+                0.00    0.00     514/710018448     cdr [13]
+                0.00    0.00     286/286         mk_bound_var [174]
+                                 514             symbol_to_bound_var [145]
+-----------------------------------------------
+                                1117             get_var_index [146]
+                0.00    0.00     800/800         symbol_to_bound_var [145]
+[146]    0.0    0.00    0.00     800+1117    get_var_index [146]
+                0.00    0.00    2768/519808999     car [12]
+                0.00    0.00    1117/710018448     cdr [13]
+                                1117             get_var_index [146]
+-----------------------------------------------
+                0.00    0.00     107/1885        scan_internal_defs [157]
+                0.00    0.00    1778/1885        exp_to_name_free_exp <cycle 2> [118]
+[147]    0.0    0.00    0.00    1885         is_sexp_definition [147]
+                0.00    0.00    1885/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1835/1835        exp_to_name_free_exp <cycle 2> [118]
+[148]    0.0    0.00    0.00    1835         is_sexp_if [148]
+                0.00    0.00    1835/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1714/1714        exp_to_name_free_exp <cycle 2> [118]
+[149]    0.0    0.00    0.00    1714         is_sexp_lambda [149]
+                0.00    0.00    1714/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1629/1629        exp_to_name_free_exp <cycle 2> [118]
+[150]    0.0    0.00    0.00    1629         is_sexp_begin [150]
+                0.00    0.00    1629/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1627/1627        exp_to_name_free_exp <cycle 2> [118]
+[151]    0.0    0.00    0.00    1627         is_sexp_match [151]
+                0.00    0.00    1627/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1625/1625        exp_to_name_free_exp <cycle 2> [118]
+[152]    0.0    0.00    0.00    1625         is_sexp_apply [152]
+                0.00    0.00    1625/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1625/1625        exp_to_name_free_exp <cycle 2> [118]
+[153]    0.0    0.00    0.00    1625         is_sexp_call_cc [153]
+                0.00    0.00    1625/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00    1625/1625        exp_to_name_free_exp <cycle 2> [118]
+[154]    0.0    0.00    0.00    1625         is_sexp_delay [154]
+                0.00    0.00    1625/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00       5/152         mk_unassigned_vars [107]
+                0.00    0.00       5/152         mk_set_var_values [139]
+                0.00    0.00       8/152         inner_construct_case_clauses [136]
+                0.00    0.00       9/152         named_let_to_letrec <cycle 4> [138]
+                0.00    0.00      12/152         case_to_cond <cycle 4> [132]
+                0.00    0.00      50/152         quasiquote_to_list [127]
+                0.00    0.00      63/152         define_to_lambda <cycle 4> [123]
+[155]    0.0    0.00    0.00     152         mk_list [155]
+                0.00    0.00     152/79523378     reverse [11]
+                0.00    0.00     185/140600067     cons [14]
+                0.00    0.00     152/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00     110/110         apply_primitive_procedure <cycle 1> [8]
+[156]    0.0    0.00    0.00     110         _cons_procedure_ [156]
+                0.00    0.00     110/140600067     cons [14]
+                0.00    0.00     110/55365342     length [36]
+                0.00    0.00     220/519808999     car [12]
+                0.00    0.00     110/477160054     assert_throw [18]
+                0.00    0.00     110/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      85/85          exp_to_name_free_exp <cycle 2> [118]
+[157]    0.0    0.00    0.00      85         scan_internal_defs [157]
+                0.00    0.00      85/79523378     reverse [11]
+                0.00    0.00     107/1885        is_sexp_definition [147]
+                0.00    0.00     107/519808999     car [12]
+                0.00    0.00     107/710018448     cdr [13]
+                0.00    0.00      85/232867458     nil [40]
+                0.00    0.00       9/140600067     cons [14]
+                0.00    0.00       9/73          sexp_definition_variable [188]
+-----------------------------------------------
+                0.00    0.00     713/713         xlat <cycle 4> [70]
+[158]    0.0    0.00    0.00     713         is_or [158]
+                0.00    0.00     713/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00     708/708         xlat <cycle 4> [70]
+[159]    0.0    0.00    0.00     708         is_let [159]
+                0.00    0.00     708/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00     692/692         xlat <cycle 4> [70]
+[160]    0.0    0.00    0.00     692         is_letrec [160]
+                0.00    0.00     692/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00     625/625         xlat <cycle 4> [70]
+[161]    0.0    0.00    0.00     625         is_cond [161]
+                0.00    0.00     625/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00     609/609         xlat <cycle 4> [70]
+[162]    0.0    0.00    0.00     609         is_case [162]
+                0.00    0.00     609/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00     605/605         xlat <cycle 4> [70]
+[163]    0.0    0.00    0.00     605         is_quasiquote [163]
+                0.00    0.00     605/25832       is_tagged_list [137]
+-----------------------------------------------
+                                  16             xlat <cycle 4> [70]
+[164]    0.0    0.00    0.00      16         let_to_combination <cycle 4> [164]
+                0.00    0.00      16/23          unzip [165]
+                0.00    0.00      16/16          mk_sexp_lambda [194]
+                0.00    0.00      16/140600067     cons [14]
+                0.00    0.00      16/55365342     length [36]
+                0.00    0.00      16/70          cadr [190]
+                0.00    0.00      16/87          cddr [191]
+                0.00    0.00      16/519808999     car [12]
+                0.00    0.00      16/477160054     assert_throw [18]
+                0.00    0.00      16/710018448     cdr [13]
+                                  32             xlat <cycle 4> [70]
+-----------------------------------------------
+                0.00    0.00       3/23          named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       4/23          letrec_to_let <cycle 4> [90]
+                0.00    0.00      16/23          let_to_combination <cycle 4> [164]
+[165]    0.0    0.00    0.00      23         unzip [165]
+                0.00    0.00      23/23          _unzip_ [167]
+                0.00    0.00      46/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00     597/597         get_index [22]
+[166]    0.0    0.00    0.00     597         number_hash [166]
+                0.00    0.00     597/79534425     as_integer [38]
+-----------------------------------------------
+                                  32             _unzip_ [167]
+                0.00    0.00      23/23          unzip [165]
+[167]    0.0    0.00    0.00      23+32      _unzip_ [167]
+                0.00    0.00      46/79523378     reverse [11]
+                0.00    0.00      87/140600067     cons [14]
+                0.00    0.00     128/519808999     car [12]
+                0.00    0.00      64/710018448     cdr [13]
+                                  32             _unzip_ [167]
+-----------------------------------------------
+                                  33             expand_cond_clauses <cycle 4> [168]
+                                  16             cond_to_if <cycle 4> [232]
+[168]    0.0    0.00    0.00      16+33      expand_cond_clauses <cycle 4> [168]
+                0.00    0.00      33/37          mk_sexp_if [170]
+                0.00    0.00     131/519808999     car [12]
+                0.00    0.00      49/49          is_cond_else_clause [195]
+                0.00    0.00      33/131         cond_predicate [187]
+                0.00    0.00      49/710018448     cdr [13]
+                0.00    0.00      49/49          cond_actions [212]
+                                  66             xlat <cycle 4> [70]
+                                  49             sequence_to_exp <cycle 4> [178]
+                                  33             expand_cond_clauses <cycle 4> [168]
+-----------------------------------------------
+                0.00    0.00      31/31          apply_primitive_procedure <cycle 1> [8]
+[169]    0.0    0.00    0.00      31         _mul_procedure_ [169]
+                0.00    0.00      31/9227497     fold_right [31]
+                0.00    0.00      31/519808999     car [12]
+                0.00    0.00      31/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/37          inner_or_to_if <cycle 4> [203]
+                0.00    0.00      33/37          expand_cond_clauses <cycle 4> [168]
+[170]    0.0    0.00    0.00      37         mk_sexp_if [170]
+                0.00    0.00     148/140600067     cons [14]
+                0.00    0.00      37/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00      76/76          hairy_eval <cycle 1> [4]
+[171]    0.0    0.00    0.00      76         mk_procedure [171]
+                0.00    0.00      66/55365342     length [36]
+                0.00    0.00     152/318114044     mloc [32]
+                0.00    0.00      76/76          is_improper_list [201]
+                0.00    0.00      10/10          improper_list_length [244]
+-----------------------------------------------
+                0.00    0.00      32/32          apply_primitive_procedure <cycle 1> [8]
+[172]    0.0    0.00    0.00      32         _less_procedure_ [172]
+                0.00    0.00      32/33385376     it_bin_pred [21]
+-----------------------------------------------
+                0.00    0.00      57/57          exp_to_name_free_exp <cycle 2> [118]
+[173]    0.0    0.00    0.00      57         if_sexp_alternative [173]
+                0.00    0.00     333/710018448     cdr [13]
+                0.00    0.00      54/519808999     car [12]
+                0.00    0.00      57/62          mk_none [213]
+-----------------------------------------------
+                0.00    0.00     286/286         symbol_to_bound_var [145]
+[174]    0.0    0.00    0.00     286         mk_bound_var [174]
+                0.00    0.00     572/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       2/87          match_clauses_to_name_free <cycle 2> [140]
+                0.00    0.00      85/87          exp_to_name_free_exp <cycle 2> [118]
+[175]    0.0    0.00    0.00      87         extend_context [175]
+                0.00    0.00      87/140600067     cons [14]
+-----------------------------------------------
+                0.00    0.00      85/85          exp_to_name_free_exp <cycle 2> [118]
+[176]    0.0    0.00    0.00      85         mk_lambda [176]
+                0.00    0.00      85/140600224     mk_pair_data [24]
+-----------------------------------------------
+                0.00    0.00      63/63          define_to_lambda <cycle 4> [123]
+[177]    0.0    0.00    0.00      63         caadr [177]
+                0.00    0.00     126/519808999     car [12]
+                0.00    0.00      63/710018448     cdr [13]
+-----------------------------------------------
+                                  49             expand_cond_clauses <cycle 4> [168]
+[178]    0.0    0.00    0.00      49         sequence_to_exp <cycle 4> [178]
+                0.00    0.00      49/18455118     is_last_exp [55]
+                0.00    0.00      49/18455118     first_exp [60]
+                                  49             xlat <cycle 4> [70]
+-----------------------------------------------
+                0.00    0.00     153/153         init_primitive_procedures [112]
+[179]    0.0    0.00    0.00     153         mk_primitive_procedure [179]
+                0.00    0.00     306/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00      34/34          apply_primitive_procedure <cycle 1> [8]
+[180]    0.0    0.00    0.00      34         _IS_NIL_procedure_ [180]
+                0.00    0.00      34/55365342     length [36]
+                0.00    0.00      34/519808999     car [12]
+                0.00    0.00      34/477160054     assert_throw [18]
+                0.00    0.00      34/33385441     mk_boolean [88]
+-----------------------------------------------
+                0.00    0.00      64/64          exp_to_name_free_exp <cycle 2> [118]
+[181]    0.0    0.00    0.00      64         sexp_definition_value [181]
+                0.00    0.00     128/710018448     cdr [13]
+                0.00    0.00      64/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00      63/63          define_to_lambda <cycle 4> [123]
+[182]    0.0    0.00    0.00      63         cdadr [182]
+                0.00    0.00     126/710018448     cdr [13]
+                0.00    0.00      63/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00      85/85          exp_to_name_free_exp <cycle 2> [118]
+[183]    0.0    0.00    0.00      85         lambda_sexp_parameters [183]
+                0.00    0.00      85/519808999     car [12]
+                0.00    0.00      85/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      16/16          pattern_match [131]
+[184]    0.0    0.00    0.00      16         add_var_if_consistent [184]
+                0.00    0.00      32/140600067     cons [14]
+                0.00    0.00      16/16          find [211]
+-----------------------------------------------
+                0.00    0.00      64/64          exp_to_name_free_exp <cycle 2> [118]
+[185]    0.0    0.00    0.00      64         mk_definition [185]
+                0.00    0.00      64/140600224     mk_pair_data [24]
+-----------------------------------------------
+                0.00    0.00      57/57          exp_to_name_free_exp <cycle 2> [118]
+[186]    0.0    0.00    0.00      57         if_sexp_consequent [186]
+                0.00    0.00     114/710018448     cdr [13]
+                0.00    0.00      57/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00      33/131         expand_cond_clauses <cycle 4> [168]
+                0.00    0.00      98/131         is_cond_else_clause [195]
+[187]    0.0    0.00    0.00     131         cond_predicate [187]
+                0.00    0.00     131/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00       9/73          scan_internal_defs [157]
+                0.00    0.00      64/73          exp_to_name_free_exp <cycle 2> [118]
+[188]    0.0    0.00    0.00      73         sexp_definition_variable [188]
+                0.00    0.00      73/519808999     car [12]
+                0.00    0.00      73/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      32/32          it_bin_pred [21]
+[189]    0.0    0.00    0.00      32         is_number_lt [189]
+                0.00    0.00      64/477160054     assert_throw [18]
+                0.00    0.00      64/122135684     is_number [43]
+                0.00    0.00      32/61067842     is_atleast_one [50]
+-----------------------------------------------
+                0.00    0.00       3/70          named_let_to_letrec <cycle 4> [138]
+                0.00    0.00       4/70          letrec_to_let <cycle 4> [90]
+                0.00    0.00       4/70          case_key [240]
+                0.00    0.00       5/70          unquote_value [233]
+                0.00    0.00      16/70          let_to_combination <cycle 4> [164]
+                0.00    0.00      38/70          is_named_let [108]
+[190]    0.0    0.00    0.00      70         cadr [190]
+                0.00    0.00      70/519808999     car [12]
+                0.00    0.00      70/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/87          letrec_to_let <cycle 4> [90]
+                0.00    0.00       4/87          case_clauses [243]
+                0.00    0.00      16/87          let_to_combination <cycle 4> [164]
+                0.00    0.00      63/87          define_to_lambda <cycle 4> [123]
+[191]    0.0    0.00    0.00      87         cddr [191]
+                0.00    0.00     174/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      85/85          exp_to_name_free_exp <cycle 2> [118]
+[192]    0.0    0.00    0.00      85         lambda_sexp_body [192]
+                0.00    0.00     170/710018448     cdr [13]
+-----------------------------------------------
+                                  16             define_scan [193]
+                0.00    0.00       8/8           define_variable [124]
+[193]    0.0    0.00    0.00       8+16      define_scan [193]
+                0.00    0.00       8/8           add_binding_to_frame [205]
+                0.00    0.00      32/519808999     car [12]
+                0.00    0.00      32/710018448     cdr [13]
+                                  16             define_scan [193]
+-----------------------------------------------
+                0.00    0.00      16/16          let_to_combination <cycle 4> [164]
+[194]    0.0    0.00    0.00      16         mk_sexp_lambda [194]
+                0.00    0.00      32/140600067     cons [14]
+-----------------------------------------------
+                0.00    0.00      49/49          expand_cond_clauses <cycle 4> [168]
+[195]    0.0    0.00    0.00      49         is_cond_else_clause [195]
+                0.00    0.00      98/131         cond_predicate [187]
+-----------------------------------------------
+                0.00    0.00      57/57          exp_to_name_free_exp <cycle 2> [118]
+[196]    0.0    0.00    0.00      57         if_sexp_predicate [196]
+                0.00    0.00      57/519808999     car [12]
+                0.00    0.00      57/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       8/8           apply_primitive_procedure <cycle 1> [8]
+[197]    0.0    0.00    0.00       8         _reverse_procedure_ [197]
+                0.00    0.00       8/79523378     reverse [11]
+                0.00    0.00       8/55365342     length [36]
+                0.00    0.00       8/519808999     car [12]
+                0.00    0.00       8/477160054     assert_throw [18]
+-----------------------------------------------
+                0.00    0.00      85/85          exp_to_name_free_exp <cycle 2> [118]
+[198]    0.0    0.00    0.00      85         add_defs_to_context [198]
+                0.00    0.00       9/9           add_definition_to_context [202]
+                0.00    0.00       9/519808999     car [12]
+                0.00    0.00       9/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      56/56          quasiquote_to_list [127]
+[199]    0.0    0.00    0.00      56         is_unquote [199]
+                0.00    0.00      56/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00      14/14          apply_primitive_procedure <cycle 1> [8]
+[200]    0.0    0.00    0.00      14         _car_procedure_ [200]
+                0.00    0.00      14/55365342     length [36]
+                0.00    0.00      28/519808999     car [12]
+                0.00    0.00      14/477160054     assert_throw [18]
+-----------------------------------------------
+                                 107             is_improper_list [201]
+                0.00    0.00      76/76          mk_procedure [171]
+[201]    0.0    0.00    0.00      76+107     is_improper_list [201]
+                0.00    0.00     107/710018448     cdr [13]
+                                 107             is_improper_list [201]
+-----------------------------------------------
+                0.00    0.00       9/9           add_defs_to_context [198]
+[202]    0.0    0.00    0.00       9         add_definition_to_context [202]
+                0.00    0.00       9/140600067     cons [14]
+                0.00    0.00       9/9           symbol_exist_in_improper_list [217]
+                0.00    0.00       9/519808999     car [12]
+                0.00    0.00       9/11          set_car [234]
+-----------------------------------------------
+                                   2             inner_or_to_if <cycle 4> [203]
+                                   2             or_to_if <cycle 4> [262]
+[203]    0.0    0.00    0.00       2+2       inner_or_to_if <cycle 4> [203]
+                0.00    0.00       4/37          mk_sexp_if [170]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       6/710018448     cdr [13]
+                0.00    0.00       2/33385441     mk_boolean [88]
+                                   4             xlat <cycle 4> [70]
+                                   2             inner_or_to_if <cycle 4> [203]
+-----------------------------------------------
+                0.00    0.00      57/57          exp_to_name_free_exp <cycle 2> [118]
+[204]    0.0    0.00    0.00      57         mk_if [204]
+                0.00    0.00     114/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       8/8           define_scan [193]
+[205]    0.0    0.00    0.00       8         add_binding_to_frame [205]
+                0.00    0.00      16/140600067     cons [14]
+-----------------------------------------------
+                0.00    0.00      33/33          quasiquote_to_list [127]
+[206]    0.0    0.00    0.00      33         is_unqoute_splicing [206]
+                0.00    0.00      33/25832       is_tagged_list [137]
+-----------------------------------------------
+                0.00    0.00       6/6           abbreviation <cycle 3> [126]
+[207]    0.0    0.00    0.00       6         mk_sexp_quoted [207]
+                0.00    0.00      12/140600067     cons [14]
+                0.00    0.00       6/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00       8/8           apply_primitive_procedure <cycle 1> [8]
+[208]    0.0    0.00    0.00       8         _cdr_procedure_ [208]
+                0.00    0.00       8/55365342     length [36]
+                0.00    0.00       8/519808999     car [12]
+                0.00    0.00       8/477160054     assert_throw [18]
+                0.00    0.00       8/710018448     cdr [13]
+-----------------------------------------------
+                                   6             apply_primitive_procedure <cycle 1> [8]
+[209]    0.0    0.00    0.00       6         _data_eval_procedure_ <cycle 1> [209]
+                0.00    0.00       6/55365342     length [36]
+                0.00    0.00      12/519808999     car [12]
+                0.00    0.00       6/477160054     assert_throw [18]
+                0.00    0.00       6/710018448     cdr [13]
+                                   6             data_eval <cycle 1> [93]
+-----------------------------------------------
+                0.00    0.00       4/4           fold_right [31]
+[210]    0.0    0.00    0.00       4         string_append [210]
+                0.00    0.00       8/8           string_length [227]
+                0.00    0.00       8/79534425     as_integer [38]
+                0.00    0.00       8/477160054     assert_throw [18]
+                0.00    0.00       4/25          mk_string_type [215]
+                0.00    0.00       8/19          is_string [280]
+-----------------------------------------------
+                                   8             find [211]
+                0.00    0.00      16/16          add_var_if_consistent [184]
+[211]    0.0    0.00    0.00      16+8       find [211]
+                0.00    0.00      16/519808999     car [12]
+                0.00    0.00      16/710018448     cdr [13]
+                0.00    0.00      16/232867458     nil [40]
+                                   8             find [211]
+-----------------------------------------------
+                0.00    0.00      49/49          expand_cond_clauses <cycle 4> [168]
+[212]    0.0    0.00    0.00      49         cond_actions [212]
+                0.00    0.00      49/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       1/62          _display_procedure_ [236]
+                0.00    0.00       4/62          hairy_eval <cycle 1> [4]
+                0.00    0.00      57/62          if_sexp_alternative [173]
+[213]    0.0    0.00    0.00      62         mk_none [213]
+                0.00    0.00      62/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00      31/31          decimal [94]
+[214]    0.0    0.00    0.00      31         mk_number [214]
+                0.00    0.00      31/27683215     mk_number_from_int [58]
+-----------------------------------------------
+                0.00    0.00       4/25          string_append [210]
+                0.00    0.00      21/25          mk_string_with_length [71]
+[215]    0.0    0.00    0.00      25         mk_string_type [215]
+                0.00    0.00      50/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       4/4           apply_primitive_procedure <cycle 1> [8]
+[216]    0.0    0.00    0.00       4         _caar_procedure_ [216]
+                0.00    0.00       4/55365342     length [36]
+                0.00    0.00       4/4           caar [235]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       4/477160054     assert_throw [18]
+-----------------------------------------------
+                                   9             symbol_exist_in_improper_list [217]
+                0.00    0.00       9/9           add_definition_to_context [202]
+[217]    0.0    0.00    0.00       9+9       symbol_exist_in_improper_list [217]
+                0.00    0.00      18/519808999     car [12]
+                0.00    0.00       9/710018448     cdr [13]
+                                   9             symbol_exist_in_improper_list [217]
+-----------------------------------------------
+                0.00    0.00       4/4           apply_primitive_procedure <cycle 1> [8]
+[218]    0.0    0.00    0.00       4         _cdar_procedure_ [218]
+                0.00    0.00       4/55365342     length [36]
+                0.00    0.00       4/4           cdar [238]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       4/477160054     assert_throw [18]
+-----------------------------------------------
+                0.00    0.00       5/42          mk_begin [252]
+                0.00    0.00      37/42          mk_quoted [222]
+[219]    0.0    0.00    0.00      42         mk_cell_data [219]
+                0.00    0.00      42/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       4/20          inner_construct_case_clauses [136]
+                0.00    0.00      16/20          is_else_clause [223]
+[220]    0.0    0.00    0.00      20         case_clause_datum [220]
+                0.00    0.00      20/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00       4/4           mk_hash_table [102]
+[221]    0.0    0.00    0.00       4         mk_vector [221]
+                0.00    0.00       4/4           _mk_vector [229]
+                0.00    0.00       4/79534425     as_integer [38]
+                0.00    0.00       4/477160054     assert_throw [18]
+                0.00    0.00       4/66          is_integer [275]
+-----------------------------------------------
+                0.00    0.00      17/37          exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00      20/37          xlat <cycle 4> [70]
+[222]    0.0    0.00    0.00      37         mk_quoted [222]
+                0.00    0.00      37/42          mk_cell_data [219]
+-----------------------------------------------
+                0.00    0.00       8/8           inner_construct_case_clauses [136]
+[223]    0.0    0.00    0.00       8         is_else_clause [223]
+                0.00    0.00      16/20          case_clause_datum [220]
+-----------------------------------------------
+                0.00    0.00      10/10          script_mode [23]
+[224]    0.0    0.00    0.00      10         is_char_equal [224]
+                0.00    0.00      20/477160054     assert_throw [18]
+                0.00    0.00      20/20          is_char [279]
+-----------------------------------------------
+                0.00    0.00       9/9           script_mode [23]
+[225]    0.0    0.00    0.00       9         read_char_from_port [225]
+                0.00    0.00       9/477160054     assert_throw [18]
+                0.00    0.00       9/33385423     is_true [69]
+                0.00    0.00       9/13          is_input_port [247]
+                0.00    0.00       9/10          _read_char_from_port [471]
+-----------------------------------------------
+                0.00    0.00       4/4           exp_to_name_free_exp <cycle 2> [118]
+[226]    0.0    0.00    0.00       4         mk_apply [226]
+                0.00    0.00       4/55365342     length [36]
+                0.00    0.00       8/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       8/8           string_append [210]
+[227]    0.0    0.00    0.00       8         string_length [227]
+                0.00    0.00       8/27683215     mk_number_from_int [58]
+                0.00    0.00       8/477160054     assert_throw [18]
+                0.00    0.00       8/19          is_string [280]
+-----------------------------------------------
+                0.00    0.00       6/6           exp_to_name_free_exp <cycle 2> [118]
+[228]    0.0    0.00    0.00       6         mk_assignment [228]
+                0.00    0.00       6/140600224     mk_pair_data [24]
+-----------------------------------------------
+                0.00    0.00       4/4           mk_vector [221]
+[229]    0.0    0.00    0.00       4         _mk_vector [229]
+                0.00    0.00      12/318114044     mloc [32]
+                0.00    0.00       4/79534425     as_integer [38]
+-----------------------------------------------
+                0.00    0.00      16/16          hairy_eval <cycle 1> [4]
+[230]    0.0    0.00    0.00      16         rest_exps [230]
+                0.00    0.00      16/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00      16/16          cond_to_if <cycle 4> [232]
+[231]    0.0    0.00    0.00      16         cond_clauses [231]
+                0.00    0.00      16/710018448     cdr [13]
+-----------------------------------------------
+                                  16             xlat <cycle 4> [70]
+[232]    0.0    0.00    0.00      16         cond_to_if <cycle 4> [232]
+                0.00    0.00      16/16          cond_clauses [231]
+                                  16             expand_cond_clauses <cycle 4> [168]
+-----------------------------------------------
+                0.00    0.00       5/5           quasiquote_to_list [127]
+[233]    0.0    0.00    0.00       5         unquote_value [233]
+                0.00    0.00       5/70          cadr [190]
+-----------------------------------------------
+                0.00    0.00       2/11          set_var [259]
+                0.00    0.00       9/11          add_definition_to_context [202]
+[234]    0.0    0.00    0.00      11         set_car [234]
+                0.00    0.00      11/477160054     assert_throw [18]
+-----------------------------------------------
+                0.00    0.00       4/4           _caar_procedure_ [216]
+[235]    0.0    0.00    0.00       4         caar [235]
+                0.00    0.00       8/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00       1/1           apply_primitive_procedure <cycle 1> [8]
+[236]    0.0    0.00    0.00       1         _display_procedure_ [236]
+                0.00    0.00       1/55365342     length [36]
+                0.00    0.00       1/1           display [253]
+                0.00    0.00       1/519808999     car [12]
+                0.00    0.00       1/477160054     assert_throw [18]
+                0.00    0.00       1/62          mk_none [213]
+-----------------------------------------------
+                0.00    0.00       3/3           named_let_to_letrec <cycle 4> [138]
+[237]    0.0    0.00    0.00       3         caddr [237]
+                0.00    0.00       6/710018448     cdr [13]
+                0.00    0.00       3/519808999     car [12]
+-----------------------------------------------
+                0.00    0.00       4/4           _cdar_procedure_ [218]
+[238]    0.0    0.00    0.00       4         cdar [238]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       4/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           exp_to_name_free_exp <cycle 2> [118]
+[239]    0.0    0.00    0.00       4         sexp_apply_procedure [239]
+                0.00    0.00       4/519808999     car [12]
+                0.00    0.00       4/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           case_to_cond <cycle 4> [132]
+[240]    0.0    0.00    0.00       4         case_key [240]
+                0.00    0.00       4/70          cadr [190]
+-----------------------------------------------
+                0.00    0.00       3/3           named_let_to_letrec <cycle 4> [138]
+[241]    0.0    0.00    0.00       3         cdddr [241]
+                0.00    0.00       9/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           exp_to_name_free_exp <cycle 2> [118]
+[242]    0.0    0.00    0.00       4         sexp_apply_arguments [242]
+                0.00    0.00       8/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           case_to_cond <cycle 4> [132]
+[243]    0.0    0.00    0.00       4         case_clauses [243]
+                0.00    0.00       4/87          cddr [191]
+-----------------------------------------------
+                                   7             improper_list_length [244]
+                0.00    0.00      10/10          mk_procedure [171]
+[244]    0.0    0.00    0.00      10+7       improper_list_length [244]
+                0.00    0.00       7/710018448     cdr [13]
+                                   7             improper_list_length [244]
+-----------------------------------------------
+                0.00    0.00       2/2           exp_to_name_free_exp <cycle 2> [118]
+[245]    0.0    0.00    0.00       2         mk_match [245]
+                0.00    0.00       2/140600224     mk_pair_data [24]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[246]    0.0    0.00    0.00       1         get_global_env [246]
+                0.00    0.00       1/18455054     mk_env [51]
+                0.00    0.00       3/232867458     nil [40]
+-----------------------------------------------
+                0.00    0.00       1/13          peek_char_from_port [258]
+                0.00    0.00       3/13          read_from_port [122]
+                0.00    0.00       9/13          read_char_from_port [225]
+[247]    0.0    0.00    0.00      13         is_input_port [247]
+                0.00    0.00      13/33385441     mk_boolean [88]
+-----------------------------------------------
+                0.00    0.00       2/2           exp_to_name_free_exp <cycle 2> [118]
+[248]    0.0    0.00    0.00       2         sexp_match_key [248]
+                0.00    0.00       2/519808999     car [12]
+                0.00    0.00       2/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       2/2           exp_to_name_free_exp <cycle 2> [118]
+[249]    0.0    0.00    0.00       2         sexp_match_clauses [249]
+                0.00    0.00       4/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           inner_construct_case_clauses [136]
+[250]    0.0    0.00    0.00       4         case_clause_exp [250]
+                0.00    0.00       4/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       4/4           inner_construct_case_clauses [136]
+[251]    0.0    0.00    0.00       4         is_last_clause [251]
+                0.00    0.00       4/710018448     cdr [13]
+-----------------------------------------------
+                0.00    0.00       2/5           exp_to_name_free_exp <cycle 2> [118]
+                0.00    0.00       3/5           match_clauses_to_name_free <cycle 2> [140]
+[252]    0.0    0.00    0.00       5         mk_begin [252]
+                0.00    0.00       5/42          mk_cell_data [219]
+-----------------------------------------------
+                0.00    0.00       1/1           _display_procedure_ [236]
+[253]    0.0    0.00    0.00       1         display [253]
+                0.00    0.00       1/1           display_on_file [254]
+-----------------------------------------------
+                0.00    0.00       1/1           display [253]
+[254]    0.0    0.00    0.00       1         display_on_file [254]
+                0.00    0.00       1/1           display_inside_list [255]
+                0.00    0.00       1/79533812     is_vector [57]
+                0.00    0.00       1/1           is_none [282]
+-----------------------------------------------
+                0.00    0.00       1/1           display_on_file [254]
+[255]    0.0    0.00    0.00       1         display_inside_list [255]
+                0.00    0.00       1/1           display_number [256]
+-----------------------------------------------
+                0.00    0.00       1/1           display_inside_list [255]
+[256]    0.0    0.00    0.00       1         display_number [256]
+                0.00    0.00       1/79534425     as_integer [38]
+                0.00    0.00       1/79534488     is_real [47]
+-----------------------------------------------
+                0.00    0.00       1/1           script_mode [23]
+[257]    0.0    0.00    0.00       1         open_input_file [257]
+                0.00    0.00       1/1           mk_port [264]
+                0.00    0.00       1/477160054     assert_throw [18]
+                0.00    0.00       1/19          is_string [280]
+-----------------------------------------------
+                0.00    0.00       1/1           script_mode [23]
+[258]    0.0    0.00    0.00       1         peek_char_from_port [258]
+                0.00    0.00       1/477160054     assert_throw [18]
+                0.00    0.00       1/33385423     is_true [69]
+                0.00    0.00       1/13          is_input_port [247]
+                0.00    0.00       1/1           peek_char_from_file [283]
+-----------------------------------------------
+                0.00    0.00       2/2           set_variable_value [260]
+[259]    0.0    0.00    0.00       2         set_var [259]
+                0.00    0.00       2/11          set_car [234]
+-----------------------------------------------
+                0.00    0.00       2/2           hairy_eval <cycle 1> [4]
+[260]    0.0    0.00    0.00       2         set_variable_value [260]
+                0.00    0.00       2/2           set_var [259]
+-----------------------------------------------
+                0.00    0.00       2/2           exp_to_name_free_exp <cycle 2> [118]
+[261]    0.0    0.00    0.00       2         sexp_begin_actions [261]
+                0.00    0.00       2/710018448     cdr [13]
+-----------------------------------------------
+                                   2             xlat <cycle 4> [70]
+[262]    0.0    0.00    0.00       2         or_to_if <cycle 4> [262]
+                0.00    0.00       2/710018448     cdr [13]
+                                   2             inner_or_to_if <cycle 4> [203]
+-----------------------------------------------
+                0.00    0.00       2/2           simple_datum [92]
+[263]    0.0    0.00    0.00       2         mk_eof [263]
+                0.00    0.00       2/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00       1/1           open_input_file [257]
+[264]    0.0    0.00    0.00       1         mk_port [264]
+                0.00    0.00       2/318114044     mloc [32]
+-----------------------------------------------
+                0.00    0.00    2096/5904        next_token [67]
+                0.00    0.00    3808/5904        subsequent [267]
+[265]    0.0    0.00    0.00    5904         initial [265]
+-----------------------------------------------
+                0.00    0.00       6/4403        decimal_sufix [96]
+                0.00    0.00      76/4403        decimal [94]
+                0.00    0.00     139/4403        character [274]
+                0.00    0.00     374/4403        string [89]
+                0.00    0.00    3808/4403        identifier [106]
+[266]    0.0    0.00    0.00    4403         set_token_char [266]
+-----------------------------------------------
+                0.00    0.00    3808/3808        identifier [106]
+[267]    0.0    0.00    0.00    3808         subsequent [267]
+                0.00    0.00    3808/5904        initial [265]
+-----------------------------------------------
+                                 946             skip_atmospheres [268]
+                0.00    0.00    2098/2098        next_token [67]
+[268]    0.0    0.00    0.00    2098+946     skip_atmospheres [268]
+                                 946             skip_atmospheres [268]
+-----------------------------------------------
+                0.00    0.00      10/2079        abbreviation <cycle 3> [126]
+                0.00    0.00      10/2079        parse_vector [134]
+                0.00    0.00      32/2079        parse_list <cycle 3> [100]
+                0.00    0.00     582/2079        simple_datum [92]
+                0.00    0.00    1445/2079        datum_plus <cycle 3> [99]
+[269]    0.0    0.00    0.00    2079         unget_token [269]
+-----------------------------------------------
+                0.00    0.00      12/114         script_mode [23]
+                0.00    0.00     102/114         populate_initial_environment [3]
+[270]    0.0    0.00    0.00     114         is_eof_object [270]
+-----------------------------------------------
+                0.00    0.00       2/78          script_mode [23]
+                0.00    0.00      10/78          _read_char_from_port [471]
+                0.00    0.00      66/78          character [274]
+[271]    0.0    0.00    0.00      78         mk_char [271]
+-----------------------------------------------
+                0.00    0.00      73/73          is_delimiter_or_eof [273]
+[272]    0.0    0.00    0.00      73         is_delimiter [272]
+-----------------------------------------------
+                0.00    0.00      73/73          character [274]
+[273]    0.0    0.00    0.00      73         is_delimiter_or_eof [273]
+                0.00    0.00      73/73          is_delimiter [272]
+-----------------------------------------------
+                0.00    0.00      66/66          next_token [67]
+[274]    0.0    0.00    0.00      66         character [274]
+                0.00    0.00     139/4403        set_token_char [266]
+                0.00    0.00      73/73          is_delimiter_or_eof [273]
+                0.00    0.00      66/78          mk_char [271]
+-----------------------------------------------
+                0.00    0.00       4/66          mk_vector [221]
+                0.00    0.00      62/66          as_real [78]
+[275]    0.0    0.00    0.00      66         is_integer [275]
+-----------------------------------------------
+                0.00    0.00      33/33          decimal [94]
+[276]    0.0    0.00    0.00      33         handle_sign [276]
+-----------------------------------------------
+                0.00    0.00       5/31          get_vars_from_match [141]
+                0.00    0.00      26/31          pattern_match [131]
+[277]    0.0    0.00    0.00      31         is_pattern_var [277]
+-----------------------------------------------
+                0.00    0.00       5/21          get_vars_from_match [141]
+                0.00    0.00      16/21          pattern_match [131]
+[278]    0.0    0.00    0.00      21         is_wildcard_pattern [278]
+-----------------------------------------------
+                0.00    0.00      20/20          is_char_equal [224]
+[279]    0.0    0.00    0.00      20         is_char [279]
+-----------------------------------------------
+                0.00    0.00       1/19          open_input_file [257]
+                0.00    0.00       2/19          string_to_symbol [82]
+                0.00    0.00       8/19          string_length [227]
+                0.00    0.00       8/19          string_append [210]
+[280]    0.0    0.00    0.00      19         is_string [280]
+-----------------------------------------------
+                0.00    0.00      10/10          compound_datum <cycle 3> [133]
+[281]    0.0    0.00    0.00      10         constructor [281]
+-----------------------------------------------
+                0.00    0.00       1/1           display_on_file [254]
+[282]    0.0    0.00    0.00       1         is_none [282]
+-----------------------------------------------
+                0.00    0.00       1/1           peek_char_from_port [258]
+[283]    0.0    0.00    0.00       1         peek_char_from_file [283]
+                0.00    0.00       1/10          _read_char_from_port [471]
+-----------------------------------------------
+                0.00    0.00       1/10          peek_char_from_file [283]
+                0.00    0.00       9/10          read_char_from_port [225]
+[471]    0.0    0.00    0.00      10         _read_char_from_port [471]
+                0.00    0.00      10/78          mk_char [271]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+ [180] _IS_NIL_procedure_     [79] gr_init               [214] mk_number
+ [216] _caar_procedure_        [4] hairy_eval             [58] mk_number_from_int
+ [200] _car_procedure_       [276] handle_sign            [24] mk_pair_data
+ [218] _cdar_procedure_       [83] hash_table_delete     [264] mk_port
+ [208] _cdr_procedure_         [7] hash_table_ref        [179] mk_primitive_procedure
+ [156] _cons_procedure_       [80] hash_table_set        [171] mk_procedure
+ [209] _data_eval_procedure_ [106] identifier            [222] mk_quoted
+  [95] _decimal              [173] if_sexp_alternative    [97] mk_real
+ [236] _display_procedure_   [186] if_sexp_consequent    [128] mk_real_from_double
+  [19] _equal_procedure_     [196] if_sexp_predicate     [139] mk_set_var_values
+  [16] _find                 [244] improper_list_length  [170] mk_sexp_if
+  [77] _is_inexact_procedure_ [112] init_primitive_procedures [194] mk_sexp_lambda
+ [172] _less_procedure_      [121] init_symbol_table     [207] mk_sexp_quoted
+  [15] _minus_procedure_     [265] initial               [215] mk_string_type
+ [229] _mk_vector            [136] inner_construct_case_clauses [71] mk_string_with_length
+ [169] _mul_procedure_       [203] inner_or_to_if         [61] mk_symbol
+  [29] _plus_procedure_      [109] is_and                [113] mk_unasigned_number
+ [471] _read_char_from_port   [50] is_atleast_one        [107] mk_unassigned_vars
+  [84] _remove               [162] is_case               [221] mk_vector
+ [197] _reverse_procedure_   [279] is_char                [32] mloc
+ [119] _string_append_procedure_ [224] is_char_equal      [73] mul_number
+  [81] _string_to_symbol_procedure_ [68] is_compound_procedure [129] name_from_pattern_var
+  [26] _sub_numbers          [161] is_cond               [138] named_let_to_letrec
+  [34] _sub_two_numbers      [195] is_cond_else_clause    [67] next_token
+ [115] _symbol_equal_        [111] is_define              [40] nil
+  [33] _symbol_hash_         [272] is_delimiter           [52] no_operands
+  [85] _symbol_to_string_procedure_ [273] is_delimiter_or_eof [105] not
+ [167] _unzip_               [223] is_else_clause         [72] nstrcpy
+ [126] abbreviation          [270] is_eof_object         [166] number_hash
+ [205] add_binding_to_frame  [201] is_improper_list      [257] open_input_file
+ [202] add_definition_to_context [247] is_input_port      [37] operands
+ [198] add_defs_to_context   [275] is_integer             [41] operator
+  [42] add_number            [251] is_last_clause        [262] or_to_if
+ [184] add_var_if_consistent  [55] is_last_exp            [63] param_len
+  [98] append                [159] is_let                [100] parse_list
+   [8] apply_primitive_procedure [110] is_let_star       [134] parse_vector
+  [38] as_integer            [160] is_letrec             [131] pattern_match
+  [78] as_real                [86] is_list               [283] peek_char_from_file
+  [18] assert_throw          [108] is_named_let          [258] peek_char_from_port
+ [177] caadr                 [282] is_none                 [3] populate_initial_environment
+ [235] caar                   [43] is_number              [56] procedure_body
+ [237] caddr                  [30] is_number_equal        [49] procedure_environment
+ [190] cadr                  [189] is_number_lt           [64] procedure_parameters
+  [12] car                   [158] is_or                 [127] quasiquote_to_list
+ [220] case_clause_datum     [277] is_pattern_var        [225] read_char_from_port
+ [250] case_clause_exp       [103] is_primitive_procedure [66] read_from_file
+ [243] case_clauses          [163] is_quasiquote         [122] read_from_port
+ [240] case_key               [47] is_real               [230] rest_exps
+ [132] case_to_cond          [152] is_sexp_apply          [45] rest_operands
+ [182] cdadr                 [150] is_sexp_begin          [10] restore
+ [238] cdar                  [153] is_sexp_call_cc        [11] reverse
+ [241] cdddr                 [147] is_sexp_definition      [9] save
+ [191] cddr                  [154] is_sexp_delay         [157] scan_internal_defs
+  [13] cdr                   [148] is_sexp_if             [23] script_mode
+ [274] character             [149] is_sexp_lambda        [178] sequence_to_exp
+  [44] check_procedure_arg_len [151] is_sexp_match       [234] set_car
+ [133] compound_datum        [144] is_sexp_quoted         [25] set_cdr
+ [212] cond_actions          [104] is_stream_cons        [266] set_token_char
+ [231] cond_clauses          [280] is_string             [259] set_var
+ [187] cond_predicate         [53] is_symbol_eq          [260] set_variable_value
+ [232] cond_to_if            [137] is_tagged_list        [242] sexp_apply_arguments
+  [14] cons                   [69] is_true               [239] sexp_apply_procedure
+ [135] construct_case_clauses [206] is_unqoute_splicing  [261] sexp_begin_actions
+ [281] constructor           [199] is_unquote            [181] sexp_definition_value
+  [93] data_eval              [74] is_var_arg            [188] sexp_definition_variable
+  [91] datum                  [57] is_vector             [249] sexp_match_clauses
+  [99] datum_plus            [278] is_wildcard_pattern   [248] sexp_match_key
+  [94] decimal                [21] it_bin_pred           [101] sexp_quotation_value
+  [96] decimal_sufix         [192] lambda_sexp_body       [92] simple_datum
+ [193] define_scan           [183] lambda_sexp_parameters [268] skip_atmospheres
+ [123] define_to_lambda       [28] last_operand           [48] stack_init
+ [124] define_variable        [36] length                 [89] string
+ [253] display               [164] let_to_combination    [210] string_append
+ [255] display_inside_list    [90] letrec_to_let         [227] string_length
+ [256] display_number          [5] lookup_unbound_var     [82] string_to_symbol
+ [254] display_on_file        [35] lookup_variable_value  [20] sub_numbers
+ [116] eval                  [140] match_clauses_to_name_free [267] subsequent
+ [118] exp_to_name_free_exp  [114] min_number            [217] symbol_exist_in_improper_list
+ [168] expand_cond_clauses   [226] mk_apply              [145] symbol_to_bound_var
+ [175] extend_context        [228] mk_assignment          [87] symbol_to_string
+  [46] extend_environment    [252] mk_begin               [75] type_tag_to_string
+ [211] find                   [88] mk_boolean            [269] unget_token
+ [130] find_matching_match_clause [174] mk_bound_var     [233] unquote_value
+  [60] first_exp             [219] mk_cell_data          [165] unzip
+  [27] first_operand         [271] mk_char                [76] vector_length
+  [31] fold_right            [120] mk_command_line_list   [17] vector_ref
+  [62] format_error          [185] mk_definition         [143] vector_set
+ [246] get_global_env         [51] mk_env                 [70] xlat
+  [22] get_index             [263] mk_eof                [142] xlat_sequence
+  [39] get_var               [102] mk_hash_table           [2] <cycle 1>
+  [54] get_var_from_frame    [204] mk_if                 [117] <cycle 2>
+ [146] get_var_index         [176] mk_lambda              [65] <cycle 3>
+ [141] get_vars_from_match   [155] mk_list                [59] <cycle 4>
+ [125] global_env_define_variable [245] mk_match
+   [6] global_env_lookup_var [213] mk_none

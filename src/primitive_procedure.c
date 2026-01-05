@@ -1158,8 +1158,7 @@ MAKE_VOID_WRAPPER_NO_ARG(gr_swap_buffers);
 void 
 init_primitive_procedures()
 {
-    _primitive_procedure_table_ = mk_hash_table(is_symbol_eq, _symbol_hash_);
-
+    _primitive_procedure_table_ = mk_hash_table(is_symbol_eq, symbol_hash);
     ADD_PROCEDURE(debug, debug);
     
     ADD_PROCEDURE(data_eval, eval);
