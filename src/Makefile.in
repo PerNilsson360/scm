@@ -100,14 +100,14 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_scheme_OBJECTS = parser.$(OBJEXT) lexer.$(OBJEXT) number.$(OBJEXT) \
-	symbol.$(OBJEXT) char.$(OBJEXT) str.$(OBJEXT) vector.$(OBJEXT) \
-	procedure.$(OBJEXT) type.$(OBJEXT) port.$(OBJEXT) \
-	util.$(OBJEXT) io.$(OBJEXT) eval.$(OBJEXT) env.$(OBJEXT) \
-	error.$(OBJEXT) primitive_procedure.$(OBJEXT) \
-	hash_table.$(OBJEXT) stack.$(OBJEXT) socket.$(OBJEXT) \
-	graphics.$(OBJEXT) blob.$(OBJEXT) unix.$(OBJEXT) \
-	read.$(OBJEXT) elab.$(OBJEXT) syntax.$(OBJEXT) \
-	prelude.$(OBJEXT) scheme.$(OBJEXT)
+	symbol.$(OBJEXT) symbol_table.$(OBJEXT) char.$(OBJEXT) \
+	str.$(OBJEXT) vector.$(OBJEXT) procedure.$(OBJEXT) \
+	type.$(OBJEXT) port.$(OBJEXT) util.$(OBJEXT) io.$(OBJEXT) \
+	eval.$(OBJEXT) env.$(OBJEXT) error.$(OBJEXT) \
+	primitive_procedure.$(OBJEXT) hash_table.$(OBJEXT) \
+	stack.$(OBJEXT) socket.$(OBJEXT) graphics.$(OBJEXT) \
+	blob.$(OBJEXT) unix.$(OBJEXT) read.$(OBJEXT) elab.$(OBJEXT) \
+	syntax.$(OBJEXT) prelude.$(OBJEXT) scheme.$(OBJEXT)
 scheme_OBJECTS = $(am_scheme_OBJECTS)
 scheme_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -135,8 +135,9 @@ am__depfiles_remade = ./$(DEPDIR)/blob.Po ./$(DEPDIR)/char.Po \
 	./$(DEPDIR)/procedure.Po ./$(DEPDIR)/read.Po \
 	./$(DEPDIR)/scheme.Po ./$(DEPDIR)/socket.Po \
 	./$(DEPDIR)/stack.Po ./$(DEPDIR)/str.Po ./$(DEPDIR)/symbol.Po \
-	./$(DEPDIR)/syntax.Po ./$(DEPDIR)/type.Po ./$(DEPDIR)/unix.Po \
-	./$(DEPDIR)/util.Po ./$(DEPDIR)/vector.Po
+	./$(DEPDIR)/symbol_table.Po ./$(DEPDIR)/syntax.Po \
+	./$(DEPDIR)/type.Po ./$(DEPDIR)/unix.Po ./$(DEPDIR)/util.Po \
+	./$(DEPDIR)/vector.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -288,10 +289,10 @@ top_srcdir = @top_srcdir@
 AM_YFLAGS = -t -v -d -Wno-yacc
 BUILT_SOURCES = parser.h parser.c
 CLEANFILES = parser.h parser.c parser.output lexer.c
-scheme_SOURCES = parser.y lexer.l number.c symbol.c char.c str.c vector.c procedure.c type.c \
-	port.c util.c io.c eval.c env.c error.c primitive_procedure.c \
-	hash_table.c stack.c socket.c graphics.c blob.c unix.c read.c \
-	elab.c syntax.c prelude.c scheme.c
+scheme_SOURCES = parser.y lexer.l number.c symbol.c symbol_table.c char.c str.c vector.c \
+    procedure.c type.c port.c util.c io.c eval.c env.c error.c primitive_procedure.c \
+	hash_table.c stack.c socket.c graphics.c blob.c unix.c read.c  elab.c syntax.c \
+	prelude.c scheme.c
 
 scheme_LDADD = -L/usr/local/lib -lX11 -L/usr/lib  -lm -ldl -lgc -lpthread
 all: $(BUILT_SOURCES)
@@ -406,6 +407,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stack.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/str.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symbol.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/symbol_table.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syntax.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/type.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unix.Po@am__quote@ # am--include-marker
@@ -594,6 +596,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/stack.Po
 	-rm -f ./$(DEPDIR)/str.Po
 	-rm -f ./$(DEPDIR)/symbol.Po
+	-rm -f ./$(DEPDIR)/symbol_table.Po
 	-rm -f ./$(DEPDIR)/syntax.Po
 	-rm -f ./$(DEPDIR)/type.Po
 	-rm -f ./$(DEPDIR)/unix.Po
@@ -666,6 +669,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/stack.Po
 	-rm -f ./$(DEPDIR)/str.Po
 	-rm -f ./$(DEPDIR)/symbol.Po
+	-rm -f ./$(DEPDIR)/symbol_table.Po
 	-rm -f ./$(DEPDIR)/syntax.Po
 	-rm -f ./$(DEPDIR)/type.Po
 	-rm -f ./$(DEPDIR)/unix.Po

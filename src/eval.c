@@ -412,7 +412,6 @@ eval_dispatch:
         case SYMBOL_TYPE_TAG:
             reg.val = lookup_unbound_var(reg.exp);
             goto *reg.cont;
-            break;
         default:
             /* All other non struct types are self evaluating i.e. values */
             reg.val = reg.exp;
@@ -699,7 +698,9 @@ apply_dispatch:
     else {
 	display_debug(reg.exp);
 	display_debug(reg.proc);
-	throw_error(APPLY_ERROR, "Apply: not a valid procedure type");
+	throw_error(APPLY_ERROR,
+                "Apply: not a valid procedure type: %s",
+                type_tag_to_string(reg.proc));
     }
 primitive_apply:
     reg.val = apply_primitive_procedure(reg.proc, reg.argl, reg.env);

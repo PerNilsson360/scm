@@ -26,7 +26,7 @@
 
 #define IS_NIL(pointer) (GET_TYPE_TAG(pointer) == NIL_TYPE_TAG)
 unsigned int symbol_hash(const TYPE* symbol);
-void init_symbol_table();
+void symbols_init();
 TYPE* mk_symbol(const char* symbol);
 #define IS_SYMBOL(POINTER) (IS_TAGGED_POINTER_OF_TYPE(POINTER, SYMBOL_TYPE_TAG))
 int is_symbol_eq(const TYPE* left, const TYPE* right);

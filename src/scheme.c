@@ -149,7 +149,7 @@ main(int argc, char** argv)
     script_has_run = FALSE;
     GC_INIT();
     
-    init_symbol_table();
+    symbols_init();
     init_primitive_procedures();
     gr_init();
     

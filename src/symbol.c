@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,7 +32,7 @@
 #include "str.h"
 #include "util.h"
 #include "common.h"
-#include "hash_table.h"
+#include "symbol_table.h"
 #include "symbol.h"
 #include "error.h"
 
@@ -94,9 +95,10 @@ symbol_hash(const TYPE* symbol)
 }
 
 void
-init_symbol_table()
+symbols_init()
 {
-    symbol_table = mk_hash_table(_symbol_equal_, _symbol_hash_);
+    symbol_table_init();
+
     _else_keyword_symbol_ = mk_symbol("else");
     _define_keyword_symbol_ = mk_symbol("define");
     _unquote_keyword_symbol_ = mk_symbol("unquote");
@@ -130,27 +132,7 @@ mk_symbol(const char* symbol)
         return nil();
     }
 
-    TYPE* result;
-    TYPE* tmp = mloc(sizeof(char) * strlen(symbol));
-    
-    if (tmp == NULL)
-    {
-        fprintf(stderr, "MK_SYMBOL: could not allocate memory for symbol");
-        exit(1);
-    }
-    
-    strcpy((char*)tmp, symbol);
-    tmp = (TYPE*)(((intptr_t)tmp) | SYMBOL_TYPE_TAG);
-
-    int found = hash_table_ref(symbol_table, tmp, &result);
-
-    if (!found)
-    {
-        hash_table_set(symbol_table, tmp, tmp);
-        result = tmp;
-    }
-
-    return result;
+    return symbol_table_find(symbol);
 }
 
 int 
