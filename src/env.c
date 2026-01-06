@@ -82,7 +82,10 @@ lookup_unbound_var(TYPE* var) {
     {
         return result;
     }
-    throw_error(EVAL_ERROR, "LOOKUP_UNBOUND_VAR: could not find var: %s", var->d.s);
+    throw_error(EVAL_ERROR,
+                "LOOKUP_UNBOUND_VAR: could not find var: %s, var type %s",
+                symbol_as_string(var),
+                type_tag_to_string(var));
 }
 
 int

@@ -32,6 +32,8 @@ TYPE* mk_symbol(const char* symbol);
 int is_symbol_eq(const TYPE* left, const TYPE* right);
 TYPE* symbol_to_string(const TYPE* symbol);
 TYPE* string_to_symbol(const TYPE* symbol);
+const char* symbol_as_string(const TYPE* symbol);
+
 
 TYPE* nil();
 

@@ -38,6 +38,7 @@ unsigned
 int
 get_index(const char* s)
 {
+    /* A hash function to find the index */
     unsigned int result = 0;
     for (; *s != 0; s++)
     {

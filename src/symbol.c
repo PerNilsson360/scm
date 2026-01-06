@@ -61,37 +61,14 @@ TYPE* _apply_keyword_symbol_;
 
 static TYPE* symbol_table;
 
-static
-int
-_symbol_equal_(const TYPE* left, const TYPE* right)
-{
-    const char* l = (const char*)REMOVE_TYPE_TAG(left);
-    const char* r = (const char*)REMOVE_TYPE_TAG(right);
-    return strcmp(l, r) == 0;
-}
-
-static
-unsigned int
-_symbol_hash_(const TYPE* symbol)
-{
-    unsigned int result = 0;    
-    const char* s = (const char*)REMOVE_TYPE_TAG(symbol);
-    for (; *s != 0; s++)
-    {
-        result = result * 127 + *s;
-    }
-    return result;
-}
-
 /* Externaly symbol pointers are unique */
 unsigned int
 symbol_hash(const TYPE* symbol)
 {
     /*
-      Lower bits are the same so shift them away.
-      TODO: 8 seems to be good but meaybe there is a better way to do this.
+      Lower 4 bits are the same so shift them away.
      */
-    return ((unsigned int) ((intptr_t)symbol)) >> 8;
+    return ((unsigned int) ((intptr_t)symbol)) >> 4;
 }
 
 void
@@ -149,6 +126,15 @@ string_to_symbol(const TYPE* string)
                  "STRING_TO_SYMBOL: argument must be a string");
 
     return mk_symbol(string->d.s);
+}
+
+const char*
+symbol_as_string(const TYPE* symbol)
+{
+    if (!IS_TAGGED_POINTER_OF_TYPE(symbol, SYMBOL_TYPE_TAG)) {
+        return "SYMBOL_AS_STRING: not a symbol";
+    }
+    return (const char*)REMOVE_TYPE_TAG(symbol);
 }
 
 TYPE* 

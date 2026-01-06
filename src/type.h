@@ -28,7 +28,7 @@
 
 /**
  * Classical lisp implementation of tagged pointers.
- * It works since malloc returns 16 byte alligned pointers.
+ * It works since boehms garbage collector returns 16 byte alligned pointers.
  */
 
 #define NIL_TYPE_TAG         1
@@ -40,10 +40,10 @@
 
 #define REMOVE_TYPE_TAG(POINTER) (((intptr_t)POINTER) & 0xfffffffffffffff0)
 #define GET_TYPE_TAG(POINTER) (((intptr_t)POINTER) & 0xF)
-#define GET_INT_FROM_TYPE_TAGGED_INT(POINTER) (((intptr_t)POINTER) >> 8)
+#define GET_INT_FROM_TYPE_TAGGED_INT(POINTER) (((intptr_t)POINTER) >> 4)
 #define IS_TAGGED_POINTER_OF_TYPE(POINTER, TAG) (GET_TYPE_TAG(POINTER) == TAG)
 #define IS_TYPE_TAGGED_POINTER(POINTER) (GET_TYPE_TAG(POINTER) != 0)
-#define MK_TAGGED_POINTER(VALUE, TAG) ((VALUE << 8) | TAG)
+#define MK_TAGGED_POINTER(VALUE, TAG) ((VALUE << 4) | TAG)
 
 #define IS_POINTER_TO_STRUCT(POINTER) (GET_TYPE_TAG(POINTER) == 0)
 #define IS_POINTER_TO_STRUCT_OF_TYPE(POINTER, TAG) (IS_POINTER_TO_STRUCT(POINTER) && \
