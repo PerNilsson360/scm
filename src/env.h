@@ -31,7 +31,7 @@ TYPE* get_global_env();
  * Given an unbound variable (i.e. symbol) find its value
  * in the global environment.
  */
-TYPE* lookup_unbound_var(TYPE* var);
+int lookup_unbound_var(TYPE* var, TYPE** val);
 
 int is_env(const TYPE* sexp);
 

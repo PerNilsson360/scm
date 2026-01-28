@@ -410,8 +410,19 @@ eval_dispatch:
         switch(type_tag)
         {
         case SYMBOL_TYPE_TAG:
-            reg.val = lookup_unbound_var(reg.exp);
-            goto *reg.cont;
+	{
+	    TYPE* val;
+	    int result = lookup_unbound_var(reg.exp, &val);
+	    if (!result)
+	    {
+		throw_error(EVAL_ERROR,
+			    "LOOKUP_UNBOUND_VAR: could not find var: %s, var type %s",
+			    symbol_as_string(reg.exp),
+			    type_tag_to_string(reg.exp));
+	    }
+	    reg.val = val;
+	    goto *reg.cont;
+	}
         default:
             /* All other non struct types are self evaluating i.e. values */
             reg.val = reg.exp;
@@ -429,6 +440,7 @@ eval_dispatch:
     case VECTOR:
     case NONE:
     case ESCAPE_PROC:
+    case PRIMITIVE_PROCEDURE:
 	/* Self evalutating expressions */
 	reg.val = reg.exp;
 	goto *reg.cont;
@@ -1054,7 +1066,17 @@ exp_to_name_free_exp(TYPE* exp, TYPE* context)
     {
         TYPE* hd = exp_to_name_free_exp(car(exp), context);
         TYPE* tl = exp_to_name_free_exp(cdr(exp), context);
-        result = cons(hd, tl);
+	if (IS_SYMBOL(hd))
+	{
+	    TYPE* proc;
+	    if (lookup_unbound_var(hd, &proc) &&
+		IS_POINTER_TO_STRUCT_OF_TYPE(proc, PRIMITIVE_PROCEDURE))
+	    {
+		hd = proc;
+	    }
+	}
+
+	result = cons(hd, tl);
     } 
     else if (IS_SYMBOL(exp))
     {

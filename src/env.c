@@ -74,18 +74,10 @@ get_global_env()
     return global_env;
 }
 
-TYPE*
-lookup_unbound_var(TYPE* var) {
-    TYPE* result;
-    int found = global_env_lookup_var(var, &result);
-    if (found)
-    {
-        return result;
-    }
-    throw_error(EVAL_ERROR,
-                "LOOKUP_UNBOUND_VAR: could not find var: %s, var type %s",
-                symbol_as_string(var),
-                type_tag_to_string(var));
+int
+lookup_unbound_var(TYPE* var, TYPE** val)
+{
+    return global_env_lookup_var(var, val);
 }
 
 int
