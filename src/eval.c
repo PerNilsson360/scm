@@ -528,9 +528,13 @@ eval_dispatch:
 	reg.exp = operator(reg.exp);
 	save(reg.cont);
 	save(reg.exp);
+	if (is_primitive_procedure(reg.exp)) {
+	    reg.proc = reg.exp;
+	    goto ev_appl_did_no_eval_operator;
+	}
 	save(reg.env);
 	save(reg.unev);
-	reg.cont = &&ev_appl_did_operator;
+	reg.cont = &&ev_appl_did_eval_operator;
 	goto eval_dispatch;
     default:
 	// TODO:
@@ -623,11 +627,12 @@ ev_apply_accum_last_arg:
     restore(&reg.proc);
     goto apply_dispatch;
     /* application of operator to operands */
-ev_appl_did_operator:
+ev_appl_did_eval_operator:
     restore(&reg.unev);
     restore(&reg.env);
-    reg.argl = nil();
     reg.proc = reg.val;
+ev_appl_did_no_eval_operator:
+    reg.argl = nil();
     if (no_operands(reg.unev)) goto apply_dispatch;
     save (reg.proc);
 ev_appl_operand_loop:
