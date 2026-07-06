@@ -352,28 +352,27 @@ check_procedure_arg_len(const TYPE* proc_name, int arg_len, const TYPE* proc)
     int len = param_len(proc);
     if (is_var_arg(proc))
     {
-	if (arg_len < len)
+        if (arg_len < len)
         {     /* len is min length */
-	    display_debug(proc_name);
-	    fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
-		    arg_len,
-		    len);
-	    throw_error(APPLY_ERROR, 
-			"Apply: wrong number of arguments in application");
-	}
+            display_debug(proc_name);
+            fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected at least %d args\n",
+                    arg_len,
+                    len);
+            throw_error(APPLY_ERROR, 
+                        "Apply: wrong number of arguments in application");
+        }
     }
     else
     {
-
-	if (arg_len != len)
+        if (arg_len != len)
         {
-	    display_debug(proc_name);
-	    fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
-		    arg_len,
-		    len);
-	    throw_error(APPLY_ERROR, 
-			"Apply: wrong number of arguments in application");
-	}
+            display_debug(proc_name);
+            fprintf(stderr, "CHECK_PROCEDURE_ARG_LEN: got %d args expected %d args\n",
+                    arg_len,
+                    len);
+            throw_error(APPLY_ERROR, 
+                        "Apply: wrong number of arguments in application");
+        }
     }
 }
 
